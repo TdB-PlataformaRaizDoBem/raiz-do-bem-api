@@ -1,6 +1,6 @@
-package br.com.raizdobem.controller;
+package br.com.raizdobem.api.controller;
 
-import br.com.raizdobem.model.Endereco;
+import br.com.raizdobem.api.model.Endereco;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 

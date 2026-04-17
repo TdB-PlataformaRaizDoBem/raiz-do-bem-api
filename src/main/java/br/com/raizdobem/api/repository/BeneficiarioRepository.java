@@ -1,4 +1,4 @@
-package br.com.raizdobem.repository;
+package br.com.raizdobem.api.repository;
 
 public class BeneficiarioRepository {
 }

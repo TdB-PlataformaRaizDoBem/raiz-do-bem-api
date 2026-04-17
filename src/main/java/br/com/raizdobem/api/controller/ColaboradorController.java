@@ -1,6 +1,6 @@
-package br.com.raizdobem.controller;
+package br.com.raizdobem.api.controller;
 
-import br.com.raizdobem.model.Colaborador;
+import br.com.raizdobem.api.model.Colaborador;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 

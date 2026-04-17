@@ -1,4 +1,4 @@
-package br.com.raizdobem.model;
+package br.com.raizdobem.api.model;
 
 //@Entity
 public class Endereco {
