@@ -3,6 +3,7 @@ package br.com.raizdobem.api.controller;
 import br.com.raizdobem.api.model.Beneficiario;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
+import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
 import java.util.ArrayList;
@@ -13,28 +14,40 @@ import java.util.List;
 public class BeneficiarioController {
 
     @GET
+    @Operation(summary = "Endpoint de listagem dos beneficiários cadastrados.")
     @Produces(MediaType.APPLICATION_JSON)
     public List<Beneficiario> listarTodos(){
         return new ArrayList<>();
     }
 
     @POST
+    @Operation(summary = "Endpoint para a criação de beneficiários.")
     @Produces(MediaType.APPLICATION_JSON)
     public String criar(){
-        return "Criando novo pedido de ajuda";
+        return "Criando novo beneficiário";
+    }
+
+    @GET
+    @Path("/{cpf}")
+    @Operation(summary = "Endpoint para encontrar um beneficiário específico.")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Beneficiario buscarPorCpf(@PathParam("cpf") String cpf){
+        return new Beneficiario();
     }
 
     @PUT
     @Path("/{cpf}")
+    @Operation(summary = "Endpoint de atualização de informações de beneficiário.")
     @Produces(MediaType.APPLICATION_JSON)
     public String atualizar(@PathParam("cpf") String cpf){
-        return "Atualizando pedido de ajuda";
+        return "Atualizando beneficiário";
     }
 
     @DELETE
     @Path("/{cpf}")
+    @Operation(summary = "Endpoint para apagar beneficiário existente.")
     @Produces(MediaType.APPLICATION_JSON)
     public String excluir(@PathParam("cpf") String cpf){
-        return "Apagar pedido de ajuda";
+        return "Apagar beneficiário";
     }
 }

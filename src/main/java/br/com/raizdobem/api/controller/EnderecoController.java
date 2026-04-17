@@ -19,12 +19,11 @@ public class EnderecoController {
     }
 
     @GET
-    @Path("/{cidade}")
+    @Path("/cidade/{cidade}")
     @Produces(MediaType.APPLICATION_JSON)
     public List<Endereco> listarPorCidade(@PathParam("cidade") String cidade){
         return new ArrayList<>();
     }
-
 
     @POST
     @Produces(MediaType.APPLICATION_JSON)
@@ -32,10 +31,17 @@ public class EnderecoController {
         return "Criar novo endereço";
     }
 
+    @GET
+    @Path("/cep/{cep}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Endereco buscarEndereco(@PathParam("cep") String cep){
+        return new Endereco();
+    }
+
     @PUT
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public String atualizar(@PathParam("id") int id){
+    public String atualizar(@PathParam("id") Long id){
         return "Atualizando Endereço";
     }
 
