@@ -1,7 +1,7 @@
 package br.com.raizdobem.api.model;
 
 public class Dentista {
-    private int id;
+    private Long id;
     private String croDentista;
     private String cpf;
     private String nomeCompleto;
@@ -15,7 +15,7 @@ public class Dentista {
     public Dentista() {
     }
 
-    public Dentista(int id, String croDentista, String cpf, String nomeCompleto, Sexo sexo, String email, String telefone, Categoria categoria, boolean disponivel, Endereco endereco) {
+    public Dentista(Long id, String croDentista, String cpf, String nomeCompleto, Sexo sexo, String email, String telefone, Categoria categoria, boolean disponivel, Endereco endereco) {
         this.id = id;
         this.croDentista = croDentista;
         this.cpf = cpf;
@@ -28,11 +28,11 @@ public class Dentista {
         this.endereco = endereco;
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
