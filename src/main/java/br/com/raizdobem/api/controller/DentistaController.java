@@ -1,6 +1,6 @@
 package br.com.raizdobem.api.controller;
 
-import br.com.raizdobem.api.model.Beneficiario;
+import br.com.raizdobem.api.model.Dentista;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
@@ -8,33 +8,33 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import java.util.ArrayList;
 import java.util.List;
 
-@Path("/beneficiario")
-@Tag(name = "Beneficiario", description = "Disponibiliza funcionalidades relacionadas aos beneficiários.")
-public class BeneficiarioController {
+@Path("/dentista")
+@Tag(name = "Dentista", description = "Disponibiliza funcionalidades relacionadas a dentistas.")
+public class DentistaController {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Beneficiario> listarTodos(){
+    public List<Dentista> listarTodos(){
         return new ArrayList<>();
     }
 
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     public String criar(){
-        return "Criando novo pedido de ajuda";
+        return "Criando novo dentista";
     }
 
     @PUT
     @Path("/{cpf}")
     @Produces(MediaType.APPLICATION_JSON)
     public String atualizar(@PathParam("cpf") String cpf){
-        return "Atualizando pedido de ajuda";
+        return "Atualizando dentista";
     }
 
     @DELETE
     @Path("/{cpf}")
     @Produces(MediaType.APPLICATION_JSON)
     public String excluir(@PathParam("cpf") String cpf){
-        return "Apagar pedido de ajuda";
+        return "Apagar colaborador";
     }
 }

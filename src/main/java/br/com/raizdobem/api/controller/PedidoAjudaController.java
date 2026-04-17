@@ -3,11 +3,13 @@ package br.com.raizdobem.api.controller;
 import br.com.raizdobem.api.model.PedidoAjuda;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
+import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Path("/pedido-ajuda")
+@Tag(name = "PedidoAjuda", description = "Disponibiliza funcionalidades relacionadas aos pedidos de ajuda.")
 public class PedidoAjudaController {
 
     @GET
