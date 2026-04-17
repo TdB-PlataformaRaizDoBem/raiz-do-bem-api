@@ -1,14 +1,19 @@
 package br.com.raizdobem.controller;
 
+import br.com.raizdobem.model.Beneficiario;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Path("/beneficiario")
 public class BeneficiarioController {
+
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public String listarTodos(){
-        return "Listando todos pedidos";
+    public List<Beneficiario> listarTodos(){
+        return new ArrayList<>();
     }
 
     @POST

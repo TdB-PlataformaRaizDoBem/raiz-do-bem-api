@@ -1,15 +1,19 @@
 package br.com.raizdobem.controller;
 
+import br.com.raizdobem.model.Endereco;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Path("/endereco")
 public class EnderecoController {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public String listarTodos(){
-        return "Listando todos os endereços";
+    public List<Endereco> listarTodos(){
+        return new ArrayList<>();
     }
 
     @POST
@@ -17,6 +21,7 @@ public class EnderecoController {
     public String criar(){
         return "Criar novo endereço";
     }
+
     @PUT
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)

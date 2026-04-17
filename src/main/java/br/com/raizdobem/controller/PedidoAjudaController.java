@@ -1,15 +1,19 @@
 package br.com.raizdobem.controller;
 
+import br.com.raizdobem.model.PedidoAjuda;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Path("/pedido-ajuda")
 public class PedidoAjudaController {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public String listarTodos(){
-        return "Listando todos pedidos";
+    public List<PedidoAjuda> listarTodos(){
+        return new ArrayList<>();
     }
 
     @POST
