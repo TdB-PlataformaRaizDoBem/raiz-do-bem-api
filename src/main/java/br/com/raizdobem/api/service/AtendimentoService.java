@@ -5,6 +5,8 @@ import br.com.raizdobem.api.repository.AtendimentoRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
+import java.util.List;
+
 @ApplicationScoped
 public class AtendimentoService {
     @Inject
@@ -12,5 +14,8 @@ public class AtendimentoService {
 
     public Atendimento buscar() {
         return new Atendimento();
+    }
+    public List<Atendimento> listarAtendimentos(){
+        return repository.listarTodos();
     }
 }

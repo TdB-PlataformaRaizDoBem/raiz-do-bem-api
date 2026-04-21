@@ -1,6 +1,5 @@
 package br.com.raizdobem.api.controller;
 
-import br.com.raizdobem.api.model.Especialidade;
 import br.com.raizdobem.api.model.ProgramaSocial;
 import br.com.raizdobem.api.service.ProgramaService;
 import jakarta.enterprise.context.RequestScoped;
@@ -22,7 +21,7 @@ public class ProgramaSocialController {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<ProgramaSocial> listarTodas(){
+    public List<ProgramaSocial> listarTodos(){
         return service.listarProgramasSociais();
     }
 }

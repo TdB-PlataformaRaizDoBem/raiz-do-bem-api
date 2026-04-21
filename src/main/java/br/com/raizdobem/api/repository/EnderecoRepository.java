@@ -9,8 +9,12 @@ import java.util.List;
 @ApplicationScoped
 public class EnderecoRepository implements PanacheRepository<Endereco> {
 
-    public Endereco buscarPorCep(String cep){
-        return find("cep", cep).firstResult();
+//    public Endereco buscarPorCep(String cep){
+//        return find("cep", cep).firstResult();
+//    }
+
+    public void criar(Endereco endereco){
+        persist(endereco);
     }
 
     public List<Endereco> listarTodos(){
@@ -19,6 +23,10 @@ public class EnderecoRepository implements PanacheRepository<Endereco> {
 
     public List<Endereco> listarPorCidade(String cidade){
         return list("cidade = ?1", cidade);
+    }
+
+    public Endereco buscarPeloId(Long id){
+        return findById(id);
     }
 
     public boolean excluir(Long id) {

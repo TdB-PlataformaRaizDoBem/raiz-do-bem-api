@@ -1,7 +1,6 @@
 package br.com.raizdobem.api.controller;
 
 import br.com.raizdobem.api.model.Atendimento;
-import br.com.raizdobem.api.model.Beneficiario;
 import br.com.raizdobem.api.service.AtendimentoService;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
@@ -23,7 +22,7 @@ public class AtendimentoController {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public List<Atendimento> listarTodos(){
-        return new ArrayList<>();
+        return service.listarAtendimentos();
     }
 
     @POST

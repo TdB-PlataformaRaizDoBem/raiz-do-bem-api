@@ -1,22 +1,33 @@
 package br.com.raizdobem.api.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 
 import java.time.LocalDate;
 
-//@Entity
+@Entity
 public class Colaborador {
-    private int id;
+    @Id
+    @Column(name = "id_colaborador")
+    private Long id;
+
     private String cpf;
+
+    @Column(name = "nome_completo")
     private String nomeCompleto;
+
+    @Column(name = "data_nascimento")
     private LocalDate dataNascimento;
+
+    @Column(name = "data_contratacao")
     private LocalDate dataContratacao;
     private String email;
 
     public Colaborador() {
     }
 
-    public Colaborador(int id, String cpf, String nomeCompleto, LocalDate dataNascimento, LocalDate dataContratacao, String email) {
+    public Colaborador(Long id, String cpf, String nomeCompleto, LocalDate dataNascimento, LocalDate dataContratacao, String email) {
         this.id = id;
         this.cpf = cpf;
         this.nomeCompleto = nomeCompleto;
@@ -25,11 +36,11 @@ public class Colaborador {
         this.email = email;
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public Colaborador setId(int id) {
+    public Colaborador setId(Long id) {
         this.id = id;
         return this;
     }

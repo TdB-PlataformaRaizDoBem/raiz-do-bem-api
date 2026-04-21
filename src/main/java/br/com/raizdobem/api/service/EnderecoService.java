@@ -15,23 +15,41 @@ import com.google.gson.JsonObject;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import jakarta.ws.rs.WebApplicationException;
 
 @ApplicationScoped
 public class EnderecoService {
     @Inject
     EnderecoRepository repository;
 
-//    public void criar(Endereco endereco){
-//        if(endereco != null)
-//            repository.adicionar(endereco);
-//        else{
-//            throw new RuntimeException("Endereço Inválido");
-//        }
-//    }
-//
-//    public Endereco buscaPorId(int id){
-//        return repository.buscarPorId();
-//    }
+    @Transactional
+    public Endereco criar(String cep, String numero, String tipoLocal) {
+        Gson gson = new Gson();
+        if(validarCep(cep)){
+            String response = buscarApiViaCep(cep);
+            Endereco endereco = gson.fromJson(response, Endereco.class);
+
+            endereco.setNumero(numero);
+            TipoEndereco tipoEndereco;
+
+            if (tipoLocal.equals("RESIDENCIAL")) {
+                tipoEndereco = TipoEndereco.RESIDENCIAL;
+            } else {
+                tipoEndereco = TipoEndereco.PROFISSIONAL;
+            }
+
+            endereco.setTipoEndereco(tipoEndereco);
+
+            repository.criar(endereco);
+            return endereco;
+        }
+        throw new WebApplicationException("CEP inválido! Insira 8 dígitos!");
+}
+
+    public Endereco buscaPorId(Long id){
+        return repository.buscarPeloId(id);
+    }
+
     public List<Endereco> listarTodos() {
         return repository.listarTodos();
     }
@@ -60,7 +78,7 @@ public class EnderecoService {
         JsonObject jsonObject = gson.fromJson(enderecoResponse, JsonObject.class);
 
         Endereco endereco = gson.fromJson(enderecoResponse, Endereco.class);
-        endereco.cidade = jsonObject.get("cidade").getAsString();
+        endereco.setCidade(jsonObject.get("cidade").getAsString());
 
         return endereco;
     }

@@ -1,7 +1,6 @@
 package br.com.raizdobem.api.controller;
 
 import br.com.raizdobem.api.model.PedidoAjuda;
-import br.com.raizdobem.api.service.EnderecoService;
 import br.com.raizdobem.api.service.PedidoAjudaService;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;

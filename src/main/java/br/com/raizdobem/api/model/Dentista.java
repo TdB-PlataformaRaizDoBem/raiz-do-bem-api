@@ -1,18 +1,33 @@
 package br.com.raizdobem.api.model;
 
-import jakarta.persistence.Entity;
+import jakarta.persistence.*;
 
-//@Entity
+@Entity
 public class Dentista {
+    @Id
+    @Column(name = "id_dentista")
     private Long id;
+
+    @Column(name = "cro")
     private String croDentista;
+
     private String cpf;
+
+    @Column(name = "nome_completo")
     private String nomeCompleto;
+
+    @Enumerated(EnumType.STRING)
     private Sexo sexo;
+
     private String email;
     private String telefone;
+
+    @Enumerated(EnumType.STRING)
     private Categoria categoria;
+
     private boolean disponivel;
+    @ManyToOne
+    @JoinColumn(name = "id_endereco")
     private Endereco endereco;
 
     public Dentista() {

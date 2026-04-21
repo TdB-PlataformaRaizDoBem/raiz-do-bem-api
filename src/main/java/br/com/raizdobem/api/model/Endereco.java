@@ -3,25 +3,76 @@ package br.com.raizdobem.api.model;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "endereco")
 public class Endereco {
 
-    //    @GeneratedValue
+    @GeneratedValue
     @Id
     @Column(name = "id_endereco")
-    public Long id;
-    public String logradouro;
-    public String cep;
-    public String numero;
-    public String bairro;
-    public String cidade;
-    public String estado;
+    private Long id;
+    private String logradouro;
+    private String cep;
+    private String numero;
+    private String bairro;
+    private String cidade;
+    private String estado;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "tipo_endereco")
-    TipoEndereco tipoEndereco;
+    private TipoEndereco tipoEndereco;
 
     public Endereco() {
     }
 
+    public Long getId() {
+        return id;
+    }
+
+    public String getLogradouro() {
+        return logradouro;
+    }
+
+    public String getCep() {
+        return cep;
+    }
+
+    public Endereco setCep(String cep) {
+        this.cep = cep;
+        return this;
+    }
+
+    public String getNumero() {
+        return numero;
+    }
+
+    public Endereco setNumero(String numero) {
+        this.numero = numero;
+        return this;
+    }
+
+    public String getBairro() {
+        return bairro;
+    }
+
+
+    public String getCidade() {
+        return cidade;
+    }
+
+    public Endereco setCidade(String cidade) {
+        this.cidade = cidade;
+        return this;
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public TipoEndereco getTipoEndereco() {
+        return tipoEndereco;
+    }
+
+    public Endereco setTipoEndereco(TipoEndereco tipoEndereco) {
+        this.tipoEndereco = tipoEndereco;
+        return this;
+    }
 }

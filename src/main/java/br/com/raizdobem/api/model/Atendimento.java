@@ -1,20 +1,31 @@
 package br.com.raizdobem.api.model;
 
+import jakarta.persistence.*;
+
 import java.time.LocalDate;
 
-//@Entity
+@Entity
 public class Atendimento {
-//    @Id
+    @Id
 //    @GeneratedValue
+    @Column(name = "id_atendimento")
     private Long id;
     private String prontuario;
+    @Column(name = "data_inicial")
     private LocalDate dataInicial;
+    @Column(name = "data_final")
     private LocalDate dataFinal;
-//    @ManyToOne
+
+    @ManyToOne
+    @JoinColumn(name = "id_beneficiario")
     private Beneficiario beneficiario;
-//    @ManyToOne
+
+    @ManyToOne
+    @JoinColumn(name = "id_dentista")
     private Dentista dentista;
-//    @ManyToOne
+
+    @ManyToOne
+    @JoinColumn(name = "id_colaborador")
     private Colaborador colaborador;
 
     public Atendimento() {

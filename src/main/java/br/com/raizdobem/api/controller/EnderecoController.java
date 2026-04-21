@@ -1,7 +1,10 @@
 package br.com.raizdobem.api.controller;
 
 import br.com.raizdobem.api.model.Endereco;
+import br.com.raizdobem.api.model.TipoEndereco;
 import br.com.raizdobem.api.service.EnderecoService;
+import com.fasterxml.jackson.databind.util.JacksonCollectors;
+import com.google.gson.Gson;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
@@ -20,12 +23,14 @@ public class EnderecoController {
     EnderecoService service;
 
     @GET
+    @Operation(summary = "Endpoint para a listagem de todos os endereços.")
     @Produces(MediaType.APPLICATION_JSON)
     public List<Endereco> listarTodos(){
         return service.listarTodos();
     }
 
     @GET
+    @Operation(summary = "Endpoint para a listagem de endereços por cidade.")
     @Path("/cidade/{cidade}")
     @Produces(MediaType.APPLICATION_JSON)
     public List<Endereco> listarPorCidade(@PathParam("cidade") String cidade){
@@ -35,17 +40,19 @@ public class EnderecoController {
     @POST
     @Operation(summary = "Endpoint para a criação de endereços.")
     @Produces(MediaType.APPLICATION_JSON)
-    public String criar(){
-        return "Criar novo endereço";
+    public Response criar(@PathParam("cep") String cep, @PathParam("numero") String numero, @PathParam("tipoEndereco") String tipoLocal){
+        tipoLocal = tipoLocal.toUpperCase();
+        Endereco enderecoCompleto = service.criar(cep, numero, tipoLocal);
+        return Response.status(Response.Status.CREATED).entity(enderecoCompleto).build();
     }
 
-//    @GET
-//    @Operation(summary = "Endpoint para a busca de endereços.")
-//    @Path("/cep/{cep}")
-//    @Produces(MediaType.APPLICATION_JSON)
-//    public Endereco buscarEndereco(@PathParam("cep") String cep){
-//        return new Endereco();
-//    }
+    @GET
+    @Operation(summary = "Endpoint para buscar endereço específico pelo id.")
+    @Path("/id/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Endereco buscarEndereco(@PathParam("id") Long id){
+        return service.buscaPorId(id);
+    }
 
     @GET
     @Operation(summary = "Endpoint para buscar endereços na API do ViaCep.")

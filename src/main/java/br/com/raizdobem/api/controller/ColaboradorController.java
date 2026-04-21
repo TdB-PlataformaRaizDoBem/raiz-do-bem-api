@@ -21,7 +21,7 @@ public class ColaboradorController {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public List<Colaborador> listarTodos(){
-        return new ArrayList<>();
+        return service.listarTodos();
     }
 
     @POST
