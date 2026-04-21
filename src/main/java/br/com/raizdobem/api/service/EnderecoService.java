@@ -1,25 +1,26 @@
 package br.com.raizdobem.api.service;
 
-//import br.com.raizdobem.api.repository.EnderecoRepository;
+import br.com.raizdobem.api.repository.EnderecoRepository;
+import br.com.raizdobem.api.model.Endereco;
+import br.com.raizdobem.api.model.TipoEndereco;
 
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.List;
 
-import br.com.raizdobem.api.model.Endereco;
-import br.com.raizdobem.api.model.TipoEndereco;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import jakarta.enterprise.context.ApplicationScoped;
-
-import static org.yaml.snakeyaml.nodes.Tag.STR;
+import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 
 @ApplicationScoped
 public class EnderecoService {
-//    @Inject
-//    EnderecoRepository repository;
-//
+    @Inject
+    EnderecoRepository repository;
+
 //    public void criar(Endereco endereco){
 //        if(endereco != null)
 //            repository.adicionar(endereco);
@@ -31,14 +32,14 @@ public class EnderecoService {
 //    public Endereco buscaPorId(int id){
 //        return repository.buscarPorId();
 //    }
-//    public List<Endereco> listarTodos(){
-//        return repository.listarTodos();
-//    }
-//
-//    public List<Endereco> listarPorCidade(String cidade){
-//        return repository.listarPorCidade(cidade);
-//    }
-//
+    public List<Endereco> listarTodos() {
+        return repository.listarTodos();
+    }
+
+    public List<Endereco> listarPorCidades(String cidade) {
+        return repository.listarPorCidade(cidade);
+    }
+
 //    public void atualizar(int id, Endereco enderecoAtualizado) {
 //        Endereco endereco = repository.buscarPorId(id);
 //
@@ -47,16 +48,12 @@ public class EnderecoService {
 //        }
 //        repository.atualizar(id, enderecoAtualizado);
 //    }
-//
-//    public void excluir(int id) {
-//        Endereco endereco = repository.buscarPorId(id);
-//
-//        if(endereco == null){
-//            throw new RuntimeException("Endereço não encontrado!!!");
-//        }
-//        repository.excluir(id);
-//    }
-//
+
+    @Transactional
+    public boolean excluir(Long id) {
+        return repository.deleteById(id);
+    }
+
     public Endereco validarEndereco(String cep, String numero, TipoEndereco tipoEndereco) {
         String enderecoResponse = buscarApiViaCep(cep);
         Gson gson = new Gson();
@@ -69,29 +66,29 @@ public class EnderecoService {
     }
 
     public String buscarApiViaCep(String cep) {
-       String url = "https://viacep.com.br/ws/%s/json/".formatted(cep);
-       if(validarCep(cep)){
-           try {
-               HttpClient client = HttpClient.newHttpClient();
+        String url = "https://viacep.com.br/ws/%s/json/".formatted(cep);
+        if (validarCep(cep)) {
+            try {
+                HttpClient client = HttpClient.newHttpClient();
 
-               HttpRequest request = HttpRequest.newBuilder()
-                       .uri(URI.create(url))
-                       .build();
+                HttpRequest request = HttpRequest.newBuilder()
+                        .uri(URI.create(url))
+                        .build();
 
-               HttpResponse<String> response = client
-                       .send(request, HttpResponse.BodyHandlers.ofString());
+                HttpResponse<String> response = client
+                        .send(request, HttpResponse.BodyHandlers.ofString());
 
-               return response.body();
-           } catch (Exception e) {
-               throw new RuntimeException("Erro ao consultar Api: " + e.getMessage());
-           }
-       }
-       else{
-           return "CEP Inválido!!! Digite 8 dígitos!";
-       }
+                return response.body();
+            } catch (Exception e) {
+                throw new RuntimeException("Erro ao consultar Api: " + e.getMessage());
+            }
+        } else {
+            return "CEP Inválido!!! Digite 8 dígitos!";
+        }
     }
-//
-    public boolean validarCep(String cep){
+
+    //
+    public boolean validarCep(String cep) {
         return cep != null && cep.matches("\\d{8}");
     }
 //

@@ -1,5 +1,8 @@
 package br.com.raizdobem.api.model;
 
+import jakarta.persistence.Entity;
+
+//@Entity
 public class Dentista {
     private Long id;
     private String croDentista;

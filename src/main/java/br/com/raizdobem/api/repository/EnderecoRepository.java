@@ -1,12 +1,27 @@
 package br.com.raizdobem.api.repository;
 
 import br.com.raizdobem.api.model.Endereco;
+import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 
-//@ApplicationScoped
-//public class EnderecoRepository implements PanacheRepository<Endereco> {
-//
-//    public Endereco buscarPorCep(String cep){
-//        return find("cep", cep).firstResult();
-//    }
-//}
+import java.util.List;
+
+@ApplicationScoped
+public class EnderecoRepository implements PanacheRepository<Endereco> {
+
+    public Endereco buscarPorCep(String cep){
+        return find("cep", cep).firstResult();
+    }
+
+    public List<Endereco> listarTodos(){
+        return listAll();
+    }
+
+    public List<Endereco> listarPorCidade(String cidade){
+        return list("cidade = ?1", cidade);
+    }
+
+    public boolean excluir(Long id) {
+        return deleteById(id);
+    }
+}

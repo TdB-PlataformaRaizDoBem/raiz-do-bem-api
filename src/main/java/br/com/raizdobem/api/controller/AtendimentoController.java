@@ -3,6 +3,8 @@ package br.com.raizdobem.api.controller;
 import br.com.raizdobem.api.model.Atendimento;
 import br.com.raizdobem.api.model.Beneficiario;
 import br.com.raizdobem.api.service.AtendimentoService;
+import jakarta.enterprise.context.RequestScoped;
+import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -11,10 +13,12 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import java.util.ArrayList;
 import java.util.List;
 
+@RequestScoped
 @Path("/atendimento")
 @Tag(name = "Atendimento", description = "Disponibiliza funcionalidades relacionadas aos atendimentos.")
 public class AtendimentoController {
-    private final AtendimentoService service = new AtendimentoService();
+    @Inject
+    AtendimentoService service;
     
     @GET
     @Produces(MediaType.APPLICATION_JSON)

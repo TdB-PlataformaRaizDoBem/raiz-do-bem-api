@@ -1,6 +1,15 @@
 package br.com.raizdobem.api.model;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name = "programa_social")
 public class ProgramaSocial {
+    @Id
+    @Column(name = "id_programa")
     private Long id;
     private String programa;
 

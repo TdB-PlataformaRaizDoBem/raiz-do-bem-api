@@ -1,7 +1,10 @@
 package br.com.raizdobem.api.controller;
 
 import br.com.raizdobem.api.model.Beneficiario;
+import br.com.raizdobem.api.repository.BeneficiarioRepository;
+import br.com.raizdobem.api.service.BeneficiarioService;
 import jakarta.enterprise.context.RequestScoped;
+import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import org.eclipse.microprofile.openapi.annotations.Operation;
@@ -14,6 +17,8 @@ import java.util.List;
 @Path("/beneficiario")
 @Tag(name = "Beneficiario", description = "Disponibiliza funcionalidades relacionadas aos beneficiários.")
 public class BeneficiarioController {
+    @Inject
+    BeneficiarioService service;
 
     @GET
     @Operation(summary = "Endpoint de listagem dos beneficiários cadastrados.")

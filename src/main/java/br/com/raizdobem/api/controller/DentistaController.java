@@ -1,6 +1,9 @@
 package br.com.raizdobem.api.controller;
 
 import br.com.raizdobem.api.model.Dentista;
+import br.com.raizdobem.api.service.DentistaService;
+import jakarta.enterprise.context.RequestScoped;
+import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
@@ -8,9 +11,12 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import java.util.ArrayList;
 import java.util.List;
 
+@RequestScoped
 @Path("/dentista")
 @Tag(name = "Dentista", description = "Disponibiliza funcionalidades relacionadas a dentistas.")
 public class DentistaController {
+    @Inject
+    DentistaService service;
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)

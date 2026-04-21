@@ -1,7 +1,10 @@
 package br.com.raizdobem.api.model;
 
+import jakarta.persistence.Entity;
+
 import java.time.LocalDate;
 
+//@Entity
 public class PedidoAjuda {
     private Long id;
     private String cpf;

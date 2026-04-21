@@ -10,7 +10,6 @@ import jakarta.ws.rs.core.Response;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RequestScoped
@@ -23,14 +22,14 @@ public class EnderecoController {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public List<Endereco> listarTodos(){
-        return new ArrayList<>();
+        return service.listarTodos();
     }
 
     @GET
     @Path("/cidade/{cidade}")
     @Produces(MediaType.APPLICATION_JSON)
     public List<Endereco> listarPorCidade(@PathParam("cidade") String cidade){
-        return new ArrayList<>();
+        return service.listarPorCidades(cidade);
     }
 
     @POST
@@ -73,7 +72,13 @@ public class EnderecoController {
     @Operation(summary = "Endpoint para apagar endereços.")
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public String excluir(@PathParam("id") int id){
-        return "Apagar endereço";
+    public Response excluir(@PathParam("id") Long id) {
+        boolean apagado = service.excluir(id);
+        if(apagado){
+            return Response.noContent().build();
+        }
+        return Response.status(Response.Status.NOT_FOUND)
+                .entity("Endereço não encontrado")
+                .build();
     }
 }
