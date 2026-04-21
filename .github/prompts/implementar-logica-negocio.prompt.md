@@ -1,122 +1,142 @@
-# Prompt: Implementar os 4 Métodos com Lógica de Negócio (requisito avaliativo)
+# Prompt: Implementar os 4 Metodos com Logica de Negocio (requisito avaliativo)
 
-O rubricador exige **no mínimo 4 métodos com lógica e regras de negócio** relevantes ao sistema.
-Implemente os 4 métodos abaixo — cada um em seu respectivo Service.
+Os 4 metodos abaixo sao baseados diretamente nas regras de negocio da Sprint 3 (raiz-do-bem-backend-java),
+adaptadas para Quarkus/Panache. Implemente cada um no respectivo Service.
 
 ---
 
-## Método 1 — `agendarAtendimento` (`AtendimentoService`)
+## Metodo 1 — `criarBeneficiario` (`BeneficiarioService`)
 
-**Regra:** Um dentista não pode ter dois atendimentos no mesmo dia e horário.  
-Se o beneficiário já tiver atendimento pendente, lançar `RegraDeNegocioException`.
+**Regra (herdada de BeneficiarioBO.adicionar):**
+Um beneficiario so pode ser criado a partir de um `PedidoAjuda` com status `APROVADO`.
+Os dados pessoais sao copiados do pedido para o novo registro de beneficiario.
 
 ```java
 @Transactional
-public Atendimento agendarAtendimento(Atendimento atendimento) {
-    // 1. Verificar se dentista já tem atendimento nesse dia/hora
-    boolean conflitoHorario = atendimentoRepository
-        .count("dentista = ?1 and dataHora = ?2",
-               atendimento.getDentista(), atendimento.getDataHora()) > 0;
-    if (conflitoHorario) {
+public Beneficiario criarBeneficiario(Long idPedido, Long idProgramaSocial) {
+    PedidoAjuda pedido = pedidoAjudaRepository.findByIdOptional(idPedido)
+        .orElseThrow(() -> new RecursoNaoEncontradoException("Pedido de ajuda nao encontrado: " + idPedido));
+
+    if (!StatusPedido.APROVADO.equals(pedido.getStatus())) {
         throw new RegraDeNegocioException(
-            "Dentista já possui atendimento nesse horário.");
+            "Impossivel criar beneficiario — pedido nao aprovado. Status atual: " + pedido.getStatus());
     }
-    // 2. Verificar se o beneficiário já tem atendimento pendente
-    boolean pendente = atendimentoRepository
-        .count("beneficiario = ?1 and status = 'PENDENTE'",
-               atendimento.getBeneficiario()) > 0;
-    if (pendente) {
-        throw new RegraDeNegocioException(
-            "Beneficiário já possui um atendimento pendente.");
-    }
-    atendimento.setStatus("AGENDADO");
-    atendimentoRepository.persist(atendimento);
-    return atendimento;
+
+    Beneficiario beneficiario = new Beneficiario();
+    beneficiario.setCpf(pedido.getCpf());
+    beneficiario.setNomeCompleto(pedido.getNomeCompleto());
+    beneficiario.setDataNascimento(pedido.getDataNascimento());
+    beneficiario.setTelefone(pedido.getTelefone());
+    beneficiario.setEmail(pedido.getEmail());
+    beneficiario.setIdPedidoAjuda(idPedido);
+    beneficiario.setIdEndereco(pedido.getIdEndereco());
+    beneficiario.setIdProgramaSocial(idProgramaSocial);
+
+    beneficiarioRepository.persist(beneficiario);
+    return beneficiario;
 }
 ```
 
 ---
 
-## Método 2 — `avaliarElegibilidadeBeneficiario` (`BeneficiarioService`)
+## Metodo 2 — `processarPedido` (`PedidoAjudaService`)
 
-**Regra:** O beneficiário é elegível ao programa social se:
-- Tiver pelo menos 1 pedido de ajuda APROVADO.
-- Não estiver já vinculado a um programa social ativo.
-
-```java
-public boolean avaliarElegibilidade(String cpf) {
-    Beneficiario beneficiario = buscarPorCpf(cpf);
-
-    boolean temPedidoAprovado = pedidoAjudaRepository
-        .count("beneficiario = ?1 and status = ?2",
-               beneficiario, StatusPedido.APROVADO) > 0;
-
-    boolean jaVinculado = beneficiario.getProgramaSocial() != null;
-
-    return temPedidoAprovado && !jaVinculado;
-}
-```
-
----
-
-## Método 3 — `processarPedidoAjuda` (`PedidoAjudaService`)
-
-**Regra:** Ao processar um pedido:
-- Status `PENDENTE` → `APROVADO` apenas se o beneficiário não tiver dívidas (sem atendimentos `NAO_PAGO`).
-- Caso contrário, muda para `REJEITADO` com justificativa.
+**Regra (herdada de PedidoAjudaBO.validarGerarBeneficiario):**
+Ao aprovar um pedido, atualiza `status_pedido` e `id_dentista` no banco.
+Se o novo status for `APROVADO`, cria automaticamente o beneficiario chamando `BeneficiarioService`.
 
 ```java
 @Transactional
-public PedidoAjuda processarPedido(Long pedidoId) {
-    PedidoAjuda pedido = pedidoAjudaRepository.findByIdOptional(pedidoId)
-        .orElseThrow(() -> new RecursoNaoEncontradoException("Pedido não encontrado: " + pedidoId));
+public PedidoAjuda processarPedido(Long id, StatusPedido novoStatus, Long idDentista, Long idPrograma) {
+    PedidoAjuda pedido = pedidoAjudaRepository.findByIdOptional(id)
+        .orElseThrow(() -> new RecursoNaoEncontradoException("Pedido nao encontrado: " + id));
 
-    if (pedido.getStatus() != StatusPedido.PENDENTE) {
-        throw new RegraDeNegocioException("Apenas pedidos PENDENTES podem ser processados.");
+    if (!StatusPedido.PENDENTE.equals(pedido.getStatus())) {
+        throw new RegraDeNegocioException(
+            "Apenas pedidos PENDENTES podem ser processados. Status atual: " + pedido.getStatus());
     }
 
-    long inadimplencias = atendimentoRepository
-        .count("beneficiario = ?1 and status = 'NAO_PAGO'", pedido.getBeneficiario());
-
-    if (inadimplencias == 0) {
-        pedido.setStatus(StatusPedido.APROVADO);
-        pedido.setObservacao("Aprovado automaticamente — beneficiário sem pendências.");
-    } else {
-        pedido.setStatus(StatusPedido.REJEITADO);
-        pedido.setObservacao("Rejeitado — beneficiário possui " + inadimplencias + " atendimento(s) não pago(s).");
+    if (idDentista == null || idDentista <= 0) {
+        throw new ValidacaoException("ID do dentista e obrigatorio para processar o pedido.");
     }
+
+    pedido.setStatus(novoStatus);
+    pedido.setIdDentista(idDentista);
+
+    if (StatusPedido.APROVADO.equals(novoStatus)) {
+        beneficiarioService.criarBeneficiario(id, idPrograma);
+    }
+
     return pedido;
 }
 ```
 
 ---
 
-## Método 4 — `calcularEstatisticasPorDentista` (`AtendimentoService`)
+## Metodo 3 — `validarCro` (`DentistaService`)
 
-**Regra:** Retorna um relatório com total de atendimentos, por status, para um dentista em um período.
+**Regra (herdada de DentistaBO.validarCro):**
+O CRO do dentista deve seguir o formato: 2+ letras seguidas de exatamente 2 digitos.
+Exemplo valido: `SP12`, `RJ99`.
 
 ```java
-public Map<String, Long> calcularEstatisticasPorDentista(Long dentistaId,
-                                                          LocalDate inicio,
-                                                          LocalDate fim) {
-    Dentista dentista = dentistaRepository.findByIdOptional(dentistaId)
-        .orElseThrow(() -> new RecursoNaoEncontradoException("Dentista não encontrado: " + dentistaId));
+public void validarCro(String cro) {
+    if (cro == null || !cro.matches("^[a-zA-Z]{2,}\\d{2}$")) {
+        throw new ValidacaoException(
+            "CRO invalido: '" + cro + "'. Formato esperado: 2+ letras seguidas de 2 digitos (ex: SP12).");
+    }
+}
 
-    List<Atendimento> atendimentos = atendimentoRepository
-        .list("dentista = ?1 and cast(dataHora as date) between ?2 and ?3",
-              dentista, inicio, fim);
+@Transactional
+public Dentista criar(Dentista dentista) {
+    validarCro(dentista.getCroDentista());
+    if (dentistaRepository.existsByCpf(dentista.getCpf())) {
+        throw new ValidacaoException("CPF ja cadastrado para outro dentista: " + dentista.getCpf());
+    }
+    dentistaRepository.persist(dentista);
+    return dentista;
+}
 
-    return atendimentos.stream()
-        .collect(Collectors.groupingBy(Atendimento::getStatus, Collectors.counting()));
+public List<Dentista> listarDisponiveis() {
+    return dentistaRepository.find("disponivel", "S").list();
 }
 ```
 
 ---
 
-## Observações para a documentação
+## Metodo 4 — `validarIdadePedido` (`PedidoAjudaService`)
 
-Cada método acima deve ser incluído na documentação com:
-- Nome e localização do método
-- Descrição da regra de negócio
-- Print do código no IDE
-- Exemplo de chamada (endpoint ou teste)
+**Regra (herdada de PedidoAjudaBO.invalidarHomens):**
+O solicitante do pedido de ajuda deve ter 18 anos ou mais para que o pedido seja valido.
+
+```java
+public void validarIdadeSolicitante(LocalDate dataNascimento) {
+    if (dataNascimento == null) {
+        throw new ValidacaoException("Data de nascimento e obrigatoria.");
+    }
+    int idade = Period.between(dataNascimento, LocalDate.now()).getYears();
+    if (idade < 18) {
+        throw new RegraDeNegocioException(
+            "O solicitante deve ter no minimo 18 anos. Idade calculada: " + idade + " anos.");
+    }
+}
+
+@Transactional
+public PedidoAjuda criar(PedidoAjuda pedido) {
+    validarIdadeSolicitante(pedido.getDataNascimento());
+    pedido.setDataPedido(LocalDate.now());
+    pedido.setStatus(StatusPedido.PENDENTE);
+    pedidoAjudaRepository.persist(pedido);
+    return pedido;
+}
+```
+
+---
+
+## Observacoes para a documentacao
+
+Cada metodo acima deve ser incluido na documentacao PDF com:
+- Nome e localizacao do metodo (classe + pacote)
+- Descricao da regra de negocio
+- Print do codigo no IDE (IntelliJ ou VS Code)
+- Exemplo de chamada via Swagger UI (endpoint + payload)
