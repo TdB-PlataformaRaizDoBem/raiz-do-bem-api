@@ -1,6 +1,7 @@
 package br.com.raizdobem.api.controller;
 
 import br.com.raizdobem.api.model.Beneficiario;
+import jakarta.enterprise.context.RequestScoped;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import org.eclipse.microprofile.openapi.annotations.Operation;
@@ -9,6 +10,7 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import java.util.ArrayList;
 import java.util.List;
 
+@RequestScoped
 @Path("/beneficiario")
 @Tag(name = "Beneficiario", description = "Disponibiliza funcionalidades relacionadas aos beneficiários.")
 public class BeneficiarioController {

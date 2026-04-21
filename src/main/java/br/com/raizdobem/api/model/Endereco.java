@@ -13,4 +13,8 @@ public class Endereco {
     public String cidade;
     public String estado;
     TipoEndereco tipoEndereco;
+
+    public Endereco() {
+    }
+
 }
