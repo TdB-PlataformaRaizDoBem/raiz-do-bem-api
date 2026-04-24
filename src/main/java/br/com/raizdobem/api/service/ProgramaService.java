@@ -13,6 +13,6 @@ public class ProgramaService {
     ProgramaRepository repository;
 
     public List<ProgramaSocial> listarProgramasSociais() {
-        return repository.listarTodas();
+        return repository.listarTodos();
     }
 }

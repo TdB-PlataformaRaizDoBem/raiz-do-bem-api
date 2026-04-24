@@ -12,4 +12,12 @@ public class PedidoAjudaRepository implements PanacheRepository<PedidoAjuda> {
     public List<PedidoAjuda> listarTodos(){
         return listAll();
     }
+
+    public void criar(PedidoAjuda pedidoAjuda){
+        persist(pedidoAjuda);
+    }
+
+    public boolean excluir(Long id) {
+        return deleteById(id);
+    }
 }

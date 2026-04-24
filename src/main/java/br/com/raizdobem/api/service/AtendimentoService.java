@@ -4,6 +4,7 @@ import br.com.raizdobem.api.model.Atendimento;
 import br.com.raizdobem.api.repository.AtendimentoRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 
 import java.util.List;
 
@@ -17,5 +18,10 @@ public class AtendimentoService {
     }
     public List<Atendimento> listarAtendimentos(){
         return repository.listarTodos();
+    }
+
+    @Transactional
+    public boolean excluir(Long id) {
+        return repository.excluir(id);
     }
 }

@@ -8,7 +8,7 @@ import java.util.List;
 
 @ApplicationScoped
 public class ProgramaRepository implements PanacheRepository<ProgramaSocial> {
-    public List<ProgramaSocial> listarTodas(){
+    public List<ProgramaSocial> listarTodos(){
         return listAll();
     }
 }

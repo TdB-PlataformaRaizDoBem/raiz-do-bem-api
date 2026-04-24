@@ -69,7 +69,7 @@ public class EnderecoService {
 
     @Transactional
     public boolean excluir(Long id) {
-        return repository.deleteById(id);
+        return repository.excluir(id);
     }
 
     public Endereco validarEndereco(String cep, String numero, TipoEndereco tipoEndereco) {

@@ -11,4 +11,12 @@ public class DentistaRepository implements PanacheRepository<Dentista> {
     public List<Dentista> listarTodos(){
         return listAll();
     }
+
+    public void criar(Dentista dentista){
+        persist(dentista);
+    }
+
+    public boolean excluir(Long id) {
+        return deleteById(id);
+    }
 }

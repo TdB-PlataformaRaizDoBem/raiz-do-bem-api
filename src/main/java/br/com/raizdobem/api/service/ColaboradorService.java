@@ -4,6 +4,7 @@ import br.com.raizdobem.api.model.Colaborador;
 import br.com.raizdobem.api.repository.ColaboradorRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 
 import java.util.List;
 
@@ -14,5 +15,10 @@ public class ColaboradorService {
 
     public List<Colaborador> listarTodos() {
         return repository.listarTodos();
+    }
+
+    @Transactional
+    public boolean excluir(Long id) {
+        return repository.excluir(id);
     }
 }
