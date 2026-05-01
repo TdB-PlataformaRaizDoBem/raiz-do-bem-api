@@ -1,9 +1,15 @@
 package br.com.raizdobem.api.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@Data
+@NoArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown = true)
 @Entity
 public class Especialidade {
     @Id
@@ -11,25 +17,4 @@ public class Especialidade {
     private Long id;
 
     private String descricao;
-
-    public Long getId() {
-        return id;
-    }
-
-    public Especialidade setId(Long id) {
-        this.id = id;
-        return this;
-    }
-
-    public String getDescricao() {
-        return descricao;
-    }
-
-    public Especialidade setDescricao(String descricao) {
-        this.descricao = descricao;
-        return this;
-    }
-
-    public Especialidade() {
-    }
 }

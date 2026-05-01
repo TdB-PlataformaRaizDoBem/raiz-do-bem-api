@@ -1,6 +1,7 @@
 package br.com.raizdobem.api.service;
 
 import br.com.raizdobem.api.model.Dentista;
+import br.com.raizdobem.api.model.Endereco;
 import br.com.raizdobem.api.repository.DentistaRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -15,6 +16,10 @@ public class DentistaService {
 
     public List<Dentista> listarTodos() {
         return repository.listarTodos();
+    }
+
+    public List<Dentista> listarPorCidades(String cidade) {
+        return repository.listarPorCidade(cidade);
     }
 
     @Transactional
