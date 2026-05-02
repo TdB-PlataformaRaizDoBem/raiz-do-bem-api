@@ -1,6 +1,6 @@
 package br.com.raizdobem.api.service;
 
-import br.com.raizdobem.api.model.ProgramaSocial;
+import br.com.raizdobem.api.model.dto.ProgramaSocialDTO;
 import br.com.raizdobem.api.repository.ProgramaRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -12,7 +12,7 @@ public class ProgramaService {
     @Inject
     ProgramaRepository repository;
 
-    public List<ProgramaSocial> listarProgramasSociais() {
+    public List<ProgramaSocialDTO> listarProgramasSociais() {
         return repository.listarTodos();
     }
 }

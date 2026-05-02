@@ -1,6 +1,6 @@
 package br.com.raizdobem.api.service;
 
-import br.com.raizdobem.api.model.Colaborador;
+import br.com.raizdobem.api.model.dto.ColaboradorDTO;
 import br.com.raizdobem.api.repository.ColaboradorRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -13,12 +13,12 @@ public class ColaboradorService {
     @Inject
     ColaboradorRepository repository;
 
-    public List<Colaborador> listarTodos() {
+    public List<ColaboradorDTO> listarTodos() {
         return repository.listarTodos();
     }
 
     @Transactional
-    public Long excluir(String cpf) {
+    public long excluir(String cpf) {
         return repository.excluir(cpf);
     }
 }

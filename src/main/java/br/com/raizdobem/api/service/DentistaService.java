@@ -1,6 +1,6 @@
 package br.com.raizdobem.api.service;
 
-import br.com.raizdobem.api.model.Dentista;
+import br.com.raizdobem.api.model.dto.DentistaDTO;
 import br.com.raizdobem.api.repository.DentistaRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -13,16 +13,16 @@ public class DentistaService {
     @Inject
     DentistaRepository repository;
 
-    public List<Dentista> listarTodos() {
+    public List<DentistaDTO> listarTodos() {
         return repository.listarTodos();
     }
 
-    public List<Dentista> listarPorCidades(String cidade) {
+    public List<DentistaDTO> listarPorCidades(String cidade) {
         return repository.listarPorCidade(cidade);
     }
 
     @Transactional
-    public boolean excluir(Long id) {
-        return repository.excluir(id);
+    public long excluir(String cpf) {
+        return repository.excluir(cpf);
     }
 }

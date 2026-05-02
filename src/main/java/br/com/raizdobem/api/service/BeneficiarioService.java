@@ -1,6 +1,6 @@
 package br.com.raizdobem.api.service;
 
-import br.com.raizdobem.api.model.Beneficiario;
+import br.com.raizdobem.api.model.dto.BeneficiarioDTO;
 import br.com.raizdobem.api.repository.BeneficiarioRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -13,11 +13,11 @@ public class BeneficiarioService {
     @Inject
     BeneficiarioRepository repository;
 
-    public Beneficiario buscarPorCpf() {
-        return new Beneficiario();
+    public BeneficiarioDTO buscarPorCpf() {
+        return new BeneficiarioDTO();
     }
 
-    public List<Beneficiario> listarTodos() {
+    public List<BeneficiarioDTO> listarTodos() {
         return repository.listarTodos();
     }
 

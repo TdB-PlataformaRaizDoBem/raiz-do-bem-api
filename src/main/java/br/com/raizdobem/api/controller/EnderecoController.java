@@ -1,6 +1,6 @@
 package br.com.raizdobem.api.controller;
 
-import br.com.raizdobem.api.model.Endereco;
+import br.com.raizdobem.api.model.dto.EnderecoDTO;
 import br.com.raizdobem.api.service.EnderecoService;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
@@ -10,11 +10,12 @@ import jakarta.ws.rs.core.Response;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
+import java.util.Collections;
 import java.util.List;
 
 @RequestScoped
 @Path("/endereco")
-@Tag(name = "Endereco", description = "Disponibiliza funcionalidades relacionadas aos endereços.")
+@Tag(name = "EnderecoDTO", description = "Disponibiliza funcionalidades relacionadas aos endereços.")
 public class EnderecoController {
     @Inject
     EnderecoService service;
@@ -22,7 +23,7 @@ public class EnderecoController {
     @GET
     @Operation(summary = "Endpoint para a listagem de todos os endereços.")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Endereco> listarTodos(){
+    public List<EnderecoDTO> listarTodos(){
         return service.listarTodos();
     }
 
@@ -30,7 +31,7 @@ public class EnderecoController {
     @Operation(summary = "Endpoint para a listagem de endereços por cidade.")
     @Path("/{cidade}")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Endereco> listarPorCidade(@PathParam("cidade") String cidade){
+    public List<EnderecoDTO> listarPorCidade(@PathParam("cidade") String cidade){
         return service.listarPorCidades(cidade);
     }
 
@@ -39,15 +40,15 @@ public class EnderecoController {
     @Produces(MediaType.APPLICATION_JSON)
     public Response criar(@PathParam("cep") String cep, @PathParam("numero") String numero, @PathParam("tipoEndereco") String tipoLocal){
         tipoLocal = tipoLocal.toUpperCase();
-        Endereco enderecoCompleto = service.criar(cep, numero, tipoLocal);
-        return Response.status(Response.Status.CREATED).entity(enderecoCompleto).build();
+        EnderecoDTO enderecoDTOCompleto = service.criar(cep, numero, tipoLocal);
+        return Response.status(Response.Status.CREATED).entity(enderecoDTOCompleto).build();
     }
 
     @GET
     @Operation(summary = "Endpoint para buscar endereço específico pelo id.")
     @Path("/id/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Endereco buscarEndereco(@PathParam("id") Long id){
+    public EnderecoDTO buscarEndereco(@PathParam("id") Long id){
         return service.buscaPorId(id);
     }
 
@@ -91,7 +92,7 @@ public class EnderecoController {
             return Response.noContent().build();
         }
         return Response.status(Response.Status.NOT_FOUND)
-                .entity("Endereço não encontrado")
+                .entity(Collections.singletonMap("erro", "Endereço não encontrado."))
                 .build();
     }
 }

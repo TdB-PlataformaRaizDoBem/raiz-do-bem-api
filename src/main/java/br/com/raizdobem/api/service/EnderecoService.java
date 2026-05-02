@@ -1,8 +1,8 @@
 package br.com.raizdobem.api.service;
 
+import br.com.raizdobem.api.model.dto.EnderecoDTO;
 import br.com.raizdobem.api.repository.EnderecoRepository;
-import br.com.raizdobem.api.model.Endereco;
-import br.com.raizdobem.api.model.TipoEndereco;
+import br.com.raizdobem.api.model.dto.TipoEndereco;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -23,13 +23,13 @@ public class EnderecoService {
     EnderecoRepository repository;
 
     @Transactional
-    public Endereco criar(String cep, String numero, String tipoLocal) {
+    public EnderecoDTO criar(String cep, String numero, String tipoLocal) {
         Gson gson = new Gson();
         if(validarCep(cep)){
             String response = buscarApiViaCep(cep);
-            Endereco endereco = gson.fromJson(response, Endereco.class);
+            EnderecoDTO enderecoDTO = gson.fromJson(response, EnderecoDTO.class);
 
-            endereco.setNumero(numero);
+            enderecoDTO.setNumero(numero);
             TipoEndereco tipoEndereco;
 
             if (tipoLocal.equals("RESIDENCIAL")) {
@@ -38,28 +38,28 @@ public class EnderecoService {
                 tipoEndereco = TipoEndereco.PROFISSIONAL;
             }
 
-            endereco.setTipoEndereco(tipoEndereco);
+            enderecoDTO.setTipoEndereco(tipoEndereco);
 
-            repository.criar(endereco);
-            return endereco;
+            repository.criar(enderecoDTO);
+            return enderecoDTO;
         }
         throw new WebApplicationException("CEP inválido! Insira 8 dígitos!");
 }
 
-    public Endereco buscaPorId(Long id){
+    public EnderecoDTO buscaPorId(Long id){
         return repository.buscarPeloId(id);
     }
 
-    public List<Endereco> listarTodos() {
+    public List<EnderecoDTO> listarTodos() {
         return repository.listarTodos();
     }
 
-    public List<Endereco> listarPorCidades(String cidade) {
+    public List<EnderecoDTO> listarPorCidades(String cidade) {
         return repository.listarPorCidade(cidade);
     }
 
-//    public void atualizar(int id, Endereco enderecoAtualizado) {
-//        Endereco endereco = repository.buscarPorId(id);
+//    public void atualizar(int id, EnderecoDTO enderecoAtualizado) {
+//        EnderecoDTO endereco = repository.buscarPorId(id);
 //
 //        if(endereco == null){
 //            throw new RuntimeException("Endereço não encontrado!!!");
@@ -67,20 +67,16 @@ public class EnderecoService {
 //        repository.atualizar(id, enderecoAtualizado);
 //    }
 
-    @Transactional
-    public boolean excluir(Long id) {
-        return repository.excluir(id);
-    }
 
-    public Endereco validarEndereco(String cep, String numero, TipoEndereco tipoEndereco) {
+    public EnderecoDTO validarEndereco(String cep, String numero, TipoEndereco tipoEndereco) {
         String enderecoResponse = buscarApiViaCep(cep);
         Gson gson = new Gson();
         JsonObject jsonObject = gson.fromJson(enderecoResponse, JsonObject.class);
 
-        Endereco endereco = gson.fromJson(enderecoResponse, Endereco.class);
-        endereco.setCidade(jsonObject.get("cidade").getAsString());
+        EnderecoDTO enderecoDTO = gson.fromJson(enderecoResponse, EnderecoDTO.class);
+        enderecoDTO.setCidade(jsonObject.get("cidade").getAsString());
 
-        return endereco;
+        return enderecoDTO;
     }
 
     public String buscarApiViaCep(String cep) {
@@ -110,6 +106,7 @@ public class EnderecoService {
         return cep != null && cep.matches("\\d{8}");
     }
 
+    @Transactional
     public boolean atualizarEndereco(Long id) {
         return true;
     }
@@ -120,4 +117,8 @@ public class EnderecoService {
 //        }
 //        return true;
 //    }
+    @Transactional
+    public boolean excluir(Long id) {
+        return repository.excluir(id);
+    }
 }

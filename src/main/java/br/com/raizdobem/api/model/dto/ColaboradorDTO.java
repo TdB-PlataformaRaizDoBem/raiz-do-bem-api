@@ -1,10 +1,7 @@
-package br.com.raizdobem.api.model;
+package br.com.raizdobem.api.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -14,7 +11,8 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Entity
-public class Colaborador {
+@Table(name = "colaborador")
+public class ColaboradorDTO {
     @Id
     @GeneratedValue
     @Column(name = "id_colaborador")

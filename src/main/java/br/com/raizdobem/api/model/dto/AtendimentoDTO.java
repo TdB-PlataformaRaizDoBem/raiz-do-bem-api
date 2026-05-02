@@ -1,4 +1,4 @@
-package br.com.raizdobem.api.model;
+package br.com.raizdobem.api.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
@@ -11,7 +11,8 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Entity
-public class Atendimento {
+@Table(name = "atendimento")
+public class AtendimentoDTO {
     @Id
     @GeneratedValue
     @Column(name = "id_atendimento")
@@ -25,14 +26,14 @@ public class Atendimento {
 
     @ManyToOne
     @JoinColumn(name = "id_beneficiario")
-    private Beneficiario beneficiario;
+    private BeneficiarioDTO beneficiarioDTO;
 
     @ManyToOne
     @JoinColumn(name = "id_dentista")
-    private Dentista dentista;
+    private DentistaDTO dentistaDTO;
 
     @ManyToOne
     @JoinColumn(name = "id_colaborador")
-    private Colaborador colaborador;
+    private ColaboradorDTO colaboradorDTO;
 
 }

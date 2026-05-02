@@ -1,25 +1,26 @@
 package br.com.raizdobem.api.repository;
 
-import br.com.raizdobem.api.model.Atendimento;
+import br.com.raizdobem.api.model.dto.AtendimentoDTO;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.transaction.Transactional;
 
 import java.util.List;
 
 @ApplicationScoped
-public class AtendimentoRepository implements PanacheRepository<Atendimento> {
+public class AtendimentoRepository implements PanacheRepository<AtendimentoDTO> {
 
-    public List<Atendimento> listarTodos(){
+    public void criar(AtendimentoDTO atendimentoDTO){
+        persist(atendimentoDTO);
+    }
+
+    public List<AtendimentoDTO> listarTodos(){
         return listAll();
     }
 
-    @Transactional
-    public void criar(Atendimento atendimento){
-        persist(atendimento);
-    }
+//    public AtendimentoDTO buscarPeloCpf(String cpf){
+//        return find("cpf", cpf);
+//    }
 
-    @Transactional
     public boolean excluir(Long id) {
         return deleteById(id);
     }

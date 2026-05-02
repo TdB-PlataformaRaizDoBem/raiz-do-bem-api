@@ -43,7 +43,7 @@ quarkus.swagger-ui.always-include=true
 ### `Beneficiario.java`
 ```java
 @Entity
-@Table(name = "Beneficiario")
+@Table(name = "BeneficiarioDTO")
 public class Beneficiario {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_benef")
@@ -80,7 +80,7 @@ public class Beneficiario {
 ### `Dentista.java`
 ```java
 @Entity
-@Table(name = "Dentista")
+@Table(name = "DentistaDTO")
 public class Dentista {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_dent")
@@ -125,7 +125,7 @@ public class Dentista {
 ### `Atendimento.java`
 ```java
 @Entity
-@Table(name = "Atendimento")
+@Table(name = "AtendimentoDTO")
 public class Atendimento {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_atend")
@@ -204,7 +204,7 @@ public class PedidoAjuda {
 ### `Endereco.java`
 ```java
 @Entity
-@Table(name = "Endereco")
+@Table(name = "EnderecoDTO")
 public class Endereco {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_end")
@@ -228,7 +228,7 @@ public class Endereco {
 ### `Colaborador.java`
 ```java
 @Entity
-@Table(name = "Colaborador")
+@Table(name = "ColaboradorDTO")
 public class Colaborador {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_colab")

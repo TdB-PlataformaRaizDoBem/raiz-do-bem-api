@@ -1,6 +1,6 @@
 package br.com.raizdobem.api.controller;
 
-import br.com.raizdobem.api.model.Especialidade;
+import br.com.raizdobem.api.model.dto.EspecialidadeDTO;
 import br.com.raizdobem.api.service.EspecialidadeService;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
@@ -21,7 +21,7 @@ public class EspecialidadeController {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Especialidade> listarTodas(){
+    public List<EspecialidadeDTO> listarTodas(){
         return service.listarEspecialidades();
     }
 }

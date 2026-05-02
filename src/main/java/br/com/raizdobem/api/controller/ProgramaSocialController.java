@@ -1,6 +1,6 @@
 package br.com.raizdobem.api.controller;
 
-import br.com.raizdobem.api.model.ProgramaSocial;
+import br.com.raizdobem.api.model.dto.ProgramaSocialDTO;
 import br.com.raizdobem.api.service.ProgramaService;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
@@ -21,7 +21,7 @@ public class ProgramaSocialController {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<ProgramaSocial> listarTodos(){
+    public List<ProgramaSocialDTO> listarTodos(){
         return service.listarProgramasSociais();
     }
 }

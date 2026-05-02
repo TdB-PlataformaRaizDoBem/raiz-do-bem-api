@@ -1,30 +1,27 @@
 package br.com.raizdobem.api.repository;
 
-import br.com.raizdobem.api.model.Dentista;
+import br.com.raizdobem.api.model.dto.DentistaDTO;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.transaction.Transactional;
 
 import java.util.List;
 
 @ApplicationScoped
-public class DentistaRepository implements PanacheRepository<Dentista> {
+public class DentistaRepository implements PanacheRepository<DentistaDTO> {
 
-    @Transactional
-    public void criar(Dentista dentista){
-        persist(dentista);
+    public void criar(DentistaDTO dentistaDTO){
+        persist(dentistaDTO);
     }
 
-    public List<Dentista> listarTodos(){
+    public List<DentistaDTO> listarTodos(){
         return listAll();
     }
 
-    public List<Dentista> listarPorCidade(String cidade){
+    public List<DentistaDTO> listarPorCidade(String cidade){
         return list("cidade = ?1", cidade);
     }
 
-    @Transactional
-    public boolean excluir(Long id) {
-        return deleteById(id);
+    public long excluir(String cpf) {
+        return delete("cpf", cpf);
     }
 }

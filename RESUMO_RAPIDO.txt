@@ -1,0 +1,133 @@
+# 🎯 RESUMO EXECUTIVO — SPRINT 4 (15 DIAS)
+
+## 📊 STATUS ATUAL
+
+```
+55/100 pts
+████████░░░░░░░░░░░░ 55%
+
+✅ PRONTO (45 pts)
+  ✓ Arquitetura DDD      (10 pts)
+  ✓ 8 Entidades JPA      (10 pts)
+  ✓ BD Oracle integrado  (10 pts)
+  ✓ EnderecoService      (15 pts)
+
+🔴 FALTA (45 pts)
+  ✗ Camada Exception     (10 pts) ← COMECE AQUI
+  ✗ 3 Métodos críticos   (20 pts)
+  ✗ CRUD Controllers     (10 pts)
+  ✗ Documentação PDF     (5 pts adicionais)
+```
+
+---
+
+## 🎯 4 PRIORIDADES MÁXIMAS
+
+### 1️⃣ **EXCEPTION LAYER** (10 pts)
+**Quando:** Dia 1 (segunda-feira)
+**Tempo:** 1-2 horas
+**O quê:** Criar 4 classes em `exception/`
+**Arquivos:**
+- RecursoNaoEncontradoException.java (HTTP 404)
+- ValidacaoException.java (HTTP 422)
+- RegraDeNegocioException.java (HTTP 409)
+- GlobalExceptionMapper.java (@Provider)
+
+---
+
+### 2️⃣ **3 MÉTODOS DE NEGÓCIO** (20 pts)
+**Quando:** Dias 2-4
+**Tempo:** 10-12 horas total
+
+| Dia | Service | Método | Tempo |
+|---|---|---|---|
+| 2️⃣ (ter) | BeneficiarioService | `adicionar(idPedido, idPrograma)` | 3-4h |
+| 3️⃣ (qua) | DentistaService | `validarCro(cro)` | 1h |
+| 4️⃣ (qui) | PedidoAjudaService | `processarPedido(id, status, idDent)` | 3-4h |
+
+---
+
+### 3️⃣ **CRUD CONTROLLERS** (10 pts)
+**Quando:** Dias 6-7
+**Tempo:** 5-7 horas
+**O quê:** Implementar POST/PUT/DELETE REAIS em 5 controllers
+- BeneficiarioController
+- DentistaController
+- PedidoAjudaController
+- AtendimentoController
+- ColaboradorController
+
+---
+
+### 4️⃣ **DOCUMENTAÇÃO PDF** (5-10 pts)
+**Quando:** Dias 8-9
+**Tempo:** 4-5 horas
+**O quê:**
+- Copiar Sprint03Java.pdf → Sprint4
+- Adicionar 4 prints dos métodos (Swagger)
+- Adicionar tabela de endpoints
+- Adicionar "Como rodar"
+
+---
+
+## 📅 CALENDÁRIO RÁPIDO
+
+| Semana | Seg | Ter | Qua | Qui | Sex |
+|---|---|---|---|---|---|
+| **S1** | Exception | Método 1 | Método 2 | Método 3 | Bônus+Controllers begin |
+| **S2** | CRUD 2/3 | CRUD 3/3 | Compilar ✅ | Docs 1/2 | Docs 2/2 + Review |
+| **S3** | QA Final | **ENTREGA** | - | - | - |
+
+---
+
+## ✅ CHECKLIST HOJE
+
+**Vai dar tempo?** Sim! **15 dias × 20-26 horas = totalmente viável**
+
+```
+THIS WEEK (Dia 1):
+ [ ] Criar exception/ com 4 classes
+ [ ] Commit: "feat: add exception layer"
+ [ ] ./mvnw compile ← Validar
+ [ ] ~2 horas
+
+PRÓXIMA SEMANA (Dia 2-4):
+ [ ] Método 1: BeneficiarioService.adicionar()
+ [ ] Método 2: DentistaService.validarCro()
+ [ ] Método 3: PedidoAjudaService.processarPedido()
+ [ ] Testes Swagger (print cada um)
+ [ ] ~12 horas
+
+SEMANA 2 (Dia 6-9):
+ [ ] CRUD Controllers (5 classes)
+ [ ] Documentação PDF
+ [ ] ./mvnw compile final
+ [ ] ~10 horas
+
+SEMANA 3 (Dia 11-13):
+ [ ] Review + Entrega final
+```
+
+---
+
+## 🚀 VOCÊ TEM ISSO TUDO!
+
+Já está pronto:
+- ✅ BD conectado (dados reais)
+- ✅ Swagger UI funcionando
+- ✅ 8 controllers estruturados
+- ✅ Diagramas + prints básicos
+- ✅ PDF base (Sprint 3)
+
+**Falta:** Implementar código dos métodos e completar docs.
+
+---
+
+## 📞 CONTATO & DÚVIDAS
+
+**Documentação completa:** Veja `STATUS_SPRINT4.md` (plano de 15 dias com 10+ horas/dia)
+
+---
+
+**Boa sorte! 🎯 Vocês vão chegar em 85-90 pts facilmente.**
+

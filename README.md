@@ -56,34 +56,34 @@ src/main/java/br/com/raizdobem/api/
 Base URL: `http://localhost:8080`  
 Swagger UI: `http://localhost:8080/q/swagger-ui`
 
-### Beneficiário — `/beneficiario`
+### Beneficiário — `/beneficiarioDTO`
 
 | Método | Rota | Descrição |
 |---|---|---|
-| `GET` | `/beneficiario` | Lista todos os beneficiários |
-| `POST` | `/beneficiario` | Cria um novo beneficiário |
-| `GET` | `/beneficiario/{cpf}` | Busca beneficiário por CPF |
-| `PUT` | `/beneficiario/{cpf}` | Atualiza dados do beneficiário |
-| `DELETE` | `/beneficiario/{cpf}` | Remove um beneficiário |
+| `GET` | `/beneficiarioDTO` | Lista todos os beneficiários |
+| `POST` | `/beneficiarioDTO` | Cria um novo beneficiário |
+| `GET` | `/beneficiarioDTO/{cpf}` | Busca beneficiário por CPF |
+| `PUT` | `/beneficiarioDTO/{cpf}` | Atualiza dados do beneficiário |
+| `DELETE` | `/beneficiarioDTO/{cpf}` | Remove um beneficiário |
 
-### Dentista — `/dentista`
-
-| Método | Rota | Descrição |
-|---|---|---|
-| `GET` | `/dentista` | Lista todos os dentistas |
-| `POST` | `/dentista` | Cadastra um novo dentista |
-| `PUT` | `/dentista/{cpf}` | Atualiza dados do dentista |
-| `DELETE` | `/dentista/{cpf}` | Remove um dentista |
-
-### Atendimento — `/atendimento`
+### Dentista — `/dentistaDTO`
 
 | Método | Rota | Descrição |
 |---|---|---|
-| `GET` | `/atendimento` | Lista todos os atendimentos |
-| `POST` | `/atendimento` | Cria um novo atendimento |
-| `GET` | `/atendimento/{cpf}` | Busca atendimento pelo CPF do beneficiário |
-| `PUT` | `/atendimento/{id}` | Encerra / atualiza atendimento |
-| `DELETE` | `/atendimento/{id}` | Remove um atendimento |
+| `GET` | `/dentistaDTO` | Lista todos os dentistas |
+| `POST` | `/dentistaDTO` | Cadastra um novo dentistaDTO |
+| `PUT` | `/dentistaDTO/{cpf}` | Atualiza dados do dentistaDTO |
+| `DELETE` | `/dentistaDTO/{cpf}` | Remove um dentistaDTO |
+
+### Atendimento — `/atendimentoDTO`
+
+| Método | Rota | Descrição |
+|---|---|---|
+| `GET` | `/atendimentoDTO` | Lista todos os atendimentos |
+| `POST` | `/atendimentoDTO` | Cria um novo atendimentoDTO |
+| `GET` | `/atendimentoDTO/{cpf}` | Busca atendimentoDTO pelo CPF do beneficiário |
+| `PUT` | `/atendimentoDTO/{id}` | Encerra / atualiza atendimentoDTO |
+| `DELETE` | `/atendimentoDTO/{id}` | Remove um atendimentoDTO |
 
 ### Pedido de Ajuda — `/pedido-ajuda`
 
@@ -94,25 +94,25 @@ Swagger UI: `http://localhost:8080/q/swagger-ui`
 | `PUT` | `/pedido-ajuda/{id}` | Processa pedido (aprova / rejeita) |
 | `DELETE` | `/pedido-ajuda/{id}` | Remove um pedido |
 
-### Colaborador — `/colaborador`
+### Colaborador — `/colaboradorDTO`
 
 | Método | Rota | Descrição |
 |---|---|---|
-| `GET` | `/colaborador` | Lista todos os colaboradores |
-| `POST` | `/colaborador` | Cadastra um novo colaborador |
-| `PUT` | `/colaborador/{cpf}` | Atualiza dados do colaborador |
-| `DELETE` | `/colaborador/{cpf}` | Remove um colaborador |
+| `GET` | `/colaboradorDTO` | Lista todos os colaboradores |
+| `POST` | `/colaboradorDTO` | Cadastra um novo colaboradorDTO |
+| `PUT` | `/colaboradorDTO/{cpf}` | Atualiza dados do colaboradorDTO |
+| `DELETE` | `/colaboradorDTO/{cpf}` | Remove um colaboradorDTO |
 
-### Endereço — `/endereco`
+### Endereço — `/enderecoDTO`
 
 | Método | Rota | Descrição |
 |---|---|---|
-| `GET` | `/endereco` | Lista todos os endereços |
-| `GET` | `/endereco/cidade/{cidade}` | Filtra endereços por cidade |
-| `POST` | `/endereco` | Cria um novo endereço |
-| `GET` | `/endereco/viacep/{cep}` | Consulta endereço na API ViaCEP 🔗 |
-| `PUT` | `/endereco/{id}` | Atualiza um endereço |
-| `DELETE` | `/endereco/{id}` | Remove um endereço |
+| `GET` | `/enderecoDTO` | Lista todos os endereços |
+| `GET` | `/enderecoDTO/cidade/{cidade}` | Filtra endereços por cidade |
+| `POST` | `/enderecoDTO` | Cria um novo endereço |
+| `GET` | `/enderecoDTO/viacep/{cep}` | Consulta endereço na API ViaCEP 🔗 |
+| `PUT` | `/enderecoDTO/{id}` | Atualiza um endereço |
+| `DELETE` | `/enderecoDTO/{id}` | Remove um endereço |
 
 ---
 
@@ -256,10 +256,10 @@ As credenciais são fornecidas **exclusivamente via variáveis de ambiente** —
 
 ## 🔗 Integração ViaCEP
 
-O endpoint `GET /endereco/viacep/{cep}` consulta a API pública [ViaCEP](https://viacep.com.br) e retorna os dados de endereço correspondentes ao CEP informado (8 dígitos, somente números).
+O endpoint `GET /enderecoDTO/viacep/{cep}` consulta a API pública [ViaCEP](https://viacep.com.br) e retorna os dados de endereço correspondentes ao CEP informado (8 dígitos, somente números).
 
 ```bash
-curl http://localhost:8080/endereco/viacep/01310100
+curl http://localhost:8080/enderecoDTO/viacep/01310100
 ```
 
 ---

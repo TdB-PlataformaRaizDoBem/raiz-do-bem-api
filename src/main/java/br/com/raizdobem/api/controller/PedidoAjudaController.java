@@ -1,14 +1,15 @@
 package br.com.raizdobem.api.controller;
 
-import br.com.raizdobem.api.model.PedidoAjuda;
+import br.com.raizdobem.api.model.dto.PedidoAjudaDTO;
 import br.com.raizdobem.api.service.PedidoAjudaService;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @RequestScoped
@@ -20,7 +21,7 @@ public class PedidoAjudaController {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<PedidoAjuda> listarTodos(){
+    public List<PedidoAjudaDTO> listarTodos(){
         return service.listarTodos();
     }
 
@@ -40,7 +41,14 @@ public class PedidoAjudaController {
     @DELETE
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public String excluir(@PathParam("id") int id){
-        return "Apagar pedido de ajuda";
+    public Response excluir(@PathParam("id") Long id){
+        boolean apagado = service.excluir(id);
+
+        if(apagado){
+            return Response.noContent().build();
+        }
+        return Response.status(Response.Status.NOT_FOUND)
+                .entity(Collections.singletonMap("erro", "Pedido de ajuda não encontrado."))
+                .build();
     }
 }

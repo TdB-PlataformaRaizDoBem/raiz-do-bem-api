@@ -1,25 +1,22 @@
 package br.com.raizdobem.api.repository;
 
-import br.com.raizdobem.api.model.Colaborador;
+import br.com.raizdobem.api.model.dto.ColaboradorDTO;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.transaction.Transactional;
 
 import java.util.List;
 
 @ApplicationScoped
-public class ColaboradorRepository implements PanacheRepository<Colaborador> {
+public class ColaboradorRepository implements PanacheRepository<ColaboradorDTO> {
 
-    public List<Colaborador> listarTodos(){
+    public List<ColaboradorDTO> listarTodos(){
         return listAll();
     }
 
-    @Transactional
-    public void criar(Colaborador colaborador){
-        persist(colaborador);
+    public void criar(ColaboradorDTO colaboradorDTO){
+        persist(colaboradorDTO);
     }
 
-    @Transactional
     public long excluir(String cpf) {
         return delete("cpf", cpf);
     }
