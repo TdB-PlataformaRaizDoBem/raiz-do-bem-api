@@ -1,9 +1,9 @@
 package br.com.raizdobem.api.repository;
 
 import br.com.raizdobem.api.model.Atendimento;
-import br.com.raizdobem.api.model.Colaborador;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.transaction.Transactional;
 
 import java.util.List;
 
@@ -14,10 +14,12 @@ public class AtendimentoRepository implements PanacheRepository<Atendimento> {
         return listAll();
     }
 
+    @Transactional
     public void criar(Atendimento atendimento){
         persist(atendimento);
     }
 
+    @Transactional
     public boolean excluir(Long id) {
         return deleteById(id);
     }

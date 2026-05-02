@@ -3,6 +3,7 @@ package br.com.raizdobem.api.repository;
 import br.com.raizdobem.api.model.Endereco;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.transaction.Transactional;
 
 import java.util.List;
 
@@ -13,6 +14,7 @@ public class EnderecoRepository implements PanacheRepository<Endereco> {
 //        return find("cep", cep).firstResult();
 //    }
 
+    @Transactional
     public void criar(Endereco endereco){
         persist(endereco);
     }
@@ -29,6 +31,7 @@ public class EnderecoRepository implements PanacheRepository<Endereco> {
         return findById(id);
     }
 
+    @Transactional
     public boolean excluir(Long id) {
         return deleteById(id);
     }

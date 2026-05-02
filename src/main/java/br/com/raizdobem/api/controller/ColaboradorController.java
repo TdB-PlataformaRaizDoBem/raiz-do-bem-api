@@ -6,9 +6,9 @@ import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RequestScoped
@@ -40,7 +40,13 @@ public class ColaboradorController {
     @DELETE
     @Path("/{cpf}")
     @Produces(MediaType.APPLICATION_JSON)
-    public String excluir(@PathParam("cpf") String cpf){
-        return "Apagar colaborador";
+    public Response excluir(@PathParam("cpf") String cpf){
+        long retornoDelete = service.excluir(cpf);
+
+        if(retornoDelete == 1){
+            return Response.status(Response.Status.NOT_FOUND).entity("Colaborador não encontrado").build();
+
+        }
+        return Response.noContent().build();
     }
 }

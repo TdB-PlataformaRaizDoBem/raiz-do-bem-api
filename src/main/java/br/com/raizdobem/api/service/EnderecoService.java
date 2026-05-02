@@ -109,6 +109,10 @@ public class EnderecoService {
     public boolean validarCep(String cep) {
         return cep != null && cep.matches("\\d{8}");
     }
+
+    public boolean atualizarEndereco(Long id) {
+        return true;
+    }
 //
 //    public boolean validarTipoEndereco(int opc){
 //        if (opc != 1 && opc != 2) {

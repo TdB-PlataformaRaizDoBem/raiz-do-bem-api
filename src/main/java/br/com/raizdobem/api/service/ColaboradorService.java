@@ -18,7 +18,7 @@ public class ColaboradorService {
     }
 
     @Transactional
-    public boolean excluir(Long id) {
-        return repository.excluir(id);
+    public Long excluir(String cpf) {
+        return repository.excluir(cpf);
     }
 }

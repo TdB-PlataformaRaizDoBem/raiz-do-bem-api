@@ -264,6 +264,29 @@ curl http://localhost:8080/endereco/viacep/01310100
 
 ---
 
+## 📚 Documentação da Sprint 4
+
+A documentação oficial está disponível em PDF:
+
+📄 **[Raiz do Bem — Documentação Sprint 4](./docs/Raiz_do_Bem_Documentacao_Sprint4.pdf)**
+
+### Conteúdo da documentação:
+- ✅ Capa com nomes e equipe
+- ✅ Objetivo e funcionalidades da solução
+- ✅ Métodos com lógica de negócio (com prints de execução)
+- ✅ Tabela completa de endpoints (URIs, verbos HTTP, status)
+- ✅ Diagramas e protótipos
+- ✅ Modelo de Entidade-Relacionamento (MER)
+- ✅ Diagrama de Classes UML
+- ✅ Instruções para executar
+
+### Diagramas e prints de teste
+- 📊 [Diagrama de Classes](./docs/diagrams/Diagrama%20de%20Classes%20Simples%20Verificacao.png)
+- 📊 [Fluxo Central do Sistema](./docs/diagrams/FluxoCentral.png)
+- 🖼️ Prints de requisições bem-sucedidas em `./docs/prints/`
+
+---
+
 ## 📁 Estrutura do projeto
 
 ```
@@ -273,16 +296,31 @@ raiz-do-bem-api/
 │   │   ├── docker/                       Dockerfiles (jvm, native, legacy-jar)
 │   │   ├── java/br/com/raizdobem/api/
 │   │   │   ├── controller/               8 controllers REST
+│   │   │   ├── exception/                Exceções customizadas & GlobalExceptionMapper
 │   │   │   ├── model/                    10 entidades + 4 enums
 │   │   │   ├── repository/               7 repositories (Panache)
-│   │   │   └── service/                  7 services
+│   │   │   ├── service/                  7 services com lógica de negócio
+│   │   │   └── dto/                      DTOs para request/response
 │   │   └── resources/
-│   │       └── application.properties    Configuração do Quarkus
+│   │       ├── application.properties    Configuração do Quarkus
+│   │       └── import.sql                Dados de demonstração
 │   └── test/
 ├── .github/
 │   ├── copilot-instructions.md           Instruções para GitHub Copilot
 │   └── prompts/                          Prompts de desenvolvimento assistido
+├── docs/
+│   ├── Raiz_do_Bem_Documentacao_Sprint4.pdf   📄 Documentação final (OBRIGATÓRIO)
+│   ├── diagrams/
+│   │   ├── Diagrama de Classes Simples Verificacao.png
+│   │   └── FluxoCentral.png
+│   ├── prints/
+│   │   ├── listando_enderecos.png
+│   │   ├── lista_endereco_cidade.png
+│   │   ├── lista_endereco_id.png
+│   │   └── [MAIS PRINTS A ADICIONAR]
+│   └── Sprint03Java.pdf                  (base para atualização)
 ├── pom.xml
+├── mvnw / mvnw.cmd
 └── README.md
 ```
 

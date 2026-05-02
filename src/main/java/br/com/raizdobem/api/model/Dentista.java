@@ -30,7 +30,7 @@ public class Dentista {
     private String telefone;
     private String categoria;
 
-    private boolean disponivel;
+    private String disponivel;
     @ManyToOne
     @JoinColumn(name = "id_endereco")
     private Endereco endereco;

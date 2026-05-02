@@ -1,10 +1,7 @@
 package br.com.raizdobem.api.controller;
 
 import br.com.raizdobem.api.model.Endereco;
-import br.com.raizdobem.api.model.TipoEndereco;
 import br.com.raizdobem.api.service.EnderecoService;
-import com.fasterxml.jackson.databind.util.JacksonCollectors;
-import com.google.gson.Gson;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
@@ -31,7 +28,7 @@ public class EnderecoController {
 
     @GET
     @Operation(summary = "Endpoint para a listagem de endereços por cidade.")
-    @Path("/cidade/{cidade}")
+    @Path("/{cidade}")
     @Produces(MediaType.APPLICATION_JSON)
     public List<Endereco> listarPorCidade(@PathParam("cidade") String cidade){
         return service.listarPorCidades(cidade);
@@ -71,8 +68,16 @@ public class EnderecoController {
     @Operation(summary = "Endpoint criado para atualizar endereços.")
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public String atualizar(@PathParam("id") Long id){
-        return "Atualizando Endereço";
+    public Response atualizar(@PathParam("id") Long id){
+        boolean responseAtualizacao = service.atualizarEndereco(id);
+
+        if(responseAtualizacao){
+            return Response.noContent().build();
+        }
+        return Response.status(Response.Status.NOT_FOUND)
+                .entity("Endereço não encontrado")
+                .build();
+
     }
 
     @DELETE
@@ -81,6 +86,7 @@ public class EnderecoController {
     @Produces(MediaType.APPLICATION_JSON)
     public Response excluir(@PathParam("id") Long id) {
         boolean apagado = service.excluir(id);
+
         if(apagado){
             return Response.noContent().build();
         }

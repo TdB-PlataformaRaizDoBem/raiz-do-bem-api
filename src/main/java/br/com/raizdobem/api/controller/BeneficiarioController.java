@@ -23,7 +23,7 @@ public class BeneficiarioController {
     @Operation(summary = "Endpoint de listagem dos beneficiários cadastrados.")
     @Produces(MediaType.APPLICATION_JSON)
     public List<Beneficiario> listarTodos(){
-        return new ArrayList<>();
+        return service.listarTodos();
     }
 
     @POST
@@ -38,7 +38,7 @@ public class BeneficiarioController {
     @Operation(summary = "Endpoint para encontrar um beneficiário específico.")
     @Produces(MediaType.APPLICATION_JSON)
     public Beneficiario buscarPorCpf(@PathParam("cpf") String cpf){
-        return new Beneficiario();
+        return service.buscarPorCpf();
     }
 
     @PUT

@@ -21,7 +21,7 @@ public class DentistaController {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public List<Dentista> listarTodos(){
-        return new ArrayList<>();
+        return service.listarTodos();
     }
 
     @POST

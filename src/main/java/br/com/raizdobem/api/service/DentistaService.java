@@ -1,7 +1,6 @@
 package br.com.raizdobem.api.service;
 
 import br.com.raizdobem.api.model.Dentista;
-import br.com.raizdobem.api.model.Endereco;
 import br.com.raizdobem.api.repository.DentistaRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;

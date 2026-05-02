@@ -21,7 +21,7 @@ public class PedidoAjudaController {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public List<PedidoAjuda> listarTodos(){
-        return new ArrayList<>();
+        return service.listarTodos();
     }
 
     @POST

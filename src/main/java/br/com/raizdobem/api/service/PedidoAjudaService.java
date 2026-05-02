@@ -1,6 +1,5 @@
 package br.com.raizdobem.api.service;
 
-import br.com.raizdobem.api.model.Endereco;
 import br.com.raizdobem.api.model.PedidoAjuda;
 import br.com.raizdobem.api.repository.PedidoAjudaRepository;
 import jakarta.enterprise.context.ApplicationScoped;
