@@ -1,6 +1,6 @@
 package br.com.raizdobem.api.service;
 
-import br.com.raizdobem.api.model.dto.PedidoAjudaDTO;
+import br.com.raizdobem.api.model.PedidoAjuda;
 import br.com.raizdobem.api.repository.PedidoAjudaRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -12,7 +12,7 @@ public class PedidoAjudaService {
     @Inject
     PedidoAjudaRepository repository;
 
-    public List<PedidoAjudaDTO> listarTodos() {
+    public List<PedidoAjuda> listarTodos() {
         return repository.listarTodos();
     }
 

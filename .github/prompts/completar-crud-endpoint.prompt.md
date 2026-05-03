@@ -77,10 +77,10 @@ Aplicar o padrao abaixo a todos os controllers. Exemplo para `BeneficiarioContro
 
 ```java
 @RequestScoped
-@Path("/beneficiarioDTO")
+@Path("/beneficiario")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-@Tag(name = "BeneficiarioDTO", description = "Gestao de beneficiarios.")
+@Tag(name = "Beneficiario", description = "Gestao de beneficiarios.")
 public class BeneficiarioController {
 
     @Inject BeneficiarioService service;
@@ -93,8 +93,8 @@ public class BeneficiarioController {
     }
 
     @POST
-    @Operation(summary = "Cria beneficiarioDTO a partir de pedido aprovado.")
-    @APIResponse(responseCode = "201", description = "BeneficiarioDTO criado.")
+    @Operation(summary = "Cria beneficiario a partir de pedido aprovado.")
+    @APIResponse(responseCode = "201", description = "Beneficiario criado.")
     @APIResponse(responseCode = "404", description = "Pedido de ajuda nao encontrado.")
     @APIResponse(responseCode = "409", description = "Pedido nao aprovado.")
     public Response criar(@QueryParam("idPedido") Long idPedido,
@@ -104,27 +104,27 @@ public class BeneficiarioController {
 
     @GET
     @Path("/{cpf}")
-    @Operation(summary = "Busca beneficiarioDTO pelo CPF.")
-    @APIResponse(responseCode = "200", description = "BeneficiarioDTO encontrado.")
-    @APIResponse(responseCode = "404", description = "BeneficiarioDTO nao encontrado.")
+    @Operation(summary = "Busca beneficiario pelo CPF.")
+    @APIResponse(responseCode = "200", description = "Beneficiario encontrado.")
+    @APIResponse(responseCode = "404", description = "Beneficiario nao encontrado.")
     public Response buscarPorCpf(@PathParam("cpf") String cpf) {
         return Response.ok(service.buscarPorCpf(cpf)).build();
     }
 
     @PUT
     @Path("/{cpf}")
-    @Operation(summary = "Atualiza dados do beneficiarioDTO.")
+    @Operation(summary = "Atualiza dados do beneficiario.")
     @APIResponse(responseCode = "200", description = "Atualizado com sucesso.")
-    @APIResponse(responseCode = "404", description = "BeneficiarioDTO nao encontrado.")
+    @APIResponse(responseCode = "404", description = "Beneficiario nao encontrado.")
     public Response atualizar(@PathParam("cpf") String cpf, Beneficiario dados) {
         return Response.ok(service.atualizar(cpf, dados)).build();
     }
 
     @DELETE
     @Path("/{cpf}")
-    @Operation(summary = "Remove beneficiarioDTO.")
+    @Operation(summary = "Remove beneficiario.")
     @APIResponse(responseCode = "204", description = "Removido com sucesso.")
-    @APIResponse(responseCode = "404", description = "BeneficiarioDTO nao encontrado.")
+    @APIResponse(responseCode = "404", description = "Beneficiario nao encontrado.")
     public Response excluir(@PathParam("cpf") String cpf) {
         service.excluir(cpf);
         return Response.noContent().build();
@@ -141,22 +141,22 @@ Replicar para: `AtendimentoController`, `DentistaController`, `ColaboradorContro
 
 | Recurso         | Metodo | URI                             | Status Esperado     |
 |-----------------|--------|---------------------------------|---------------------|
-| Beneficiario    | GET    | /beneficiarioDTO                   | 200                 |
-| Beneficiario    | POST   | /beneficiarioDTO?idPedido=&idPrograma= | 201, 404, 409   |
-| Beneficiario    | GET    | /beneficiarioDTO/{cpf}             | 200, 404            |
-| Beneficiario    | PUT    | /beneficiarioDTO/{cpf}             | 200, 404            |
-| Beneficiario    | DELETE | /beneficiarioDTO/{cpf}             | 204, 404            |
-| Atendimento     | GET    | /atendimentoDTO                    | 200                 |
-| Atendimento     | POST   | /atendimentoDTO                    | 201, 409            |
-| Atendimento     | GET    | /atendimentoDTO/{id}               | 200, 404            |
-| Atendimento     | PUT    | /atendimentoDTO/{id}               | 200, 404            |
-| Atendimento     | DELETE | /atendimentoDTO/{id}               | 204, 404            |
-| Dentista        | GET    | /dentistaDTO                       | 200                 |
-| Dentista        | GET    | /dentistaDTO/disponiveis           | 200                 |
-| Dentista        | POST   | /dentistaDTO                       | 201, 422            |
-| Dentista        | GET    | /dentistaDTO/{cpf}                 | 200, 404            |
-| Dentista        | PUT    | /dentistaDTO/{cpf}                 | 200, 404, 422       |
-| Dentista        | DELETE | /dentistaDTO/{cpf}                 | 204, 404            |
+| Beneficiario    | GET    | /beneficiario                   | 200                 |
+| Beneficiario    | POST   | /beneficiario?idPedido=&idPrograma= | 201, 404, 409   |
+| Beneficiario    | GET    | /beneficiario/{cpf}             | 200, 404            |
+| Beneficiario    | PUT    | /beneficiario/{cpf}             | 200, 404            |
+| Beneficiario    | DELETE | /beneficiario/{cpf}             | 204, 404            |
+| Atendimento     | GET    | /atendimento                    | 200                 |
+| Atendimento     | POST   | /atendimento                    | 201, 409            |
+| Atendimento     | GET    | /atendimento/{id}               | 200, 404            |
+| Atendimento     | PUT    | /atendimento/{id}               | 200, 404            |
+| Atendimento     | DELETE | /atendimento/{id}               | 204, 404            |
+| Dentista        | GET    | /dentista                       | 200                 |
+| Dentista        | GET    | /dentista/disponiveis           | 200                 |
+| Dentista        | POST   | /dentista                       | 201, 422            |
+| Dentista        | GET    | /dentista/{cpf}                 | 200, 404            |
+| Dentista        | PUT    | /dentista/{cpf}                 | 200, 404, 422       |
+| Dentista        | DELETE | /dentista/{cpf}                 | 204, 404            |
 | PedidoAjuda     | GET    | /pedido-ajuda                   | 200                 |
 | PedidoAjuda     | POST   | /pedido-ajuda                   | 201, 422            |
 | PedidoAjuda     | GET    | /pedido-ajuda/{id}              | 200, 404            |
@@ -167,15 +167,15 @@ Replicar para: `AtendimentoController`, `DentistaController`, `ColaboradorContro
 | ProgramaSocial  | GET    | /programa-social/{id}           | 200, 404            |
 | ProgramaSocial  | PUT    | /programa-social/{id}           | 200, 404            |
 | ProgramaSocial  | DELETE | /programa-social/{id}           | 204, 404            |
-| Colaborador     | GET    | /colaboradorDTO                    | 200                 |
-| Colaborador     | POST   | /colaboradorDTO                    | 201, 422            |
-| Colaborador     | GET    | /colaboradorDTO/{cpf}              | 200, 404            |
-| Colaborador     | PUT    | /colaboradorDTO/{cpf}              | 200, 404            |
-| Colaborador     | DELETE | /colaboradorDTO/{cpf}              | 204, 404            |
-| Endereco        | GET    | /enderecoDTO                       | 200                 |
-| Endereco        | POST   | /enderecoDTO                       | 201                 |
-| Endereco        | GET    | /enderecoDTO/{id}                  | 200, 404            |
-| Endereco        | PUT    | /enderecoDTO/{id}                  | 200, 404            |
-| Endereco        | DELETE | /enderecoDTO/{id}                  | 204, 404            |
+| Colaborador     | GET    | /colaborador                    | 200                 |
+| Colaborador     | POST   | /colaborador                    | 201, 422            |
+| Colaborador     | GET    | /colaborador/{cpf}              | 200, 404            |
+| Colaborador     | PUT    | /colaborador/{cpf}              | 200, 404            |
+| Colaborador     | DELETE | /colaborador/{cpf}              | 204, 404            |
+| Endereco        | GET    | /endereco                       | 200                 |
+| Endereco        | POST   | /endereco                       | 201                 |
+| Endereco        | GET    | /endereco/{id}                  | 200, 404            |
+| Endereco        | PUT    | /endereco/{id}                  | 200, 404            |
+| Endereco        | DELETE | /endereco/{id}                  | 204, 404            |
 
 Copie essa tabela diretamente para a secao "Tabela de Endpoints" da documentacao PDF.

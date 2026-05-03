@@ -1,4 +1,4 @@
-package br.com.raizdobem.api.model.dto;
+package br.com.raizdobem.api.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
@@ -9,11 +9,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Entity
-@Table(name = "endereco")
-public class EnderecoDTO {
-
+public class Endereco {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_endereco")
     private Long id;
     private String logradouro;

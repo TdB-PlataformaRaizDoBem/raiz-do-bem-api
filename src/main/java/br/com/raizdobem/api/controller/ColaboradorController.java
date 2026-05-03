@@ -1,54 +1,57 @@
 package br.com.raizdobem.api.controller;
 
-import br.com.raizdobem.api.model.dto.ColaboradorDTO;
+import br.com.raizdobem.api.dto.ColaboradorRequestDTO;
+import br.com.raizdobem.api.model.Colaborador;
 import br.com.raizdobem.api.service.ColaboradorService;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Request;
 import jakarta.ws.rs.core.Response;
+import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
+import java.lang.annotation.Repeatable;
 import java.util.Collections;
 import java.util.List;
 
 @RequestScoped
 @Path("/colaborador")
-@Tag(name = "ColaboradorDTO", description = "Disponibiliza funcionalidades relacionadas a colaboradores.")
+@Tag(name = "Colaborador", description = "Disponibiliza funcionalidades relacionadas a colaboradores.")
+@Produces(MediaType.APPLICATION_JSON)
 public class ColaboradorController {
     @Inject
     ColaboradorService service;
-
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public List<ColaboradorDTO> listarTodos(){
-        return service.listarTodos();
-    }
+    @Inject
+    Request request;
 
     @POST
-    @Produces(MediaType.APPLICATION_JSON)
-    public String criar(){
-        return "Criando novo colaborador";
+    @Operation(summary = "Endpoint para a criação de colaborador.")
+    public Response criar(ColaboradorRequestDTO request){
+        Colaborador colaborador = service.criarColaborador(request);
+        return Response.status(Response.Status.CREATED).entity(colaborador).build();
+    }
+
+    @GET
+    @Operation(summary = "Endpoint para a listagem de colaboradores.")
+    public List<Colaborador> listarTodos(){
+        return service.listarTodos();
     }
 
     @PUT
     @Path("/{cpf}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public String atualizar(@PathParam("cpf") String cpf){
-        return "Atualizando colaborador";
+    @Operation(summary = "Endpoint para a atualização de colaborador.")
+    public Response atualizar(@PathParam("cpf") String cpf){
+        Colaborador colaboradorAtualizar = service.atualizarColaborador(cpf);
+        return Response.status(Response.Status.OK).entity(colaboradorAtualizar).build();
     }
 
     @DELETE
     @Path("/{cpf}")
-    @Produces(MediaType.APPLICATION_JSON)
+    @Operation(summary = "Endpoint para a exclusão de colaborador.")
     public Response excluir(@PathParam("cpf") String cpf){
-        long retornoDelete = service.excluir(cpf);
-
-        if(retornoDelete == 0){
-            return Response.status(Response.Status.NOT_FOUND)
-                    .entity(Collections.singletonMap("erro", "Colaborador não encontrado."))
-                    .build();
-        }
+        service.excluir(cpf);
         return Response.noContent().build();
     }
 }

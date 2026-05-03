@@ -1,4 +1,4 @@
-package br.com.raizdobem.api.model.dto;
+package br.com.raizdobem.api.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.Column;
@@ -12,8 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Entity
-@Table(name = "especialidade")
-public class EspecialidadeDTO {
+public class Especialidade {
     @Id
     @Column(name = "id_especialidade")
     private Long id;

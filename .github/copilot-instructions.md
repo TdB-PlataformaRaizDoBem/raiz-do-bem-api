@@ -154,7 +154,7 @@ exception/    → exceções customizadas — camada transversal
 | ProgramaSocial  | Programa de assistência                               |
 | Atendimento     | Consulta odontológica (campo `prontuario`, não `descricao`) |
 | Dentista        | Profissional com CRO, categoria textual e flag `disponivel` |
-| Especialidade   | Especialidade vinculável ao dentistaDTO                  |
+| Especialidade   | Especialidade vinculável ao dentista                  |
 | Colaborador     | Voluntário/funcionário                                |
 | Endereco        | Endereço com `logradouro`, `cep`, `bairro`, `cidade`, `estado`, `tipo` |
 | Sexo            | enum: MASCULINO / FEMININO                            |

@@ -1,8 +1,11 @@
 package br.com.raizdobem.api.service;
 
-import br.com.raizdobem.api.model.dto.EnderecoDTO;
+import br.com.raizdobem.api.dto.EnderecoRequestDTO;
+import br.com.raizdobem.api.dto.ViaCepResponseDTO;
+import br.com.raizdobem.api.exception.RegraNegocioException;
+import br.com.raizdobem.api.model.Endereco;
 import br.com.raizdobem.api.repository.EnderecoRepository;
-import br.com.raizdobem.api.model.dto.TipoEndereco;
+import br.com.raizdobem.api.model.TipoEndereco;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -23,43 +26,54 @@ public class EnderecoService {
     EnderecoRepository repository;
 
     @Transactional
-    public EnderecoDTO criar(String cep, String numero, String tipoLocal) {
+    public Endereco criar(EnderecoRequestDTO request) {
         Gson gson = new Gson();
+        String cep = request.getCep();
+
         if(validarCep(cep)){
             String response = buscarApiViaCep(cep);
-            EnderecoDTO enderecoDTO = gson.fromJson(response, EnderecoDTO.class);
 
-            enderecoDTO.setNumero(numero);
-            TipoEndereco tipoEndereco;
+            ViaCepResponseDTO viaCep = gson.fromJson(response, ViaCepResponseDTO.class);
 
-            if (tipoLocal.equals("RESIDENCIAL")) {
+            Endereco endereco = new Endereco();
+
+            endereco.setCep(cep); //CEP sem parênteses
+            endereco.setLogradouro(viaCep.getLogradouro());
+            endereco.setBairro(viaCep.getBairro());
+            endereco.setCidade(viaCep.getLocalidade());
+            endereco.setEstado(viaCep.getUf());
+
+            endereco.setNumero(request.getNumero());
+            TipoEndereco tipoEndereco = null;
+
+            if (request.getTipoEndereco().equals("RESIDENCIAL")) {
                 tipoEndereco = TipoEndereco.RESIDENCIAL;
-            } else {
+            } else if(request.getTipoEndereco().equals("PROFISSIONAL")){
                 tipoEndereco = TipoEndereco.PROFISSIONAL;
             }
 
-            enderecoDTO.setTipoEndereco(tipoEndereco);
+            endereco.setTipoEndereco(tipoEndereco);
 
-            repository.criar(enderecoDTO);
-            return enderecoDTO;
+            repository.criar(endereco);
+            return endereco;
         }
-        throw new WebApplicationException("CEP inválido! Insira 8 dígitos!");
+        throw new RegraNegocioException("CEP inválido! Insira 8 dígitos!");
 }
 
-    public EnderecoDTO buscaPorId(Long id){
+    public Endereco buscaPorId(Long id){
         return repository.buscarPeloId(id);
     }
 
-    public List<EnderecoDTO> listarTodos() {
+    public List<Endereco> listarTodos() {
         return repository.listarTodos();
     }
 
-    public List<EnderecoDTO> listarPorCidades(String cidade) {
+    public List<Endereco> listarPorCidades(String cidade) {
         return repository.listarPorCidade(cidade);
     }
 
-//    public void atualizar(int id, EnderecoDTO enderecoAtualizado) {
-//        EnderecoDTO endereco = repository.buscarPorId(id);
+//    public void atualizar(int id, Endereco enderecoAtualizado) {
+//        Endereco endereco = repository.buscarPorId(id);
 //
 //        if(endereco == null){
 //            throw new RuntimeException("Endereço não encontrado!!!");
@@ -68,15 +82,15 @@ public class EnderecoService {
 //    }
 
 
-    public EnderecoDTO validarEndereco(String cep, String numero, TipoEndereco tipoEndereco) {
+    public Endereco validarEndereco(String cep, String numero, TipoEndereco tipoEndereco) {
         String enderecoResponse = buscarApiViaCep(cep);
         Gson gson = new Gson();
         JsonObject jsonObject = gson.fromJson(enderecoResponse, JsonObject.class);
 
-        EnderecoDTO enderecoDTO = gson.fromJson(enderecoResponse, EnderecoDTO.class);
-        enderecoDTO.setCidade(jsonObject.get("cidade").getAsString());
+        Endereco endereco = gson.fromJson(enderecoResponse, Endereco.class);
+        endereco.setCidade(jsonObject.get("cidade").getAsString());
 
-        return enderecoDTO;
+        return endereco;
     }
 
     public String buscarApiViaCep(String cep) {

@@ -1,4 +1,4 @@
-package br.com.raizdobem.api.model.dto;
+package br.com.raizdobem.api.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
@@ -11,13 +11,11 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Entity
-@Table(name = "colaborador")
-public class ColaboradorDTO {
+public class Colaborador {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_colaborador")
     private Long id;
-
     private String cpf;
 
     @Column(name = "nome_completo")

@@ -1,6 +1,6 @@
 package br.com.raizdobem.api.controller;
 
-import br.com.raizdobem.api.model.dto.AtendimentoDTO;
+import br.com.raizdobem.api.model.Atendimento;
 import br.com.raizdobem.api.service.AtendimentoService;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
@@ -14,30 +14,28 @@ import java.util.List;
 
 @RequestScoped
 @Path("/atendimento")
-@Tag(name = "AtendimentoDTO", description = "Disponibiliza funcionalidades relacionadas aos atendimentos.")
+@Tag(name = "Atendimento", description = "Disponibiliza funcionalidades relacionadas aos atendimentos.")
+@Produces(MediaType.APPLICATION_JSON)
 public class AtendimentoController {
     @Inject
     AtendimentoService service;
     
     @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public List<AtendimentoDTO> listarTodos(){
+    public List<Atendimento> listarTodos(){
         return service.listarAtendimentos();
     }
 
     @POST
-    @Produces(MediaType.APPLICATION_JSON)
     public String criar(){
         return "Criando novo atendimento";
     }
 
     @GET
     @Path("/{cpf}")
-    @Produces(MediaType.APPLICATION_JSON)
     public Response buscarPorCpf(@PathParam("cpf") String cpf){
         try{
-            AtendimentoDTO atendimentoDTO = service.buscar();
-            return Response.ok(atendimentoDTO).build();
+            Atendimento atendimento = service.buscar();
+            return Response.ok(atendimento).build();
         } catch (RuntimeException e) {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
@@ -45,14 +43,12 @@ public class AtendimentoController {
 
     @PUT
     @Path("/{id}")
-    @Produces(MediaType.APPLICATION_JSON)
     public String atualizar(@PathParam("id") long id){
         return "Atualizando atendimento";
     }
 
     @DELETE
     @Path("/{id}")
-    @Produces(MediaType.APPLICATION_JSON)
     public Response excluirAtendimento(@PathParam("id") Long id){
         boolean apagado = service.excluir(id);
 

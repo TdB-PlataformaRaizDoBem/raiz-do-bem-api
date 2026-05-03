@@ -17,7 +17,7 @@ O projeto migrou de um backend Java puro com JDBC (Sprint 3, disponível em [`ra
 
 ---
 
-## ��️ Arquitetura — Domain Driven Design
+## 🏗️ Arquitetura — Domain Driven Design
 
 A aplicação segue uma estrutura em camadas baseada em DDD:
 
@@ -36,18 +36,17 @@ src/main/java/br/com/raizdobem/api/
 
 | Classe | Tipo | Descrição |
 |---|---|---|
-| `Beneficiario` | Entidade | Pessoa atendida pelos programas sociais |
-| `PedidoAjuda` | Entidade | Solicitação de auxílio do beneficiário |
-| `ProgramaSocial` | Entidade | Programa de assistência vinculado ao beneficiário |
-| `Atendimento` | Entidade | Consulta odontológica (campo `prontuario`) |
-| `Dentista` | Entidade | Profissional com CRO, categoria e disponibilidade |
-| `Especialidade` | Entidade | Especialidade odontológica |
-| `Colaborador` | Entidade | Voluntário / funcionário da ONG |
-| `Endereco` | Entidade | Endereço com integração ViaCEP |
+| `BeneficiarioDTO` | Entidade JPA | Pessoa atendida pelos programas sociais *(atualmente as entidades estão em `model/dto`)* |
+| `PedidoAjudaDTO` | Entidade JPA | Solicitação de auxílio do beneficiário |
+| `ProgramaSocialDTO` | Entidade JPA | Programa de assistência vinculado ao beneficiário |
+| `AtendimentoDTO` | Entidade JPA | Consulta odontológica (campo `prontuario`) |
+| `DentistaDTO` | Entidade JPA | Profissional com CRO, categoria e disponibilidade |
+| `EspecialidadeDTO` | Entidade JPA | Especialidade odontológica |
+| `ColaboradorDTO` | Entidade JPA | Voluntário / funcionário da ONG |
+| `EnderecoDTO` | Entidade JPA | Endereço com integração ViaCEP |
 | `Sexo` | Enum | `MASCULINO` / `FEMININO` |
 | `StatusPedido` | Enum | `PENDENTE` / `APROVADO` / `REJEITADO` |
 | `TipoEndereco` | Enum | `RESIDENCIAL` / `PROFISSIONAL` |
-| `Categoria` | Enum | `COORDENADOR` / `CLINICO` |
 
 ---
 
@@ -56,34 +55,36 @@ src/main/java/br/com/raizdobem/api/
 Base URL: `http://localhost:8080`  
 Swagger UI: `http://localhost:8080/q/swagger-ui`
 
-### Beneficiário — `/beneficiarioDTO`
+> Observação: os endpoints de **GET (listagem)** e alguns **DELETE** já estão funcionais e com evidências em `docs/prints_swagger/`. Os endpoints de **POST/PUT** e as **regras de negócio obrigatórias** estão em fase final de implementação (ver `STATUS_SPRINT4.md`).
+
+### Beneficiário — `/beneficiario`
 
 | Método | Rota | Descrição |
 |---|---|---|
-| `GET` | `/beneficiarioDTO` | Lista todos os beneficiários |
-| `POST` | `/beneficiarioDTO` | Cria um novo beneficiário |
-| `GET` | `/beneficiarioDTO/{cpf}` | Busca beneficiário por CPF |
-| `PUT` | `/beneficiarioDTO/{cpf}` | Atualiza dados do beneficiário |
-| `DELETE` | `/beneficiarioDTO/{cpf}` | Remove um beneficiário |
+| `GET` | `/beneficiario` | Lista todos os beneficiários |
+| `POST` | `/beneficiario` | Cria um novo beneficiário |
+| `GET` | `/beneficiario/{cpf}` | Busca beneficiário por CPF |
+| `PUT` | `/beneficiario/{cpf}` | Atualiza dados do beneficiário |
+| `DELETE` | `/beneficiario/{cpf}` | Remove um beneficiário |
 
-### Dentista — `/dentistaDTO`
-
-| Método | Rota | Descrição |
-|---|---|---|
-| `GET` | `/dentistaDTO` | Lista todos os dentistas |
-| `POST` | `/dentistaDTO` | Cadastra um novo dentistaDTO |
-| `PUT` | `/dentistaDTO/{cpf}` | Atualiza dados do dentistaDTO |
-| `DELETE` | `/dentistaDTO/{cpf}` | Remove um dentistaDTO |
-
-### Atendimento — `/atendimentoDTO`
+### Dentista — `/dentista`
 
 | Método | Rota | Descrição |
 |---|---|---|
-| `GET` | `/atendimentoDTO` | Lista todos os atendimentos |
-| `POST` | `/atendimentoDTO` | Cria um novo atendimentoDTO |
-| `GET` | `/atendimentoDTO/{cpf}` | Busca atendimentoDTO pelo CPF do beneficiário |
-| `PUT` | `/atendimentoDTO/{id}` | Encerra / atualiza atendimentoDTO |
-| `DELETE` | `/atendimentoDTO/{id}` | Remove um atendimentoDTO |
+| `GET` | `/dentista` | Lista todos os dentistas |
+| `POST` | `/dentista` | Cadastra um novo dentista |
+| `PUT` | `/dentista/{cpf}` | Atualiza dados do dentista |
+| `DELETE` | `/dentista/{cpf}` | Remove um dentista |
+
+### Atendimento — `/atendimento`
+
+| Método | Rota | Descrição |
+|---|---|---|
+| `GET` | `/atendimento` | Lista todos os atendimentos |
+| `POST` | `/atendimento` | Cria um novo atendimento |
+| `GET` | `/atendimento/{cpf}` | Busca atendimento pelo CPF do beneficiário |
+| `PUT` | `/atendimento/{id}` | Encerra / atualiza atendimento |
+| `DELETE` | `/atendimento/{id}` | Remove um atendimento |
 
 ### Pedido de Ajuda — `/pedido-ajuda`
 
@@ -94,25 +95,38 @@ Swagger UI: `http://localhost:8080/q/swagger-ui`
 | `PUT` | `/pedido-ajuda/{id}` | Processa pedido (aprova / rejeita) |
 | `DELETE` | `/pedido-ajuda/{id}` | Remove um pedido |
 
-### Colaborador — `/colaboradorDTO`
+### Colaborador — `/colaborador`
 
 | Método | Rota | Descrição |
 |---|---|---|
-| `GET` | `/colaboradorDTO` | Lista todos os colaboradores |
-| `POST` | `/colaboradorDTO` | Cadastra um novo colaboradorDTO |
-| `PUT` | `/colaboradorDTO/{cpf}` | Atualiza dados do colaboradorDTO |
-| `DELETE` | `/colaboradorDTO/{cpf}` | Remove um colaboradorDTO |
+| `GET` | `/colaborador` | Lista todos os colaboradores |
+| `POST` | `/colaborador` | Cadastra um novo colaborador |
+| `PUT` | `/colaborador/{cpf}` | Atualiza dados do colaborador |
+| `DELETE` | `/colaborador/{cpf}` | Remove um colaborador |
 
-### Endereço — `/enderecoDTO`
+### Endereço — `/endereco`
 
 | Método | Rota | Descrição |
 |---|---|---|
-| `GET` | `/enderecoDTO` | Lista todos os endereços |
-| `GET` | `/enderecoDTO/cidade/{cidade}` | Filtra endereços por cidade |
-| `POST` | `/enderecoDTO` | Cria um novo endereço |
-| `GET` | `/enderecoDTO/viacep/{cep}` | Consulta endereço na API ViaCEP 🔗 |
-| `PUT` | `/enderecoDTO/{id}` | Atualiza um endereço |
-| `DELETE` | `/enderecoDTO/{id}` | Remove um endereço |
+| `GET` | `/endereco` | Lista todos os endereços |
+| `GET` | `/endereco/id/{id}` | Busca endereço por ID |
+| `GET` | `/endereco/{cidade}` | Filtra endereços por cidade |
+| `POST` | `/endereco` | Cria um novo endereço (ViaCEP + persistência) |
+| `GET` | `/endereco/viacep/{cep}` | Consulta endereço na API ViaCEP 🔗 |
+| `PUT` | `/endereco/{id}` | Atualiza um endereço |
+| `DELETE` | `/endereco/{id}` | Remove um endereço |
+
+### Especialidades — `/especialidades`
+
+| Método | Rota | Descrição |
+|---|---|---|
+| `GET` | `/especialidades` | Lista todas as especialidades |
+
+### Programas Sociais — `/programas-sociais`
+
+| Método | Rota | Descrição |
+|---|---|---|
+| `GET` | `/programas-sociais` | Lista todos os programas sociais |
 
 ---
 
@@ -150,10 +164,21 @@ cd raiz-do-bem-api
 
 ### 2. Configurar variáveis de ambiente
 
+**PowerShell (Windows):**
+
+```powershell
+$env:DB_USER="seu_usuario"
+$env:DB_PASSWORD="sua_senha"
+# opcional (padrão já aponta para o Oracle FIAP)
+$env:DB_URL="jdbc:oracle:thin:@//oracle.fiap.com.br:1521/orcl"
+```
+
+**Bash (Linux/macOS/Git Bash):**
+
 ```bash
-export DB_USER=seu_usuario
-export DB_PASSWORD=sua_senha
-# DB_URL padrão: jdbc:oracle:thin:@//oracle.fiap.com.br:1521/orcl
+export DB_USER="seu_usuario"
+export DB_PASSWORD="sua_senha"
+export DB_URL="jdbc:oracle:thin:@//oracle.fiap.com.br:1521/orcl"
 ```
 
 ### 3. Modo desenvolvimento (hot reload)
@@ -243,23 +268,23 @@ As credenciais são fornecidas **exclusivamente via variáveis de ambiente** —
 
 | Tabela Oracle | Entidade Java | Chave primária |
 |---|---|---|
-| `Beneficiario` | `Beneficiario` | `id_beneficiario` |
-| `Dentista` | `Dentista` | `id_dentista` |
-| `Atendimento` | `Atendimento` | `id_atendimento` |
-| `Pedido_Ajuda` | `PedidoAjuda` | `id_pedido` |
-| `Endereco` | `Endereco` | `id_endereco` |
-| `Colaborador` | `Colaborador` | `id_colaborador` |
-| `Especialidade` | `Especialidade` | `id_especialidade` |
-| `Programa_Social` | `ProgramaSocial` | `id_programa_social` |
+| `Beneficiario` | `BeneficiarioDTO` | `id_beneficiario` |
+| `Dentista` | `DentistaDTO` | `id_dentista` |
+| `Atendimento` | `AtendimentoDTO` | `id_atendimento` |
+| `Pedido_Ajuda` | `PedidoAjudaDTO` | `id_pedido` |
+| `Endereco` | `EnderecoDTO` | `id_endereco` |
+| `Colaborador` | `ColaboradorDTO` | `id_colaborador` |
+| `Especialidade` | `EspecialidadeDTO` | `id_especialidade` |
+| `Programa_Social` | `ProgramaSocialDTO` | `id_programa_social` |
 
 ---
 
 ## 🔗 Integração ViaCEP
 
-O endpoint `GET /enderecoDTO/viacep/{cep}` consulta a API pública [ViaCEP](https://viacep.com.br) e retorna os dados de endereço correspondentes ao CEP informado (8 dígitos, somente números).
+O endpoint `GET /endereco/viacep/{cep}` consulta a API pública [ViaCEP](https://viacep.com.br) e retorna os dados de endereço correspondentes ao CEP informado (8 dígitos, somente números).
 
 ```bash
-curl http://localhost:8080/enderecoDTO/viacep/01310100
+curl http://localhost:8080/endereco/viacep/01310100
 ```
 
 ---
@@ -268,22 +293,45 @@ curl http://localhost:8080/enderecoDTO/viacep/01310100
 
 A documentação oficial está disponível em PDF:
 
-📄 **[Raiz do Bem — Documentação Sprint 4](./docs/Raiz_do_Bem_Documentacao_Sprint4.pdf)**
+📄 **Documentação (em atualização para Sprint 4)**
+
+- Base atual (Sprint 3): `docs/Sprint03Java.pdf`
+- Planejado (Sprint 4): `docs/Raiz_do_Bem_Documentacao_Sprint4.pdf`
 
 ### Conteúdo da documentação:
-- ✅ Capa com nomes e equipe
-- ✅ Objetivo e funcionalidades da solução
-- ✅ Métodos com lógica de negócio (com prints de execução)
-- ✅ Tabela completa de endpoints (URIs, verbos HTTP, status)
-- ✅ Diagramas e protótipos
-- ✅ Modelo de Entidade-Relacionamento (MER)
-- ✅ Diagrama de Classes UML
-- ✅ Instruções para executar
+
+> Status: vocês já têm **base forte** (PDF Sprint 3 + diagramas + prints Swagger), mas a documentação final da Sprint 4 ainda está **em montagem**.
+
+- ✅ Base PDF Sprint 3 (para adaptar)
+- ✅ Diagramas (classes/fluxo)
+- ✅ Evidências (prints Swagger) de GETs e tratamentos de erro
+- 🟡 Métodos com lógica de negócio (precisa implementar e tirar prints)
+- 🟡 Tabela completa de endpoints (revisar/atualizar conforme controllers)
+- ✅ MER / documentação do banco (base Sprint 3)
+- 🟡 Instruções de execução (já no README; replicar no PDF)
 
 ### Diagramas e prints de teste
 - 📊 [Diagrama de Classes](./docs/diagrams/Diagrama%20de%20Classes%20Simples%20Verificacao.png)
 - 📊 [Fluxo Central do Sistema](./docs/diagrams/FluxoCentral.png)
-- 🖼️ Prints de requisições bem-sucedidas em `./docs/prints/`
+- 🗄️ Banco/MER (base Sprint 3 com nota 10): `docs/database/Sprint03-Banco-de-dados.pdf`
+- 🗄️ Banco/MER (Sprint 4 — em evolução): `docs/database/Sprint4-Banco-desenvolvendo.pdf`
+- 🧾 SQL (Sprint 3): `docs/database/sqlSprint3.sql`
+- 🖼️ Prints de requisições (Swagger) em `./docs/prints_swagger/`
+- 📌 Progresso e checklist: `STATUS_SPRINT4.md`
+- 🧾 Log de evidências (prints ↔ endpoints): `docs/PROGRESSO_SPRINT4.md`
+
+### 🧭 Status consolidado (relatório IA)
+
+Para auditoria rápida do estado real do código vs. requisitos, existe um relatório HTML gerado com IA:
+
+- 📄 `docs/status_projeto_claude/guia-sprint4-raiz-do-bem.html`
+- 🕒 Última atualização do relatório: **02/05 — 17:37**
+
+**Destaques apontados no relatório:**
+- Progresso geral: **62%**
+- CRUD completo: **1/8 controllers** (apenas Endereço tem POST funcional)
+- Métodos de negócio: **1/4** (apenas ViaCEP conta como método “real” no momento)
+- Camada `exception/`: **faltando no código** (requisito direto da Sprint 4)
 
 ---
 
@@ -296,11 +344,10 @@ raiz-do-bem-api/
 │   │   ├── docker/                       Dockerfiles (jvm, native, legacy-jar)
 │   │   ├── java/br/com/raizdobem/api/
 │   │   │   ├── controller/               8 controllers REST
-│   │   │   ├── exception/                Exceções customizadas & GlobalExceptionMapper
-│   │   │   ├── model/                    10 entidades + 4 enums
+│   │   │   ├── exception/                (planejado) Exceções customizadas & GlobalExceptionMapper
+│   │   │   ├── model/                    Entidades JPA + enums (atualmente em model/dto)
 │   │   │   ├── repository/               7 repositories (Panache)
-│   │   │   ├── service/                  7 services com lógica de negócio
-│   │   │   └── dto/                      DTOs para request/response
+│   │   │   └── service/                  Services (lógica de negócio em implementação)
 │   │   └── resources/
 │   │       ├── application.properties    Configuração do Quarkus
 │   │       └── import.sql                Dados de demonstração
@@ -309,15 +356,15 @@ raiz-do-bem-api/
 │   ├── copilot-instructions.md           Instruções para GitHub Copilot
 │   └── prompts/                          Prompts de desenvolvimento assistido
 ├── docs/
-│   ├── Raiz_do_Bem_Documentacao_Sprint4.pdf   📄 Documentação final (OBRIGATÓRIO)
+│   ├── Raiz_do_Bem_Documentacao_Sprint4.pdf   📄 Documentação final (a ser gerada)
 │   ├── diagrams/
 │   │   ├── Diagrama de Classes Simples Verificacao.png
 │   │   └── FluxoCentral.png
-│   ├── prints/
+│   ├── prints_swagger/
 │   │   ├── listando_enderecos.png
 │   │   ├── lista_endereco_cidade.png
 │   │   ├── lista_endereco_id.png
-│   │   └── [MAIS PRINTS A ADICIONAR]
+│   │   └── ...
 │   └── Sprint03Java.pdf                  (base para atualização)
 ├── pom.xml
 ├── mvnw / mvnw.cmd

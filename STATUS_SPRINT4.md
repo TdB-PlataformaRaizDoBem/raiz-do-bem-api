@@ -2,27 +2,37 @@
 
 **Data:** 2 de maio de 2026  
 **Prazo final:** 17 de maio de 2026 (15 dias)  
-**Status global:** 🟡 **55/100 pts estimados**
+**Status global:** 🟡 **49/100 pts estimados**
+
+> 📄 Auditoria (IA / Claude): `docs/status_projeto_claude/guia-sprint4-raiz-do-bem.html` — **02/05 — 17:37**  
+> Este HTML consolida o **estado real do código** vs. requisitos e um **mapa de pontuação**.
 
 ---
 
 ## 📈 RESUMO EXECUTIVO
 
+### Números-chave (do relatório IA — 02/05 17:37)
+
+- **Progresso geral:** **62%**
+- **Controllers com CRUD “de verdade”:** **1/8** (somente Endereço com POST funcional)
+- **Métodos de negócio obrigatórios:** **1/4** (somente ViaCEP/Endereço conta como método completo)
+- **Camada `exception/`:** faltando no código (requisito direto)
+
 | Aspecto | Status | Pts | Observação |
 |---|---|---|---|
-| **Arquitetura & Estrutura** | ✅ 100% | 10/10 | Camada modelo perfeita (8 entidades + 4 enums) |
-| **Conexão BD + Método Endpoint** | ✅ 100% | 20/30 | EnderecoService completo (create, validate, search) |
-| **Exceções & DAO & CRUD** | 🔴 10% | 1/10 | EnderecoController tem Response.* · Outros vazios |
-| **Métodos de Negócio** | 🔴 20% | 6/20 | EnderecoService = obrigatório ✅ · Faltam 3 críticos |
-| **API REST Completa** | 🟡 40% | 14/35 | 8 controllers existem · POST/PUT/DELETE precisam ser reais |
-| **Documentação PDF** | 🟡 30% | 5/15 | Base (Sprint 3) pronta · Precisa de atualização + print |
-| **TOTAL** | 🟡 **55** | **56/100** | Possível chegar a **85-90** em 15 dias com foco |
+| **Arquitetura & Estrutura** | ✅ 100% | 10/10 | Camada modelo organizada (8 entidades + 3 enums) |
+| **Conexão BD (Oracle) + Panache** | ✅ 100% | 15/15 | Dependências OK + `application.properties` via variáveis de ambiente (sem credenciais hardcoded) |
+| **CRUD (estado atual)** | 🟡 35% | 8/23 | GET listagem ok; alguns DELETE ok; POST/PUT ainda com stubs e sem padronização total |
+| **Exceções (camada exception/)** | 🔴 0% | 0/10 | Ainda não existe `exception/` + `GlobalExceptionMapper` |
+| **Métodos de Negócio exigidos (Sprint 3 → Service)** | 🔴 0% | 0/20 | Ainda faltam os 4 métodos obrigatórios (Beneficiário, Dentista, PedidoAjuda, Atendimento) |
+| **Documentação & Evidências** | 🟡 45% | 8/17 | PDF base Sprint 3 + **PDF banco Sprint 4 em evolução** + diagramas + prints Swagger |
+| **TOTAL** | 🟡 **48** | **48/100** | Meta 85+ continua viável em 15 dias com foco nos bloqueadores |
 
 ---
 
-## ✅ JÁ ESTÁ 100% PRONTO
+## ✅ JÁ ESTÁ BEM ADIANTADO (EVIDENCIADO)
 
-### 1️⃣ Método de negócio: `EnderecoService` (15 pts)
+### 1️⃣ Integração externa + persistência: `EnderecoService` (bônus / diferencial)
 
 ```java
 ✅ criar(cep, numero, tipo)          — integra ViaCEP + BD
@@ -35,18 +45,21 @@
 ✅ validarEndereco(cep, numero, tipo) — validação completa
 ```
 
-**Comprovação:** 3 prints de sucesso no Swagger (`listando_enderecos.png`, `lista_endereco_id.png`, `lista_endereco_cidade.png`)
+**Comprovação (Swagger):**
+- `docs/prints_swagger/listando_enderecos.png`
+- `docs/prints_swagger/lista_endereco_id.png`
+- `docs/prints_swagger/lista_endereco_cidade.png`
 
-### 2️⃣ Controller com Response tipado: `EnderecoController` (5 pts)
+### 2️⃣ Endereço com endpoints úteis (GET + DELETE evidenciados)
 
 ```java
-✅ GET /enderecoDTO              → Response.ok(List)
-✅ GET /enderecoDTO/{id}        → Response.ok(Endereco)
-✅ GET /enderecoDTO/cidade/{} → Response.ok(List filtered)
-✅ GET /enderecoDTO/viacep/{} → Response com status 200/400
-✅ POST /enderecoDTO              → Response.status(201).entity()
-✅ PUT /enderecoDTO/{id}         → Response.noContent() (204)
-✅ DELETE /enderecoDTO/{id}      → Response.noContent() (204)
+✅ GET /endereco                 → lista
+✅ GET /endereco/id/{id}         → busca por id
+✅ GET /endereco/{cidade}        → filtro por cidade
+✅ GET /endereco/viacep/{cep}    → consulta externa
+✅ DELETE /endereco/{id}         → 204 ou 404
+🟡 POST /endereco                → recebe `cep`, `numero`, `tipoEndereco` (query params) e retorna 201
+🔴 PUT /endereco/{id}            → ainda está com stub (precisa implementação real)
 ```
 
 ### 3️⃣ Entidades & Mapeamento JPA (10 pts)
@@ -64,7 +77,7 @@
 ✅ Enums: Sexo, StatusPedido, TipoEndereco (+ Categoria textual)
 ```
 
-### 4️⃣ Stack & Configuração (10 pts)
+### 4️⃣ Stack & Configuração (alinhado ao requisito do Oracle)
 
 ```
 ✅ Java 21 + Quarkus 3.34.5
@@ -73,17 +86,28 @@
 ✅ SmallRye OpenAPI (Swagger UI em :8080/q/swagger-ui)
 ✅ Jackson + Gson
 ✅ pom.xml configurado
-✅ application.properties OK
+✅ `application.properties` sem credenciais hardcoded (DB_USER/DB_PASSWORD/DB_URL)
 ```
 
-### 5️⃣ Estrutura do Projeto (10 pts)
+### 5️⃣ Evidências adicionadas em `docs/`
 
 ```
 ✅ DDD em camadas: controller → service → repository → model
 ✅ Organizção clara
 ✅ README.md atualizado
-✅ Diagramas: Classes + Fluxo Central
-✅ Prints de teste: 3 GET de Endereco
+✅ PDF base (Sprint 3) em `docs/Sprint03Java.pdf` (para evoluir para Sprint 4)
+✅ Banco/MER (Sprint 4 em evolução) em `docs/database/Sprint4-Banco-desenvolvendo.pdf`
+✅ Diagramas: `docs/diagrams/`
+✅ Prints do Swagger: `docs/prints_swagger/` (inclui listagens e tratamentos de erro)
+
+**Novas evidências (prints Swagger):**
+- `lista_especialidades.png`
+- `lista_programas_sociais.png`
+- `trata_erro_excluir_dentista.png`
+- `trata_erro_exclusao_atendimento.png`
+- `trata_erro_exclusao_colaborador.png`
+- `trata_erro_exclusao_endereco.png`
+- `trata_erro_exclusao_pedido.png`
 ```
 
 ---
@@ -184,7 +208,7 @@ public Response criar(Beneficiario b) {
 [ ] 4. Implementar BeneficiarioService.adicionar(idPedido, idPrograma)
    [ ] Buscar PedidoAjuda por id
    [ ] Validar status == APROVADO (senão throw RegraDeNegocioException)
-   [ ] Copiar dados: cpf, nome, dataNasc, telefone, email, enderecoDTO
+   [ ] Copiar dados: cpf, nome, dataNasc, telefone, email, endereco
    [ ] Copiar idPrograma social
    [ ] Salvar no BD
 [ ] 5. Testes no Swagger (print de sucesso + erro)

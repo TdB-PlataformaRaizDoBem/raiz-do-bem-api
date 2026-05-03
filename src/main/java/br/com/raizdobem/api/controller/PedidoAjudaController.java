@@ -1,6 +1,6 @@
 package br.com.raizdobem.api.controller;
 
-import br.com.raizdobem.api.model.dto.PedidoAjudaDTO;
+import br.com.raizdobem.api.model.PedidoAjuda;
 import br.com.raizdobem.api.service.PedidoAjudaService;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
@@ -21,7 +21,7 @@ public class PedidoAjudaController {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<PedidoAjudaDTO> listarTodos(){
+    public List<PedidoAjuda> listarTodos(){
         return service.listarTodos();
     }
 

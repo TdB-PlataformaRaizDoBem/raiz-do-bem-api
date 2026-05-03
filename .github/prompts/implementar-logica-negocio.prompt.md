@@ -8,8 +8,8 @@ adaptadas para Quarkus/Panache. Implemente cada um no respectivo Service.
 ## Metodo 1 — `criarBeneficiario` (`BeneficiarioService`)
 
 **Regra (herdada de BeneficiarioBO.adicionar):**
-Um beneficiarioDTO so pode ser criado a partir de um `PedidoAjuda` com status `APROVADO`.
-Os dados pessoais sao copiados do pedido para o novo registro de beneficiarioDTO.
+Um beneficiario so pode ser criado a partir de um `PedidoAjuda` com status `APROVADO`.
+Os dados pessoais sao copiados do pedido para o novo registro de beneficiario.
 
 ```java
 @Transactional
@@ -19,21 +19,21 @@ public Beneficiario criarBeneficiario(Long idPedido, Long idProgramaSocial) {
 
     if (!StatusPedido.APROVADO.equals(pedido.getStatus())) {
         throw new RegraDeNegocioException(
-            "Impossivel criar beneficiarioDTO — pedido nao aprovado. Status atual: " + pedido.getStatus());
+            "Impossivel criar beneficiario — pedido nao aprovado. Status atual: " + pedido.getStatus());
     }
 
-    Beneficiario beneficiarioDTO = new Beneficiario();
-    beneficiarioDTO.setCpf(pedido.getCpf());
-    beneficiarioDTO.setNomeCompleto(pedido.getNomeCompleto());
-    beneficiarioDTO.setDataNascimento(pedido.getDataNascimento());
-    beneficiarioDTO.setTelefone(pedido.getTelefone());
-    beneficiarioDTO.setEmail(pedido.getEmail());
-    beneficiarioDTO.setIdPedidoAjuda(idPedido);
-    beneficiarioDTO.setIdEndereco(pedido.getIdEndereco());
-    beneficiarioDTO.setIdProgramaSocial(idProgramaSocial);
+    Beneficiario beneficiario = new Beneficiario();
+    beneficiario.setCpf(pedido.getCpf());
+    beneficiario.setNomeCompleto(pedido.getNomeCompleto());
+    beneficiario.setDataNascimento(pedido.getDataNascimento());
+    beneficiario.setTelefone(pedido.getTelefone());
+    beneficiario.setEmail(pedido.getEmail());
+    beneficiario.setIdPedidoAjuda(idPedido);
+    beneficiario.setIdEndereco(pedido.getIdEndereco());
+    beneficiario.setIdProgramaSocial(idProgramaSocial);
 
-    beneficiarioRepository.persist(beneficiarioDTO);
-    return beneficiarioDTO;
+    beneficiarioRepository.persist(beneficiario);
+    return beneficiario;
 }
 ```
 
@@ -43,7 +43,7 @@ public Beneficiario criarBeneficiario(Long idPedido, Long idProgramaSocial) {
 
 **Regra (herdada de PedidoAjudaBO.validarGerarBeneficiario):**
 Ao aprovar um pedido, atualiza `status_pedido` e `id_dentista` no banco.
-Se o novo status for `APROVADO`, cria automaticamente o beneficiarioDTO chamando `BeneficiarioService`.
+Se o novo status for `APROVADO`, cria automaticamente o beneficiario chamando `BeneficiarioService`.
 
 ```java
 @Transactional
@@ -57,7 +57,7 @@ public PedidoAjuda processarPedido(Long id, StatusPedido novoStatus, Long idDent
     }
 
     if (idDentista == null || idDentista <= 0) {
-        throw new ValidacaoException("ID do dentistaDTO e obrigatorio para processar o pedido.");
+        throw new ValidacaoException("ID do dentista e obrigatorio para processar o pedido.");
     }
 
     pedido.setStatus(novoStatus);
@@ -76,7 +76,7 @@ public PedidoAjuda processarPedido(Long id, StatusPedido novoStatus, Long idDent
 ## Metodo 3 — `validarCro` (`DentistaService`)
 
 **Regra (herdada de DentistaBO.validarCro):**
-O CRO do dentistaDTO deve seguir o formato: 2+ letras seguidas de exatamente 2 digitos.
+O CRO do dentista deve seguir o formato: 2+ letras seguidas de exatamente 2 digitos.
 Exemplo valido: `SP12`, `RJ99`.
 
 ```java
@@ -88,13 +88,13 @@ public void validarCro(String cro) {
 }
 
 @Transactional
-public Dentista criar(Dentista dentistaDTO) {
-    validarCro(dentistaDTO.getCroDentista());
-    if (dentistaRepository.existsByCpf(dentistaDTO.getCpf())) {
-        throw new ValidacaoException("CPF ja cadastrado para outro dentistaDTO: " + dentistaDTO.getCpf());
+public Dentista criar(Dentista dentista) {
+    validarCro(dentista.getCroDentista());
+    if (dentistaRepository.existsByCpf(dentista.getCpf())) {
+        throw new ValidacaoException("CPF ja cadastrado para outro dentista: " + dentista.getCpf());
     }
-    dentistaRepository.persist(dentistaDTO);
-    return dentistaDTO;
+    dentistaRepository.persist(dentista);
+    return dentista;
 }
 
 public List<Dentista> listarDisponiveis() {

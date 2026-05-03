@@ -1,23 +1,28 @@
 package br.com.raizdobem.api.repository;
 
-import br.com.raizdobem.api.model.dto.BeneficiarioDTO;
+import br.com.raizdobem.api.model.Beneficiario;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.transaction.Transactional;
 
 import java.util.List;
 
 @ApplicationScoped
-public class BeneficiarioRepository implements PanacheRepository<BeneficiarioDTO> {
+public class BeneficiarioRepository implements PanacheRepository<Beneficiario> {
 
-    public List<BeneficiarioDTO> listarTodos(){
+    public List<Beneficiario> listarTodos(){
         return listAll();
     }
 
-    public void criar(BeneficiarioDTO beneficiarioDTO){
-        persist(beneficiarioDTO);
+    public void criar(Beneficiario beneficiario){
+        persist(beneficiario);
     }
 
-    public boolean excluir(Long id) {
-        return deleteById(id);
+    public Beneficiario atualizar(String cpf){
+        return find("cpf", cpf).firstResult();
+    }
+
+    public long excluir(String cpf) {
+        return delete("cpf", cpf);
     }
 }

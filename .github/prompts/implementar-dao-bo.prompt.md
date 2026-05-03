@@ -31,7 +31,7 @@ public class BeneficiarioRepository implements PanacheRepository<Beneficiario> {
     public List<Beneficiario> findByCidade(String cidade) {
         return getEntityManager()
             .createQuery(
-                "SELECT b FROM BeneficiarioDTO b JOIN EnderecoDTO e ON b.idEndereco = e.id WHERE e.cidade = :cidade",
+                "SELECT b FROM Beneficiario b JOIN Endereco e ON b.idEndereco = e.id WHERE e.cidade = :cidade",
                 Beneficiario.class)
             .setParameter("cidade", cidade)
             .getResultList();
@@ -65,7 +65,7 @@ public class DentistaRepository implements PanacheRepository<Dentista> {
     public List<Dentista> findByCidade(String cidade) {
         return getEntityManager()
             .createQuery(
-                "SELECT d FROM DentistaDTO d JOIN EnderecoDTO e ON d.idEndereco = e.id WHERE e.cidade = :cidade",
+                "SELECT d FROM Dentista d JOIN Endereco e ON d.idEndereco = e.id WHERE e.cidade = :cidade",
                 Dentista.class)
             .setParameter("cidade", cidade)
             .getResultList();
@@ -78,11 +78,11 @@ public class DentistaRepository implements PanacheRepository<Dentista> {
 @ApplicationScoped
 public class AtendimentoRepository implements PanacheRepository<Atendimento> {
 
-    // Sprint 3: buscarPorCpf — JOIN com BeneficiarioDTO
+    // Sprint 3: buscarPorCpf — JOIN com Beneficiario
     public Optional<Atendimento> findByBeneficiarioCpf(String cpf) {
         return getEntityManager()
             .createQuery(
-                "SELECT a FROM AtendimentoDTO a JOIN BeneficiarioDTO b ON a.idBeneficiario = b.id WHERE b.cpf = :cpf",
+                "SELECT a FROM Atendimento a JOIN Beneficiario b ON a.idBeneficiario = b.id WHERE b.cpf = :cpf",
                 Atendimento.class)
             .setParameter("cpf", cpf)
             .getResultStream()
@@ -162,7 +162,7 @@ public class BeneficiarioService {
 
     public Beneficiario buscarPorCpf(String cpf) {
         return beneficiarioRepository.findByCpf(cpf)
-            .orElseThrow(() -> new RecursoNaoEncontradoException("BeneficiarioDTO nao encontrado: " + cpf));
+            .orElseThrow(() -> new RecursoNaoEncontradoException("Beneficiario nao encontrado: " + cpf));
     }
 
     // Metodo de negocio 1 — ver implementar-logica-negocio.prompt.md

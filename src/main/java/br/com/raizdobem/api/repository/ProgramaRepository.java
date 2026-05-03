@@ -1,14 +1,14 @@
 package br.com.raizdobem.api.repository;
 
-import br.com.raizdobem.api.model.dto.ProgramaSocialDTO;
+import br.com.raizdobem.api.model.ProgramaSocial;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 
 import java.util.List;
 
 @ApplicationScoped
-public class ProgramaRepository implements PanacheRepository<ProgramaSocialDTO> {
-    public List<ProgramaSocialDTO> listarTodos(){
+public class ProgramaRepository implements PanacheRepository<ProgramaSocial> {
+    public List<ProgramaSocial> listarTodos(){
         return listAll();
     }
 }

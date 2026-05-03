@@ -1,6 +1,6 @@
 package br.com.raizdobem.api.controller;
 
-import br.com.raizdobem.api.model.dto.BeneficiarioDTO;
+import br.com.raizdobem.api.model.Beneficiario;
 import br.com.raizdobem.api.service.BeneficiarioService;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
@@ -15,21 +15,20 @@ import java.util.List;
 
 @RequestScoped
 @Path("/beneficiario")
-@Tag(name = "BeneficiarioDTO", description = "Disponibiliza funcionalidades relacionadas aos beneficiários.")
+@Tag(name = "Beneficiario", description = "Disponibiliza funcionalidades relacionadas aos beneficiários.")
+@Produces(MediaType.APPLICATION_JSON)
 public class BeneficiarioController {
     @Inject
     BeneficiarioService service;
 
     @GET
     @Operation(summary = "Endpoint de listagem dos beneficiários cadastrados.")
-    @Produces(MediaType.APPLICATION_JSON)
-    public List<BeneficiarioDTO> listarTodos(){
+    public List<Beneficiario> listarTodos(){
         return service.listarTodos();
     }
 
     @POST
     @Operation(summary = "Endpoint para a criação de beneficiários.")
-    @Produces(MediaType.APPLICATION_JSON)
     public String criar(){
         return "Criando novo beneficiário";
     }
@@ -37,31 +36,23 @@ public class BeneficiarioController {
     @GET
     @Path("/{cpf}")
     @Operation(summary = "Endpoint para encontrar um beneficiário específico.")
-    @Produces(MediaType.APPLICATION_JSON)
-    public BeneficiarioDTO buscarPorCpf(@PathParam("cpf") String cpf){
+    public Beneficiario buscarPorCpf(@PathParam("cpf") String cpf){
         return service.buscarPorCpf();
     }
 
     @PUT
     @Path("/{cpf}")
     @Operation(summary = "Endpoint de atualização de informações de beneficiário.")
-    @Produces(MediaType.APPLICATION_JSON)
-    public String atualizar(@PathParam("cpf") String cpf){
-        return "Atualizando beneficiário";
+    public Response atualizar(@PathParam("cpf") String cpf){
+        Beneficiario beneficiario = service.atualizar(cpf);
+        return Response.status(Response.Status.OK).entity(beneficiario).build();
     }
 
     @DELETE
     @Path("/{cpf}")
     @Operation(summary = "Endpoint para apagar beneficiário existente.")
-    @Produces(MediaType.APPLICATION_JSON)
     public Response excluir(@PathParam("cpf") String cpf){
-//        boolean apagado = service.excluir(cpf);
-//
-//        if(apagado){
-//            return Response.noContent().build();
-//        }
-        return Response.status(Response.Status.NOT_FOUND)
-                .entity(Collections.singletonMap("erro", "Beneficiário não encontrado."))
-                .build();
+       service.excluir(cpf);
+       return Response.noContent().build();
     }
 }
