@@ -37,6 +37,7 @@ public class AtendimentoService {
         return repository.listarTodos();
     }
 
+    @Transactional
     public void atualizarAtendimento(String cpf, AtualizarAtendimentoDTO request){
         Atendimento atendimentoEncontrado = repository.buscarPeloCpf(cpf);
         if(atendimentoEncontrado == null){

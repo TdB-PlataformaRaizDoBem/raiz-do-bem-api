@@ -8,6 +8,7 @@ import br.com.raizdobem.api.model.StatusPedido;
 import br.com.raizdobem.api.repository.PedidoAjudaRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.Pattern;
 import jakarta.ws.rs.core.Request;
 
@@ -20,6 +21,7 @@ public class PedidoAjudaService {
     @Inject
     PedidoAjudaRepository repository;
 
+    @Transactional
     public PedidoAjuda criar(CriarPedidoAjudaDTO dto) {
         PedidoAjuda pedidoAjuda = new PedidoAjuda();
 
@@ -40,7 +42,7 @@ public class PedidoAjudaService {
 
         pedidoAjuda.setTelefone(dto.getTelefone());
         pedidoAjuda.setEmail(dto.getEmail());
-        pedidoAjuda.setDescricaoProblema(dto.getEmail());
+        pedidoAjuda.setDescricaoProblema(dto.getDescricaoProblema());
         pedidoAjuda.setDataPedido(LocalDate.now());
         int enderecoSolicitante = dto.getIdEndereco();
 
@@ -54,9 +56,11 @@ public class PedidoAjudaService {
         return repository.listarTodos();
     }
 
+    @Transactional
     public void atualizarPedido(){
 
     }
+    @Transactional
     public boolean excluir(Long id) {
         return repository.excluir(id);
     }

@@ -114,7 +114,6 @@ public class EnderecoService {
         }
     }
 
-    //
     public boolean validarCep(String cep) {
         return cep != null && cep.matches("\\d{8}");
     }

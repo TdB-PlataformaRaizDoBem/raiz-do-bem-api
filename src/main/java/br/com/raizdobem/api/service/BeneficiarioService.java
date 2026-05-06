@@ -1,5 +1,6 @@
 package br.com.raizdobem.api.service;
 
+import br.com.raizdobem.api.dto.AtualizarBeneficiarioDTO;
 import br.com.raizdobem.api.dto.CriarBeneficiarioDTO;
 import br.com.raizdobem.api.exception.ValidacaoException;
 import br.com.raizdobem.api.model.Beneficiario;
@@ -15,6 +16,7 @@ public class BeneficiarioService {
     @Inject
     BeneficiarioRepository repository;
 
+    @Transactional
     public Beneficiario criarBeneficiario(CriarBeneficiarioDTO dto) {
         Beneficiario beneficiario = new Beneficiario();
 
@@ -45,8 +47,8 @@ public class BeneficiarioService {
     }
 
     @Transactional
-    public Beneficiario atualizar(String cpf) {
-        return repository.atualizar(cpf);
+    public Beneficiario atualizar(String cpf, AtualizarBeneficiarioDTO request) {
+        return repository.atualizar(cpf, request);
     }
 
     @Transactional
