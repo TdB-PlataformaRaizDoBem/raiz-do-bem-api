@@ -5,7 +5,7 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class ViaCepResponseDTO {
+public class ResponseViaCepDTO {
     private String cep;
     private String logradouro;
     private String bairro;

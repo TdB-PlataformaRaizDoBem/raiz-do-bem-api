@@ -1,5 +1,7 @@
 package br.com.raizdobem.api.controller;
 
+import br.com.raizdobem.api.dto.CriarBeneficiarioDTO;
+import br.com.raizdobem.api.exception.RequisicaoInvalidaException;
 import br.com.raizdobem.api.model.Beneficiario;
 import br.com.raizdobem.api.service.BeneficiarioService;
 import jakarta.enterprise.context.RequestScoped;
@@ -29,15 +31,19 @@ public class BeneficiarioController {
 
     @POST
     @Operation(summary = "Endpoint para a criação de beneficiários.")
-    public String criar(){
-        return "Criando novo beneficiário";
+    public Response criar(CriarBeneficiarioDTO request){
+        Beneficiario beneficiario = service.criarBeneficiario(request);
+        if(beneficiario == null){
+            throw new RequisicaoInvalidaException("Dados de beneficiário inválidos.");
+        }
+        return Response.status(Response.Status.CREATED).entity(beneficiario).build();
     }
 
     @GET
     @Path("/{cpf}")
     @Operation(summary = "Endpoint para encontrar um beneficiário específico.")
     public Beneficiario buscarPorCpf(@PathParam("cpf") String cpf){
-        return service.buscarPorCpf();
+        return service.buscarPorCpf(cpf);
     }
 
     @PUT

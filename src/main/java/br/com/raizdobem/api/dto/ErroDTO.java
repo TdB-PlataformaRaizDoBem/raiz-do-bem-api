@@ -1,16 +1,13 @@
 package br.com.raizdobem.api.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class ErroDTO {
-    public int statusCode;
-    public String mensagem;
-
-    public ErroDTO(int statusCode, String mensagem) {
-        this.statusCode = statusCode;
-        this.mensagem = mensagem;
-    }
+    private int statusCode;
+    private String mensagem;
 }

@@ -6,44 +6,30 @@ Este arquivo serve como **log de evidências** (prints + endpoints) para facilit
 
 ---
 
-## 🧭 Relatório consolidado (IA)
-
-- Arquivo: `docs/status_projeto_claude/guia-sprint4-raiz-do-bem.html`
-- Última atualização do relatório: **02/05 — 17:37**
-
-Use este HTML como **auditoria/checklist-mestre** do que falta (exceptions, métodos de negócio e CRUD completo).
-
----
-
 ## ✅ Evidências já adicionadas (`docs/prints_swagger/`)
 
 ### Endereço (`/endereco`)
 
 - ✅ `GET /endereco` — lista todos
-  - Print: `GET_enderecos.png`
+  - Print: `listando_enderecos.png`
 - ✅ `GET /endereco/id/{id}` — busca por id
-  - Print: `GET endereco_id.png`
+  - Print: `lista_endereco_id.png`
 - ✅ `GET /endereco/{cidade}` — filtro por cidade
-  - Print: `GET_endereco_cidade.png`
-- ✅ `POST /endereco` — criação (ViaCEP + persistência)
-  - Print: `POST_endereco_sucesso.png`
+  - Print: `lista_endereco_cidade.png`
 - ✅ `DELETE /endereco/{id}` — tratamento de 404
   - Print: `trata_erro_exclusao_endereco.png`
+- 🟡 `POST /endereco` — criação (ViaCEP + persistência)
+  - Print: (se existir, adicionar aqui)
 
 ### Especialidades (`/especialidades`)
 
 - ✅ `GET /especialidades` — listagem
-  - Print: `GET_especialidades.png`
+  - Print: `lista_especialidades.png`
 
 ### Programas sociais (`/programas-sociais`)
 
 - ✅ `GET /programas-sociais` — listagem
-  - Print: `GET_programa_social.png`
-
-### Colaborador (`/colaborador`)
-
-- ✅ `POST /colaborador` — criação
-  - Print: `POST_colaborador_sucesso.png`
+  - Print: `lista_programas_sociais.png`
 
 ### Tratamento de erro em exclusões (404)
 
@@ -60,8 +46,7 @@ Use este HTML como **auditoria/checklist-mestre** do que falta (exceptions, mét
 
 ## 🧾 Documentação base
 
-- PDF base (Sprint 3): `docs/documentacao-java/Sprint03Java.pdf`
-- Banco/MER (Sprint 4 — em evolução): `docs/documentacao-database/Sprint4-Banco-desenvolvendo.pdf`
+- Banco SQL (Sprint 3): `docs/database/sqlSprint3.sql`
 - Diagramas:
   - `docs/diagrams/Diagrama de Classes Simples Verificacao.png`
   - `docs/diagrams/FluxoCentral.png`
@@ -93,8 +78,9 @@ Quando estiverem implementados, capturar:
 
 ### 3) Camada de exceções (`exception/`) comprovada
 
-- [x] camada adicionada (`src/main/java/.../exception`) com `ExceptionsMapperGlobal`
-- [ ] print/explicação do `ExceptionsMapperGlobal` retornando `ErroDTO` (422 ou 409)
+- [x] Camada adicionada (`src/main/java/.../exception`) com `ExceptionsMapperGlobal`
+- [ ] Print mostrando retorno JSON de erro (ex.: 422/409) com `ErroDTO`
+  - Sugestão de evidência rápida: forçar um CPF inválido (422) ou regra de negócio (409) e capturar o JSON
 
 ---
 
@@ -102,8 +88,7 @@ Quando estiverem implementados, capturar:
 
 - [ ] Atualizar capa / nomes / Sprint 4
 - [ ] Inserir tabela de endpoints (todas as rotas + status)
-- [ ] Inserir MER do Oracle (pode ser do Sprint 3, se o schema for o mesmo)
+- [ ] Inserir MER do Oracle (pode ser o mesmo do Sprint 3, se o schema for o mesmo)
 - [ ] Inserir diagrama de classes atualizado
 - [ ] Inserir prints (mínimo: 1 por método obrigatório + alguns CRUD)
-- [ ] Inserir instruções de execução (PowerShell e/ou Bash)
-
+- [ ] Inserir instruções de execução

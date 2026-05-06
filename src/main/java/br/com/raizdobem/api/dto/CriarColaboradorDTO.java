@@ -7,7 +7,7 @@ import java.time.LocalDate;
 
 @Data
 @NoArgsConstructor
-public class ColaboradorRequestDTO {
+public class CriarColaboradorDTO {
     private String cpf;
     private String nomeCompleto;
     private LocalDate dataNascimento;

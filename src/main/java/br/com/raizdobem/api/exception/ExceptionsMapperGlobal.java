@@ -28,6 +28,11 @@ public class ExceptionsMapperGlobal implements ExceptionMapper<Exception> {
                     .entity(new ErroDTO(409, e.getMessage()))
                     .build();
         }
+        if (e instanceof RequisicaoInvalidaException) {
+            return Response.status(400)
+                    .entity(new ErroDTO(400, e.getMessage()))
+                    .build();
+        }
 
         return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                 .entity(new ErroDTO(500, "Erro interno do servidor: " + e.getMessage()))

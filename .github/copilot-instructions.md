@@ -201,7 +201,6 @@ exception/    → exceções customizadas — camada transversal
 ## Convenções de código
 
 - **Java 21** — usar pattern matching e records onde fizer sentido.
-- **Sem Lombok** — getters/setters/construtores explícitos.
 - **Quarkus CDI**: `@ApplicationScoped` para services/repositories; `@RequestScoped` para controllers.
 - **Transactions**: `@Transactional` em métodos de escrita no service.
 - **Enums armazenados como String** (`@Enumerated(EnumType.STRING)`).
@@ -233,3 +232,108 @@ Swagger UI: `http://localhost:8080/q/swagger-ui`
 - [ ] Endpoints documentados com OpenAPI/Swagger
 - [ ] `import.sql` com dados de demonstração
 - [ ] Código compila e roda sem erros (`./mvnw compile`)
+
+---
+
+## Requisitos totais da entrega (Rubrica oficial — Domain Driven Design Using Java)
+
+> Objetivo: entrega final do projeto Java, avaliando o desenvolvimento completo da aplicação (técnico + documental), com todos os elementos necessários para funcionamento integrado com front-end e documentação comprobatória.
+
+### Entrega via GitHub (obrigatório)
+
+O repositório deve conter:
+- Código-fonte Java atualizado.
+- Documentação final **em PDF**.
+
+---
+
+## Documentação (15 pontos) — itens obrigatórios
+
+A documentação deve estar **clara**, **devidamente nomeada**, **organizada** e conter obrigatoriamente:
+
+### 1) Capa
+- Nome dos integrantes
+- Nome da equipe
+- Nome da solução
+
+### 2) Objetivo e escopo do projeto
+- Descrição objetiva e concisa da solução proposta
+- Breve descrição das principais funcionalidades
+- Destaque das funcionalidades implementadas (atualizadas)
+
+### 3) Métodos com lógica (explicação + evidência)
+- Explicação de **cada método lógico**
+- Incluir **print** de cada um dos **4 métodos exigidos** (via Swagger/execução real)
+
+### 4) Tabela de Endpoints (API RESTful)
+- URIs (caminhos completos dos recursos)
+- Verbos HTTP (GET, POST, PUT, DELETE etc.)
+- Códigos de status esperados (200, 201, 204, 400, 404, 409, 422, 500 etc.)
+
+### 5) Protótipo — prints das telas implementadas
+- Capturas de tela reais do sistema
+- Explicações resumidas
+
+### 6) MER (Modelo Entidade-Relacionamento)
+- Diagrama do banco com entidades, atributos, chaves e relacionamentos
+
+### 7) Diagrama de Classes atualizado
+- Classes com atributos, métodos e relações (associação, herança etc.)
+
+### 8) Procedimentos para rodar a aplicação
+- Instruções para executar (atualizadas em relação à Sprint anterior)
+
+---
+
+## Projeto Java finalizado (Código-fonte) — 85 pontos
+
+### Camada Modelo (entities/beans) — 10 pontos
+- Classes modelo corretamente estruturadas: atributos, construtores, getters/setters
+- Mínimo **6 classes** com encapsulamento e boas práticas
+- Deve representar corretamente o diagrama de classes e o modelo do banco
+
+### Conexão com BD + Métodos com lógica de negócio — 30 pontos
+- Utilização de dependências no `pom.xml`
+- Uso de usuário/senha para conexão (via env vars, sem hardcode)
+- Implementação de no mínimo **4 métodos relevantes**
+- Métodos devem conter lógica / regras de negócio coerentes com a solução
+- Complexidade e criatividade contam na avaliação
+
+### Camadas Exceções, DAO e BO (Service) — 10 pontos
+- Tratamento adequado de exceções
+- Contém funcionalidades essenciais para o front-end
+- CRUD funcionando completamente (Create, Read, Update, Delete)
+- Validações e regras de negócio adequadas
+
+### API RESTful — 35 pontos
+- Implementação de todos os endpoints necessários para o front-end via Quarkus
+- Seguir princípios REST (recursos, verbos HTTP, status de resposta etc.)
+
+---
+
+## Penalidades (podem derrubar bastante a nota)
+
+### Penalidades gerais
+- Documentação desorganizada: **-5 a -20 pontos**
+- Documentação em formato diferente de PDF: **-10 a -20 pontos**
+- Erro de nomenclatura no projeto: **-10 a -30 pontos** (dependendo da gravidade)
+- Falta de organização no código: **-5 a -20 pontos**
+- Baixa resolução das imagens na documentação: **-5 pontos por item**
+- Sem link do GitHub: **-35 a -85 pontos**
+- Entrega após o prazo: **não serão aceitos** (penalização total)
+
+### Penalidades por ausência de itens obrigatórios
+- Ausência de qualquer item obrigatório na documentação: **até -5 por item**, além da perda do conteúdo
+- Entrega fora do padrão solicitado: **-10 pontos**
+- Código que não compila/não executa corretamente: **-20 a -50 pontos**
+- Falta de pelo menos um método com lógica de negócio: **-5 a -10 por método faltante**
+- CRUD incompleto ou com falhas graves: **-10 por item**
+- Entrega após o prazo: **não serão aceitos** (penalização total)
+
+---
+
+## Dica prática (para guiar implementações)
+
+Sempre que implementar algo relevante para a rubrica, também:
+- Garanta resposta REST com status correto + JSON de erro (via `ExceptionsMapperGlobal`)
+- Gere evidência no Swagger (print) e atualize `docs/PROGRESSO_SPRINT4.md`

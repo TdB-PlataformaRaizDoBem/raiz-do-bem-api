@@ -1,7 +1,7 @@
 package br.com.raizdobem.api.service;
 
 import br.com.raizdobem.api.dto.EnderecoRequestDTO;
-import br.com.raizdobem.api.dto.ViaCepResponseDTO;
+import br.com.raizdobem.api.dto.ResponseViaCepDTO;
 import br.com.raizdobem.api.exception.RegraNegocioException;
 import br.com.raizdobem.api.model.Endereco;
 import br.com.raizdobem.api.repository.EnderecoRepository;
@@ -18,7 +18,6 @@ import com.google.gson.JsonObject;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
-import jakarta.ws.rs.WebApplicationException;
 
 @ApplicationScoped
 public class EnderecoService {
@@ -26,14 +25,14 @@ public class EnderecoService {
     EnderecoRepository repository;
 
     @Transactional
-    public Endereco criar(EnderecoRequestDTO request) {
+    public Endereco criar(EnderecoRequestDTO dto) {
         Gson gson = new Gson();
-        String cep = request.getCep();
+        String cep = dto.getCep();
 
         if(validarCep(cep)){
             String response = buscarApiViaCep(cep);
 
-            ViaCepResponseDTO viaCep = gson.fromJson(response, ViaCepResponseDTO.class);
+            ResponseViaCepDTO viaCep = gson.fromJson(response, ResponseViaCepDTO.class);
 
             Endereco endereco = new Endereco();
 
@@ -43,12 +42,12 @@ public class EnderecoService {
             endereco.setCidade(viaCep.getLocalidade());
             endereco.setEstado(viaCep.getUf());
 
-            endereco.setNumero(request.getNumero());
+            endereco.setNumero(dto.getNumero());
             TipoEndereco tipoEndereco = null;
 
-            if (request.getTipoEndereco().equals("RESIDENCIAL")) {
+            if (dto.getTipoEndereco().equals("RESIDENCIAL")) {
                 tipoEndereco = TipoEndereco.RESIDENCIAL;
-            } else if(request.getTipoEndereco().equals("PROFISSIONAL")){
+            } else if(dto.getTipoEndereco().equals("PROFISSIONAL")){
                 tipoEndereco = TipoEndereco.PROFISSIONAL;
             }
 
@@ -115,7 +114,6 @@ public class EnderecoService {
         }
     }
 
-    //
     public boolean validarCep(String cep) {
         return cep != null && cep.matches("\\d{8}");
     }

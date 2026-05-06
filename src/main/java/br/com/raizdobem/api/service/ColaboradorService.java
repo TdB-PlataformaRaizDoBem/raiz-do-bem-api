@@ -1,6 +1,8 @@
 package br.com.raizdobem.api.service;
 
-import br.com.raizdobem.api.dto.ColaboradorRequestDTO;
+import br.com.raizdobem.api.dto.AtualizarColaboradorDTO;
+import br.com.raizdobem.api.dto.CriarColaboradorDTO;
+import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.model.Colaborador;
 import br.com.raizdobem.api.repository.ColaboradorRepository;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -15,19 +17,17 @@ public class ColaboradorService {
     ColaboradorRepository repository;
 
     @Transactional
-    public Colaborador criarColaborador(ColaboradorRequestDTO request) {
+    public Colaborador criarColaborador(CriarColaboradorDTO dto) {
         Colaborador colaborador = new Colaborador();
 
-        if(ValidacaoService.validarCpf(request.getCpf())){
-            colaborador.setCpf(request.getCpf());
+        if(ValidacaoService.validarCpf(dto.getCpf())){
+            colaborador.setCpf(dto.getCpf());
         }
 
-        colaborador.setNomeCompleto(request.getNomeCompleto());
-        colaborador.setDataNascimento(request.getDataNascimento());
-        colaborador.setDataContratacao(request.getDataContratacao());
-        colaborador.setEmail(request.getEmail());
-
-//        Colaborador colaborador = bo.validarColaborador(cpf, nome, dataNascimento, dataContratacao, email);
+        colaborador.setNomeCompleto(dto.getNomeCompleto());
+        colaborador.setDataNascimento(dto.getDataNascimento());
+        colaborador.setDataContratacao(dto.getDataContratacao());
+        colaborador.setEmail(dto.getEmail());
 
         repository.criar(colaborador);
         return colaborador;
@@ -36,10 +36,17 @@ public class ColaboradorService {
     public List<Colaborador> listarTodos() {
         return repository.listarTodos();
     }
+    public Colaborador exibirColaborador(String cpf) {
+        return repository.buscarPorCpf(cpf);
+    }
 
     @Transactional
-    public Colaborador atualizarColaborador(String cpf) {
-        return repository.atualizar(cpf);
+    public void atualizarColaborador(String cpf, AtualizarColaboradorDTO request) {
+        Colaborador colaboradorEncontrado = repository.buscarPorCpf(cpf);
+        if(colaboradorEncontrado == null){
+            throw new NaoEncontradoException("Colaborador não encontrado");
+        }
+        repository.atualizar(cpf, request);
     }
 
     @Transactional
