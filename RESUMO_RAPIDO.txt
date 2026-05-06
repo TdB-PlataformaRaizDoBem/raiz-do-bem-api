@@ -3,20 +3,21 @@
 ## 📊 STATUS ATUAL
 
 ```
-49/100 pts
-███████░░░░░░░░░░░░░ 49%
+~62/100 pts
+███████████░░░░░░░░░ 62%
 
-✅ PRONTO / ADIANTADO (38 pts)
+✅ PRONTO / ADIANTADO (~52 pts)
   ✓ Arquitetura DDD + camadas      (10 pts)
   ✓ 8 Entidades JPA + 3 enums      (10 pts)
   ✓ BD Oracle (env vars) + Panache (15 pts)
-  ✓ Evidências em docs/            (4 pts)
+  ✓ Camada exception + mapper      (10 pts)
+  ✓ Evidências em docs/            (7 pts)
 
-🔴 FALTA (62 pts)
-  ✗ Camada Exception (10 pts) ← COMECE AQUI
-  ✗ 4 métodos de negócio obrigatórios (20+ pts)
-  ✗ CRUD completo (POST/PUT/DELETE) (15+ pts)
-  ✗ Documentação Sprint 4 em PDF (8-12 pts)
+🔴 FALTA (~38 pts)
+  ✗ 3 métodos de negócio obrigatórios (15+ pts)
+  ✗ Remover stubs (POST/PUT/GET) em Beneficiário / Atendimento / PedidoAjuda
+  ✗ CRUD completo padronizado em todos os recursos (Response + status corretos)
+  ✗ Documentação Sprint 4 em PDF (com prints dos 4 métodos obrigatórios)
 ```
 
 ---
@@ -26,54 +27,47 @@
 - Relatório HTML (código vs. requisitos): `docs/status_projeto_claude/guia-sprint4-raiz-do-bem.html`
 - Atualizado em: **02/05 — 17:37**
 
-Use como checklist-mestre para atacar primeiro: `exception/` → 4 métodos de negócio → POST/PUT reais → PDF Sprint 4.
+Use como checklist-mestre para atacar: 3 métodos de negócio restantes → remover stubs → prints Swagger → PDF Sprint 4.
 
 ## 🎯 4 PRIORIDADES MÁXIMAS
 
-### 1️⃣ **EXCEPTION LAYER** (10 pts)
-**Quando:** Dia 1 (segunda-feira)
-**Tempo:** 1-2 horas
-**O quê:** Criar 4 classes em `exception/`
-**Arquivos:**
-- RecursoNaoEncontradoException.java (HTTP 404)
-- ValidacaoException.java (HTTP 422)
-- RegraDeNegocioException.java (HTTP 409)
-- GlobalExceptionMapper.java (@Provider)
+### 1️⃣ **MÉTODOS DE NEGÓCIO (3 restantes)** (15-20 pts)
+**Quando:** Dias 1-4
+**Tempo:** 10-12 horas total
+**O quê (obrigatórios):**
+- BeneficiarioService.adicionar(idPedido, idPrograma)
+- PedidoAjudaService.processarPedido(id, novoStatus, idDentista)
+- AtendimentoService.encerrar(id, prontuario, dataFinal, idColaborador)
 
 ---
 
-### 2️⃣ **3 MÉTODOS DE NEGÓCIO** (20 pts)
-**Quando:** Dias 2-4
-**Tempo:** 10-12 horas total
+### 2️⃣ **CRUD Controllers (tirar stubs + padronizar Response)** (10-15 pts)
+**Quando:** Dias 4-7
+**Tempo:** 6-10 horas
 
 | Dia | Service | Método | Tempo |
 |---|---|---|---|
-| 2️⃣ (ter) | BeneficiarioService | `adicionar(idPedido, idPrograma)` | 3-4h |
-| 3️⃣ (qua) | DentistaService | `validarCro(cro)` | 1h |
-| 4️⃣ (qui) | PedidoAjudaService | `processarPedido(id, status, idDent)` | 3-4h |
+| Dia | Service | Método | Tempo |
+|---|---|---|---|
+| 1️⃣ | BeneficiarioService | `adicionar(idPedido, idPrograma)` | 3-4h |
+| 2️⃣ | PedidoAjudaService | `processarPedido(id, status, idDent)` | 3-4h |
+| 3️⃣ | AtendimentoService | `encerrar(id, prontuario, dataFinal, idColaborador)` | 2-3h |
 
 ---
 
-### 3️⃣ **CRUD CONTROLLERS** (10 pts)
-**Quando:** Dias 6-7
-**Tempo:** 5-7 horas
-**O quê:** Implementar POST/PUT/DELETE REAIS em 5 controllers
-- BeneficiarioController
-- DentistaController
-- PedidoAjudaController
-- AtendimentoController
-- ColaboradorController
+### 3️⃣ **DOCUMENTAÇÃO PDF (Sprint 4)** (10-15 pts)
+**Quando:** Dias 8-10
+**Tempo:** 4-6 horas
+**O quê:** atualizar a base Sprint 3 e incluir:
+- explicação + print de cada um dos 4 métodos obrigatórios
+- tabela de endpoints
+- prints adicionais de POST/PUT/DELETE
 
 ---
 
-### 4️⃣ **DOCUMENTAÇÃO PDF** (5-10 pts)
-**Quando:** Dias 8-9
-**Tempo:** 4-5 horas
-**O quê:**
-- Copiar Sprint03Java.pdf → Sprint4
-- Adicionar 4 prints dos métodos (Swagger)
-- Adicionar tabela de endpoints
-- Adicionar "Como rodar"
+### 4️⃣ **EVIDÊNCIAS (Swagger)**
+**Quando:** durante toda a semana
+**O quê:** manter `docs/prints_swagger/` com prints de sucesso e de erro (404/422/409) e registrar no `docs/PROGRESSO_SPRINT4.md`.
 
 ---
 

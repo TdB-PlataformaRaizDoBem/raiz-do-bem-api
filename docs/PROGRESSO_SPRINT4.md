@@ -20,23 +20,30 @@ Use este HTML como **auditoria/checklist-mestre** do que falta (exceptions, mét
 ### Endereço (`/endereco`)
 
 - ✅ `GET /endereco` — lista todos
-  - Print: `listando_enderecos.png`
+  - Print: `GET_enderecos.png`
 - ✅ `GET /endereco/id/{id}` — busca por id
-  - Print: `lista_endereco_id.png`
+  - Print: `GET endereco_id.png`
 - ✅ `GET /endereco/{cidade}` — filtro por cidade
-  - Print: `lista_endereco_cidade.png`
+  - Print: `GET_endereco_cidade.png`
+- ✅ `POST /endereco` — criação (ViaCEP + persistência)
+  - Print: `POST_endereco_sucesso.png`
 - ✅ `DELETE /endereco/{id}` — tratamento de 404
   - Print: `trata_erro_exclusao_endereco.png`
 
 ### Especialidades (`/especialidades`)
 
 - ✅ `GET /especialidades` — listagem
-  - Print: `lista_especialidades.png`
+  - Print: `GET_especialidades.png`
 
 ### Programas sociais (`/programas-sociais`)
 
 - ✅ `GET /programas-sociais` — listagem
-  - Print: `lista_programas_sociais.png`
+  - Print: `GET_programa_social.png`
+
+### Colaborador (`/colaborador`)
+
+- ✅ `POST /colaborador` — criação
+  - Print: `POST_colaborador_sucesso.png`
 
 ### Tratamento de erro em exclusões (404)
 
@@ -53,8 +60,8 @@ Use este HTML como **auditoria/checklist-mestre** do que falta (exceptions, mét
 
 ## 🧾 Documentação base
 
-- PDF base (Sprint 3): `docs/Sprint03Java.pdf`
-- Banco/MER (Sprint 4 — em evolução): `docs/database/Sprint4-Banco-desenvolvendo.pdf`
+- PDF base (Sprint 3): `docs/documentacao-java/Sprint03Java.pdf`
+- Banco/MER (Sprint 4 — em evolução): `docs/documentacao-database/Sprint4-Banco-desenvolvendo.pdf`
 - Diagramas:
   - `docs/diagrams/Diagrama de Classes Simples Verificacao.png`
   - `docs/diagrams/FluxoCentral.png`
@@ -86,7 +93,8 @@ Quando estiverem implementados, capturar:
 
 ### 3) Camada de exceções (`exception/`) comprovada
 
-- [ ] print/explicação do `GlobalExceptionMapper` retornando JSON padronizado
+- [x] camada adicionada (`src/main/java/.../exception`) com `ExceptionsMapperGlobal`
+- [ ] print/explicação do `ExceptionsMapperGlobal` retornando `ErroDTO` (422 ou 409)
 
 ---
 

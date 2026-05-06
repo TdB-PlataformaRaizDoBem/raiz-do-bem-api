@@ -3,12 +3,10 @@ package br.com.raizdobem.api.service;
 import br.com.raizdobem.api.dto.ColaboradorRequestDTO;
 import br.com.raizdobem.api.model.Colaborador;
 import br.com.raizdobem.api.repository.ColaboradorRepository;
-import io.quarkus.resteasy.reactive.jackson.runtime.serialisers.GeneratedSerializersRegister;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @ApplicationScoped

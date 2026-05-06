@@ -14,33 +14,31 @@ import java.util.List;
 
 @RequestScoped
 @Path("/pedido-ajuda")
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
 @Tag(name = "Pedido Ajuda", description = "Disponibiliza funcionalidades relacionadas aos pedidos de ajuda.")
 public class PedidoAjudaController {
     @Inject
     PedidoAjudaService service;
 
     @GET
-    @Produces(MediaType.APPLICATION_JSON)
     public List<PedidoAjuda> listarTodos(){
         return service.listarTodos();
     }
 
     @POST
-    @Produces(MediaType.APPLICATION_JSON)
     public String criar(){
         return "Criando novo pedido de ajuda";
     }
 
     @PUT
     @Path("/{id}")
-    @Produces(MediaType.APPLICATION_JSON)
     public String atualizar(@PathParam("id") int id){
         return "Atualizando pedido de ajuda";
     }
 
     @DELETE
     @Path("/{id}")
-    @Produces(MediaType.APPLICATION_JSON)
     public Response excluir(@PathParam("id") Long id){
         boolean apagado = service.excluir(id);
 

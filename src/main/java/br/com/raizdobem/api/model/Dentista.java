@@ -1,6 +1,7 @@
 package br.com.raizdobem.api.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,14 +13,17 @@ import lombok.NoArgsConstructor;
 public class Dentista {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonProperty("id")
     @Column(name = "id_dentista")
     private Long id;
 
+    @JsonProperty("croDentista")
     @Column(name = "cro")
     private String croDentista;
 
     private String cpf;
 
+    @JsonProperty("nomeCompleto")
     @Column(name = "nome_completo")
     private String nomeCompleto;
 
@@ -31,7 +35,7 @@ public class Dentista {
     private String categoria;
 
     private String disponivel;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_endereco")
     private Endereco endereco;
 

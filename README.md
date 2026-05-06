@@ -55,7 +55,8 @@ src/main/java/br/com/raizdobem/api/
 Base URL: `http://localhost:8080`  
 Swagger UI: `http://localhost:8080/q/swagger-ui`
 
-> Observação: os endpoints de **GET (listagem)** e alguns **DELETE** já estão funcionais e com evidências em `docs/prints_swagger/`. Os endpoints de **POST/PUT** e as **regras de negócio obrigatórias** estão em fase final de implementação (ver `STATUS_SPRINT4.md`).
+> Observação: os endpoints de **GET (listagem)** e alguns **DELETE** já estão funcionais e com evidências em `docs/prints_swagger/`.
+> Já existem **POST funcionais** (ex.: Endereço, Dentista e Colaborador). Os endpoints restantes (POST/PUT/DELETE em todos os recursos) e as **regras de negócio obrigatórias** seguem em fase final de implementação (ver `STATUS_SPRINT4.md`).
 
 ### Beneficiário — `/beneficiario`
 
@@ -295,7 +296,7 @@ A documentação oficial está disponível em PDF:
 
 📄 **Documentação (em atualização para Sprint 4)**
 
-- Base atual (Sprint 3): `docs/Sprint03Java.pdf`
+- Base atual (Sprint 3): `docs/documentacao-java/Sprint03Java.pdf`
 - Planejado (Sprint 4): `docs/Raiz_do_Bem_Documentacao_Sprint4.pdf`
 
 ### Conteúdo da documentação:
@@ -313,25 +314,29 @@ A documentação oficial está disponível em PDF:
 ### Diagramas e prints de teste
 - 📊 [Diagrama de Classes](./docs/diagrams/Diagrama%20de%20Classes%20Simples%20Verificacao.png)
 - 📊 [Fluxo Central do Sistema](./docs/diagrams/FluxoCentral.png)
-- 🗄️ Banco/MER (base Sprint 3 com nota 10): `docs/database/Sprint03-Banco-de-dados.pdf`
-- 🗄️ Banco/MER (Sprint 4 — em evolução): `docs/database/Sprint4-Banco-desenvolvendo.pdf`
-- 🧾 SQL (Sprint 3): `docs/database/sqlSprint3.sql`
+- 🗄️ Banco/MER (base Sprint 3 com nota 10): `docs/documentacao-database/Sprint03-Banco-de-dados.pdf`
+- 🗄️ Banco/MER (Sprint 4 — em evolução): `docs/documentacao-database/Sprint4-Banco-desenvolvendo.pdf`
+- 🧾 SQL (Sprint 3): `docs/documentacao-database/sqlSprint3.sql`
 - 🖼️ Prints de requisições (Swagger) em `./docs/prints_swagger/`
 - 📌 Progresso e checklist: `STATUS_SPRINT4.md`
 - 🧾 Log de evidências (prints ↔ endpoints): `docs/PROGRESSO_SPRINT4.md`
+- 🗂️ Índice da documentação: `docs/INDEX.md`
 
 ### 🧭 Status consolidado (relatório IA)
 
-Para auditoria rápida do estado real do código vs. requisitos, existe um relatório HTML gerado com IA:
+Para auditoria rápida do estado real do código vs. requisitos, existe um relatório HTML gerado com IA (snapshot):
 
 - 📄 `docs/status_projeto_claude/guia-sprint4-raiz-do-bem.html`
 - 🕒 Última atualização do relatório: **02/05 — 17:37**
 
-**Destaques apontados no relatório:**
+**Destaques apontados no relatório (podem ter mudado após commits recentes):**
 - Progresso geral: **62%**
-- CRUD completo: **1/8 controllers** (apenas Endereço tem POST funcional)
-- Métodos de negócio: **1/4** (apenas ViaCEP conta como método “real” no momento)
-- Camada `exception/`: **faltando no código** (requisito direto da Sprint 4)
+- CRUD completo (na data do relatório): **1/8 controllers**
+
+**Evoluções após o relatório (visíveis no código e em evidências mais recentes):**
+- ✅ Camada `exception/` adicionada em `src/main/java/br/com/raizdobem/api/exception/`
+- ✅ `DentistaService.validarCro()` implementado e usado na criação de dentistas
+- ✅ Evidências adicionais de POST no Swagger (ex.: `POST_endereco_sucesso.png`, `POST_colaborador_sucesso.png`)
 
 ---
 
@@ -344,7 +349,7 @@ raiz-do-bem-api/
 │   │   ├── docker/                       Dockerfiles (jvm, native, legacy-jar)
 │   │   ├── java/br/com/raizdobem/api/
 │   │   │   ├── controller/               8 controllers REST
-│   │   │   ├── exception/                (planejado) Exceções customizadas & GlobalExceptionMapper
+│   │   │   ├── exception/                Exceções customizadas & ExceptionMapper global
 │   │   │   ├── model/                    Entidades JPA + enums (atualmente em model/dto)
 │   │   │   ├── repository/               7 repositories (Panache)
 │   │   │   └── service/                  Services (lógica de negócio em implementação)
@@ -361,11 +366,13 @@ raiz-do-bem-api/
 │   │   ├── Diagrama de Classes Simples Verificacao.png
 │   │   └── FluxoCentral.png
 │   ├── prints_swagger/
-│   │   ├── listando_enderecos.png
-│   │   ├── lista_endereco_cidade.png
-│   │   ├── lista_endereco_id.png
+│   │   ├── GET_enderecos.png
+│   │   ├── GET_endereco_cidade.png
+│   │   ├── GET endereco_id.png
 │   │   └── ...
-│   └── Sprint03Java.pdf                  (base para atualização)
+│   ├── documentacao-java/                PDF(s) base
+│   │   └── Sprint03Java.pdf              (base para atualização)
+│   └── documentacao-database/            MER/SQL
 ├── pom.xml
 ├── mvnw / mvnw.cmd
 └── README.md

@@ -2,7 +2,6 @@ package br.com.raizdobem.api.service;
 
 import br.com.raizdobem.api.dto.DentistaRequestCriacaoDTO;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
-import br.com.raizdobem.api.exception.RegraNegocioException;
 import br.com.raizdobem.api.exception.ValidacaoException;
 import br.com.raizdobem.api.model.Dentista;
 import br.com.raizdobem.api.model.Endereco;

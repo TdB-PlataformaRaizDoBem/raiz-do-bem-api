@@ -1,6 +1,5 @@
 package br.com.raizdobem.api.dto;
 
-import br.com.raizdobem.api.model.Sexo;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
