@@ -1,5 +1,7 @@
 package br.com.raizdobem.api.service;
 
+import br.com.raizdobem.api.dto.CriarBeneficiarioDTO;
+import br.com.raizdobem.api.exception.ValidacaoException;
 import br.com.raizdobem.api.model.Beneficiario;
 import br.com.raizdobem.api.repository.BeneficiarioRepository;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -13,8 +15,29 @@ public class BeneficiarioService {
     @Inject
     BeneficiarioRepository repository;
 
-    public Beneficiario buscarPorCpf() {
-        return new Beneficiario();
+    public Beneficiario criarBeneficiario(CriarBeneficiarioDTO dto) {
+        Beneficiario beneficiario = new Beneficiario();
+
+        String cpf = dto.getCpf();
+        if(ValidacaoService.validarCpf(cpf))
+            beneficiario.setCpf(cpf);
+        else
+            throw new ValidacaoException("CPF inserido é inválido");
+
+        beneficiario.setNomeCompleto(dto.getNomeCompleto());
+        beneficiario.setDataNascimento(dto.getDataNascimento());
+        beneficiario.setTelefone(dto.getTelefone());
+        beneficiario.setEmail(dto.getEmail());
+        //idPedido
+        //idEndereco
+        //idProgramaSocial - vem do pedido
+
+        repository.criar(beneficiario);
+        return beneficiario;
+    }
+
+    public Beneficiario buscarPorCpf(String cpf) {
+        return repository.buscarPorCpf(cpf);
     }
 
     public List<Beneficiario> listarTodos() {

@@ -1,5 +1,10 @@
 package br.com.raizdobem.api.dto;
 
-public class ColaboradorRequestAtualizacaoDTO {
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+public class AtualizarColaboradorDTO {
     private String email;
 }

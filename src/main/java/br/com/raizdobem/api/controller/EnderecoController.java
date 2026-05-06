@@ -1,6 +1,7 @@
 package br.com.raizdobem.api.controller;
 
 import br.com.raizdobem.api.dto.EnderecoRequestDTO;
+import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.model.Endereco;
 import br.com.raizdobem.api.service.EnderecoService;
 import jakarta.enterprise.context.RequestScoped;
@@ -24,6 +25,23 @@ public class EnderecoController {
     @Inject
     EnderecoService service;
 
+    @POST
+    @Operation(summary = "Endpoint para a criação de endereços.")
+    @APIResponse(responseCode = "201", description = "Endereço criado com sucesso")
+    @APIResponse(responseCode = "400", description = "Dados de endereço inválidos")
+    @APIResponse(responseCode = "422", description = "Regra de negócio inválida")
+    public Response criar(EnderecoRequestDTO request){
+        Endereco endereco = service.criar(request);
+        if(endereco.getTipoEndereco() == null){
+            throw new NaoEncontradoException("Tipo de endereço inválido.");
+        }
+        if(request.getCep().isEmpty()){
+            throw new NaoEncontradoException("CEP não encontrado.");
+        }
+
+        return Response.status(Response.Status.CREATED).entity(endereco).build();
+    }
+
     @GET
     @Operation(summary = "Endpoint para a listagem de todos os endereços.")
     public List<Endereco> listarTodos(){
@@ -35,28 +53,6 @@ public class EnderecoController {
     @Path("/{cidade}")
     public List<Endereco> listarPorCidade(@PathParam("cidade") String cidade){
         return service.listarPorCidades(cidade);
-    }
-
-    @POST
-    @Operation(summary = "Endpoint para a criação de endereços.")
-    @APIResponse(responseCode = "201", description = "Endereço criado com sucesso")
-    @APIResponse(responseCode = "400", description = "Dados de endereço inválidos")
-    @APIResponse(responseCode = "422", description = "Regra de negócio inválida")
-    public Response criar(EnderecoRequestDTO request){
-
-        if(request.getTipoEndereco() == null || request.getTipoEndereco().isEmpty()){
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity(Collections.singletonMap("erro", "Tipo de endereço inválido."))
-                    .build();
-        }
-        if(request.getCep().isEmpty()){
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity(Collections.singletonMap("erro", "CEP inválido."))
-                    .build();
-        }
-
-        Endereco enderecoCompleto = service.criar(request);
-        return Response.status(Response.Status.CREATED).entity(enderecoCompleto).build();
     }
 
     @GET
@@ -81,16 +77,13 @@ public class EnderecoController {
     @PUT
     @Operation(summary = "Endpoint criado para atualizar endereços.")
     @Path("/{id}")
-    public Response atualizar(@PathParam("id") Long id){
+    public Response atualizar(@PathParam("id") Long id, @RequestBody EnderecoRequestDTO request){
         boolean responseAtualizacao = service.atualizarEndereco(id);
 
         if(responseAtualizacao){
             return Response.noContent().build();
         }
-        return Response.status(Response.Status.NOT_FOUND)
-                .entity("Endereço não encontrado")
-                .build();
-
+        throw new NaoEncontradoException("Endereço não encontrado.");
     }
 
     @DELETE
@@ -99,11 +92,9 @@ public class EnderecoController {
     public Response excluir(@PathParam("id") Long id) {
         boolean apagado = service.excluir(id);
 
-        if(apagado){
+        if(apagado)
             return Response.noContent().build();
-        }
-        return Response.status(Response.Status.NOT_FOUND)
-                .entity(Collections.singletonMap("erro", "Endereço não encontrado."))
-                .build();
+
+        throw new NaoEncontradoException("Endereço não encontrado.");
     }
 }

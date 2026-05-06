@@ -1,5 +1,9 @@
 package br.com.raizdobem.api.controller;
 
+import br.com.raizdobem.api.dto.CriarPedidoAjudaDTO;
+import br.com.raizdobem.api.exception.NaoEncontradoException;
+import br.com.raizdobem.api.exception.RequisicaoInvalidaException;
+import br.com.raizdobem.api.model.Colaborador;
 import br.com.raizdobem.api.model.PedidoAjuda;
 import br.com.raizdobem.api.service.PedidoAjudaService;
 import jakarta.enterprise.context.RequestScoped;
@@ -27,15 +31,19 @@ public class PedidoAjudaController {
     }
 
     @POST
-    public String criar(){
-        return "Criando novo pedido de ajuda";
+    public Response criar(CriarPedidoAjudaDTO request){
+        PedidoAjuda pedidoAjuda = service.criar(request);
+        if(pedidoAjuda == null){
+            throw new RequisicaoInvalidaException("Não foi possível criar o pedido de ajuda. Dados inválidos.");
+        }
+        return Response.status(Response.Status.CREATED).entity(pedidoAjuda).build();
     }
 
-    @PUT
-    @Path("/{id}")
-    public String atualizar(@PathParam("id") int id){
-        return "Atualizando pedido de ajuda";
-    }
+//    @PUT
+//    @Path("/{id}")
+//    public String atualizar(@PathParam("id") long id){
+//        return service.atualizarPedido();
+//    }
 
     @DELETE
     @Path("/{id}")
@@ -45,8 +53,6 @@ public class PedidoAjudaController {
         if(apagado){
             return Response.noContent().build();
         }
-        return Response.status(Response.Status.NOT_FOUND)
-                .entity(Collections.singletonMap("erro", "Pedido de ajuda não encontrado."))
-                .build();
+        throw new NaoEncontradoException("Pedido de ajuda não encontrado para exclusão.");
     }
 }

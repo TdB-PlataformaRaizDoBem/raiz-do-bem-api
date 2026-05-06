@@ -1,5 +1,6 @@
 package br.com.raizdobem.api.dto;
 
+import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -7,7 +8,8 @@ import java.time.LocalDate;
 
 @Data
 @NoArgsConstructor
-public class BeneficiarioRequestCriacaoDTO {
+public class CriarBeneficiarioDTO {
+    @Pattern(regexp = "^\\d{11}$")
     private String cpf;
     private String nomeCompleto;
     private LocalDate dataNascimento;

@@ -1,5 +1,8 @@
 package br.com.raizdobem.api.controller;
 
+import br.com.raizdobem.api.dto.CriarAtendimentoDTO;
+import br.com.raizdobem.api.exception.NaoEncontradoException;
+import br.com.raizdobem.api.exception.RequisicaoInvalidaException;
 import br.com.raizdobem.api.model.Atendimento;
 import br.com.raizdobem.api.service.AtendimentoService;
 import jakarta.enterprise.context.RequestScoped;
@@ -26,26 +29,30 @@ public class AtendimentoController {
     }
 
     @POST
-    public String criar(){
-        return "Criando novo atendimento";
+    public Response criar(CriarAtendimentoDTO request){
+        Atendimento atendimento = service.criarAtendimento(request);
+        if(atendimento == null){
+            throw new RequisicaoInvalidaException("Não foi possível criar o atendimento. Dados inválidos.");
+        }
+        return Response.status(Response.Status.CREATED).entity(atendimento).build();
     }
 
     @GET
     @Path("/{cpf}")
     public Response buscarPorCpf(@PathParam("cpf") String cpf){
         try{
-            Atendimento atendimento = service.buscar();
+            Atendimento atendimento = service.buscarPorCpf(cpf);
             return Response.ok(atendimento).build();
         } catch (RuntimeException e) {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
     }
 
-    @PUT
-    @Path("/{id}")
-    public String atualizar(@PathParam("id") long id){
-        return "Atualizando atendimento";
-    }
+//    @PUT
+//    @Path("/{id}")
+//    public String atualizar(@PathParam("id") long id){
+//        return service.atualizarAtendimento(cpf, request);
+//    }
 
     @DELETE
     @Path("/{id}")
@@ -55,8 +62,6 @@ public class AtendimentoController {
         if(apagado){
             return Response.noContent().build();
         }
-        return Response.status(Response.Status.NOT_FOUND)
-                .entity(Collections.singletonMap("erro", "Atendimento não encontrado."))
-                .build();
+        throw new NaoEncontradoException("Pedido de ajuda não encontrado para exclusão.");
     }
 }
