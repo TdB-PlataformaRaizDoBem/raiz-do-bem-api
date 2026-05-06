@@ -1,0 +1,730 @@
+---
+openapi: 3.1.0
+tags:
+- name: Atendimento
+  description: Disponibiliza funcionalidades relacionadas aos atendimentos.
+- name: Beneficiario
+  description: Disponibiliza funcionalidades relacionadas aos beneficiários.
+- name: Colaborador
+  description: Disponibiliza funcionalidades relacionadas a colaboradores.
+- name: Dentista
+  description: Disponibiliza funcionalidades relacionadas a dentistas.
+- name: Endereco
+  description: Disponibiliza funcionalidades relacionadas aos endereços.
+- name: Especialidades
+  description: Disponibiliza visualizção das especialidades gerais dos dentistas.
+- name: Pedido Ajuda
+  description: Disponibiliza funcionalidades relacionadas aos pedidos de ajuda.
+- name: Programas
+  description: Disponibiliza os programas oferecidos pela Ong.
+components:
+  schemas:
+    Atendimento:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        prontuario:
+          type: string
+        dataInicial:
+          $ref: "#/components/schemas/LocalDate"
+        dataFinal:
+          $ref: "#/components/schemas/LocalDate"
+        beneficiario:
+          $ref: "#/components/schemas/Beneficiario"
+        dentista:
+          $ref: "#/components/schemas/Dentista"
+        colaborador:
+          $ref: "#/components/schemas/Colaborador"
+    Beneficiario:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        cpf:
+          type: string
+        nomeCompleto:
+          type: string
+        dataNascimento:
+          $ref: "#/components/schemas/LocalDate"
+        telefone:
+          type: string
+        email:
+          type: string
+        pedido:
+          $ref: "#/components/schemas/PedidoAjuda"
+        programaSocial:
+          $ref: "#/components/schemas/ProgramaSocial"
+        endereco:
+          $ref: "#/components/schemas/Endereco"
+    Colaborador:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        cpf:
+          type: string
+        nomeCompleto:
+          type: string
+        dataNascimento:
+          $ref: "#/components/schemas/LocalDate"
+        dataContratacao:
+          $ref: "#/components/schemas/LocalDate"
+        email:
+          type: string
+    ColaboradorRequestDTO:
+      type: object
+      properties:
+        cpf:
+          type: string
+        nomeCompleto:
+          type: string
+        dataNascimento:
+          $ref: "#/components/schemas/LocalDate"
+        dataContratacao:
+          $ref: "#/components/schemas/LocalDate"
+        email:
+          type: string
+    Dentista:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        croDentista:
+          type: string
+        cpf:
+          type: string
+        nomeCompleto:
+          type: string
+        sexo:
+          $ref: "#/components/schemas/Sexo"
+        email:
+          type: string
+        telefone:
+          type: string
+        categoria:
+          type: string
+        disponivel:
+          type: string
+        endereco:
+          $ref: "#/components/schemas/Endereco"
+    DentistaRequestCriacaoDTO:
+      type: object
+      properties:
+        croDentista:
+          type: string
+        cpf:
+          type: string
+        nomeCompleto:
+          type: string
+        sexo:
+          type: string
+        email:
+          type: string
+        telefone:
+          type: string
+        categoria:
+          type: string
+        disponivel:
+          type: string
+        id_endereco:
+          type: integer
+          format: int64
+    Endereco:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        logradouro:
+          type: string
+        cep:
+          type: string
+        numero:
+          type: string
+        bairro:
+          type: string
+        cidade:
+          type: string
+        estado:
+          type: string
+        tipoEndereco:
+          $ref: "#/components/schemas/TipoEndereco"
+    EnderecoRequestDTO:
+      type: object
+      properties:
+        cep:
+          type: string
+        numero:
+          type: string
+        tipoEndereco:
+          type: string
+    Especialidade:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        descricao:
+          type: string
+    LocalDate:
+      type: string
+      format: date
+      examples:
+      - 2022-03-10
+    PedidoAjuda:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        cpf:
+          type: string
+        nomeCompleto:
+          type: string
+        dataNascimento:
+          $ref: "#/components/schemas/LocalDate"
+        sexo:
+          $ref: "#/components/schemas/Sexo"
+        telefone:
+          type: string
+        email:
+          type: string
+        descricaoProblema:
+          type: string
+        dataPedido:
+          $ref: "#/components/schemas/LocalDate"
+        status:
+          $ref: "#/components/schemas/StatusPedido"
+        endereco:
+          $ref: "#/components/schemas/Endereco"
+        dentista:
+          $ref: "#/components/schemas/Dentista"
+    ProgramaSocial:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        programa:
+          type: string
+    Sexo:
+      type: string
+      enum:
+      - M
+      - F
+      - O
+    StatusPedido:
+      type: string
+      enum:
+      - PENDENTE
+      - APROVADO
+      - REJEITADO
+    TipoEndereco:
+      type: string
+      enum:
+      - RESIDENCIAL
+      - PROFISSIONAL
+paths:
+  /atendimento:
+    get:
+      tags:
+      - Atendimento
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Atendimento"
+      summary: Listar Todos
+    post:
+      tags:
+      - Atendimento
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+      summary: Criar
+  /atendimento/{cpf}:
+    get:
+      tags:
+      - Atendimento
+      parameters:
+      - name: cpf
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema: {}
+      summary: Buscar Por Cpf
+  /atendimento/{id}:
+    delete:
+      tags:
+      - Atendimento
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema: {}
+      summary: Excluir Atendimento
+    put:
+      tags:
+      - Atendimento
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+      summary: Atualizar
+  /beneficiario:
+    get:
+      summary: Endpoint de listagem dos beneficiários cadastrados.
+      tags:
+      - Beneficiario
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Beneficiario"
+    post:
+      summary: Endpoint para a criação de beneficiários.
+      tags:
+      - Beneficiario
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+  /beneficiario/{cpf}:
+    delete:
+      summary: Endpoint para apagar beneficiário existente.
+      tags:
+      - Beneficiario
+      parameters:
+      - name: cpf
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema: {}
+    get:
+      summary: Endpoint para encontrar um beneficiário específico.
+      tags:
+      - Beneficiario
+      parameters:
+      - name: cpf
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Beneficiario"
+    put:
+      summary: Endpoint de atualização de informações de beneficiário.
+      tags:
+      - Beneficiario
+      parameters:
+      - name: cpf
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema: {}
+  /colaborador:
+    get:
+      summary: Endpoint para a listagem de colaboradores.
+      tags:
+      - Colaborador
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Colaborador"
+    post:
+      summary: Endpoint para a criação de colaborador.
+      tags:
+      - Colaborador
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ColaboradorRequestDTO"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema: {}
+        "400":
+          description: Bad Request
+  /colaborador/{cpf}:
+    delete:
+      summary: Endpoint para a exclusão de colaborador.
+      tags:
+      - Colaborador
+      parameters:
+      - name: cpf
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema: {}
+    put:
+      summary: Endpoint para a atualização de colaborador.
+      tags:
+      - Colaborador
+      parameters:
+      - name: cpf
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema: {}
+  /dentista:
+    get:
+      summary: Endpoint para a listagem de todos os dentistas.
+      tags:
+      - Dentista
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Dentista"
+    post:
+      summary: Endpoint para a criação de dentista.
+      tags:
+      - Dentista
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DentistaRequestCriacaoDTO"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema: {}
+        "400":
+          description: Bad Request
+  /dentista/{cpf}:
+    delete:
+      summary: Endpoint para a exclusão de dentista.
+      tags:
+      - Dentista
+      parameters:
+      - name: cpf
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema: {}
+    put:
+      summary: Endpoint para a atualização de dentista.
+      tags:
+      - Dentista
+      parameters:
+      - name: cpf
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema: {}
+  /endereco:
+    get:
+      summary: Endpoint para a listagem de todos os endereços.
+      tags:
+      - Endereco
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Endereco"
+    post:
+      summary: Endpoint para a criação de endereços.
+      tags:
+      - Endereco
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EnderecoRequestDTO"
+        required: true
+      responses:
+        "201":
+          description: Endereço criado com sucesso
+        "400":
+          description: Dados de endereço inválidos
+        "422":
+          description: Regra de negócio inválida
+  /endereco/id/{id}:
+    get:
+      summary: Endpoint para buscar endereço específico pelo id.
+      tags:
+      - Endereco
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Endereco"
+  /endereco/viacep/{cep}:
+    get:
+      summary: Endpoint para buscar endereços na API do ViaCep.
+      tags:
+      - Endereco
+      parameters:
+      - name: cep
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema: {}
+  /endereco/{cidade}:
+    get:
+      summary: Endpoint para a listagem de endereços por cidade.
+      tags:
+      - Endereco
+      parameters:
+      - name: cidade
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Endereco"
+  /endereco/{id}:
+    delete:
+      summary: Endpoint para apagar endereços.
+      tags:
+      - Endereco
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema: {}
+    put:
+      summary: Endpoint criado para atualizar endereços.
+      tags:
+      - Endereco
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema: {}
+  /especialidades:
+    get:
+      tags:
+      - Especialidades
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Especialidade"
+      summary: Listar Todas
+  /pedido-ajuda:
+    get:
+      tags:
+      - Pedido Ajuda
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PedidoAjuda"
+      summary: Listar Todos
+    post:
+      tags:
+      - Pedido Ajuda
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+      summary: Criar
+  /pedido-ajuda/{id}:
+    delete:
+      tags:
+      - Pedido Ajuda
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema: {}
+      summary: Excluir
+    put:
+      tags:
+      - Pedido Ajuda
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+      summary: Atualizar
+  /programas-sociais:
+    get:
+      tags:
+      - Programas
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ProgramaSocial"
+      summary: Listar Todos
+info:
+  title: Raiz do Bem
+  version: 1.0.0
+  description: Projeto academico elaborado para o Challenge FIAP 2025-26

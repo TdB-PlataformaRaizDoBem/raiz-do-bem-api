@@ -1,0 +1,1203 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guia Sprint 4 — Raiz do Bem</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+  :root {
+    --verde: #2d6a4f;
+    --verde-claro: #52b788;
+    --verde-neon: #74c69d;
+    --amarelo: #f4a261;
+    --vermelho: #e76f51;
+    --cinza-escuro: #1a1a2e;
+    --cinza-card: #16213e;
+    --cinza-borda: #0f3460;
+    --texto: #e2e8f0;
+    --texto-muted: #94a3b8;
+    --branco: #ffffff;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--cinza-escuro);
+    color: var(--texto);
+    font-family: 'DM Sans', sans-serif;
+    line-height: 1.6;
+  }
+
+  /* HERO */
+  .hero {
+    background: linear-gradient(135deg, #0d1b2a 0%, #1b4332 50%, #0d1b2a 100%);
+    padding: 60px 40px 40px;
+    border-bottom: 2px solid var(--verde);
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -50%; left: -50%;
+    width: 200%; height: 200%;
+    background: radial-gradient(ellipse at center, rgba(82,183,136,0.07) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .hero-tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--verde-neon);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .hero h1 {
+    font-family: 'Space Mono', monospace;
+    font-size: clamp(28px, 5vw, 48px);
+    font-weight: 700;
+    color: var(--branco);
+    line-height: 1.1;
+    margin-bottom: 8px;
+  }
+  .hero h1 span { color: var(--verde-neon); }
+  .hero-sub {
+    color: var(--texto-muted);
+    font-size: 15px;
+    margin-bottom: 32px;
+  }
+
+  /* PROGRESS BAR */
+  .progress-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+    margin-top: 24px;
+  }
+  .progress-card {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(82,183,136,0.2);
+    border-radius: 12px;
+    padding: 16px;
+  }
+  .progress-card .label {
+    font-size: 11px;
+    color: var(--texto-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
+  .progress-card .value {
+    font-family: 'Space Mono', monospace;
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--verde-neon);
+  }
+  .progress-card .desc {
+    font-size: 12px;
+    color: var(--texto-muted);
+    margin-top: 4px;
+  }
+  .bar-wrap {
+    background: rgba(255,255,255,0.1);
+    border-radius: 4px;
+    height: 6px;
+    margin-top: 10px;
+    overflow: hidden;
+  }
+  .bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    background: linear-gradient(90deg, var(--verde), var(--verde-neon));
+    animation: fillBar 1.2s ease forwards;
+  }
+  @keyframes fillBar { from { width: 0; } }
+
+  /* LAYOUT PRINCIPAL */
+  .main { max-width: 1100px; margin: 0 auto; padding: 40px 24px; }
+
+  /* SEÇÃO */
+  .section { margin-bottom: 48px; }
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(82,183,136,0.2);
+  }
+  .section-icon {
+    width: 36px; height: 36px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  .section-header h2 {
+    font-family: 'Space Mono', monospace;
+    font-size: 16px;
+    color: var(--branco);
+  }
+  .section-header .badge {
+    margin-left: auto;
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .badge-ok { background: rgba(82,183,136,0.15); color: var(--verde-neon); border: 1px solid rgba(82,183,136,0.3); }
+  .badge-warn { background: rgba(244,162,97,0.15); color: var(--amarelo); border: 1px solid rgba(244,162,97,0.3); }
+  .badge-danger { background: rgba(231,111,81,0.15); color: var(--vermelho); border: 1px solid rgba(231,111,81,0.3); }
+
+  /* STATUS GRID */
+  .status-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 14px;
+  }
+  .status-item {
+    background: var(--cinza-card);
+    border: 1px solid var(--cinza-borda);
+    border-radius: 10px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    transition: border-color 0.2s;
+  }
+  .status-item:hover { border-color: rgba(82,183,136,0.4); }
+  .status-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    margin-top: 5px;
+    flex-shrink: 0;
+  }
+  .dot-green { background: var(--verde-neon); box-shadow: 0 0 6px var(--verde-neon); }
+  .dot-yellow { background: var(--amarelo); box-shadow: 0 0 6px var(--amarelo); }
+  .dot-red { background: var(--vermelho); box-shadow: 0 0 6px var(--vermelho); }
+  .status-text strong {
+    display: block;
+    font-size: 13px;
+    color: var(--branco);
+    margin-bottom: 3px;
+  }
+  .status-text span { font-size: 12px; color: var(--texto-muted); }
+
+  /* CODE BLOCK */
+  .code-block {
+    background: #0d1117;
+    border: 1px solid var(--cinza-borda);
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 12px 0;
+  }
+  .code-header {
+    background: rgba(255,255,255,0.04);
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--cinza-borda);
+  }
+  .code-header span { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--texto-muted); }
+  .copy-btn {
+    background: none;
+    border: 1px solid rgba(82,183,136,0.3);
+    color: var(--verde-neon);
+    padding: 3px 10px;
+    border-radius: 4px;
+    font-size: 11px;
+    cursor: pointer;
+    transition: background 0.2s;
+    font-family: 'Space Mono', monospace;
+  }
+  .copy-btn:hover { background: rgba(82,183,136,0.1); }
+  pre {
+    padding: 16px;
+    overflow-x: auto;
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    line-height: 1.7;
+    color: #e2e8f0;
+  }
+  .kw { color: #c792ea; }
+  .cls { color: #82aaff; }
+  .fn { color: #82aaff; }
+  .str { color: #c3e88d; }
+  .ann { color: #f78c6c; }
+  .cmt { color: #546e7a; font-style: italic; }
+  .num { color: #f78c6c; }
+
+  /* ENDPOINT TABLE */
+  .endpoint-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .endpoint-table th {
+    text-align: left;
+    padding: 10px 14px;
+    background: rgba(82,183,136,0.1);
+    color: var(--verde-neon);
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    border-bottom: 1px solid rgba(82,183,136,0.2);
+  }
+  .endpoint-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    vertical-align: middle;
+  }
+  .endpoint-table tr:hover td { background: rgba(255,255,255,0.02); }
+  .method {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 4px;
+    display: inline-block;
+    width: 58px;
+    text-align: center;
+  }
+  .get { background: rgba(130,170,255,0.15); color: #82aaff; }
+  .post { background: rgba(195,232,141,0.15); color: #c3e88d; }
+  .put { background: rgba(247,140,108,0.15); color: #f78c6c; }
+  .del { background: rgba(231,111,81,0.15); color: var(--vermelho); }
+  .path-col { font-family: 'Space Mono', monospace; font-size: 12px; color: var(--verde-neon); }
+  .status-code {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--texto-muted);
+  }
+  .tag-incomplete {
+    font-size: 10px;
+    background: rgba(231,111,81,0.15);
+    color: var(--vermelho);
+    border: 1px solid rgba(231,111,81,0.3);
+    border-radius: 4px;
+    padding: 1px 6px;
+    margin-left: 6px;
+  }
+  .tag-done {
+    font-size: 10px;
+    background: rgba(82,183,136,0.12);
+    color: var(--verde-neon);
+    border: 1px solid rgba(82,183,136,0.25);
+    border-radius: 4px;
+    padding: 1px 6px;
+    margin-left: 6px;
+  }
+
+  /* TIMELINE */
+  .timeline { position: relative; padding-left: 28px; }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 8px; top: 0; bottom: 0;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--verde), transparent);
+  }
+  .tl-item {
+    position: relative;
+    margin-bottom: 20px;
+  }
+  .tl-item::before {
+    content: '';
+    position: absolute;
+    left: -24px; top: 6px;
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--verde-neon);
+    border: 2px solid var(--cinza-escuro);
+    box-shadow: 0 0 8px var(--verde-neon);
+  }
+  .tl-days {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--verde-neon);
+    margin-bottom: 4px;
+  }
+  .tl-title {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--branco);
+    margin-bottom: 4px;
+  }
+  .tl-desc { font-size: 13px; color: var(--texto-muted); }
+
+  /* TABS */
+  .tabs { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+  .tab-btn {
+    background: none;
+    border: 1px solid var(--cinza-borda);
+    color: var(--texto-muted);
+    padding: 7px 16px;
+    border-radius: 6px;
+    font-size: 12px;
+    cursor: pointer;
+    font-family: 'Space Mono', monospace;
+    transition: all 0.2s;
+  }
+  .tab-btn.active {
+    background: rgba(82,183,136,0.12);
+    border-color: var(--verde-neon);
+    color: var(--verde-neon);
+  }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* ALERT BOX */
+  .alert {
+    border-left: 3px solid;
+    padding: 12px 16px;
+    border-radius: 0 8px 8px 0;
+    margin: 12px 0;
+    font-size: 13px;
+  }
+  .alert-danger { border-color: var(--vermelho); background: rgba(231,111,81,0.08); color: #fca5a5; }
+  .alert-warn { border-color: var(--amarelo); background: rgba(244,162,97,0.08); color: #fcd34d; }
+  .alert-success { border-color: var(--verde-neon); background: rgba(82,183,136,0.08); color: var(--verde-neon); }
+
+  /* PONTUAÇÃO */
+  .score-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 12px;
+  }
+  .score-card {
+    background: var(--cinza-card);
+    border: 1px solid var(--cinza-borda);
+    border-radius: 10px;
+    padding: 16px;
+  }
+  .score-card .pts {
+    font-family: 'Space Mono', monospace;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--verde-neon);
+  }
+  .score-card .pts-label { font-size: 11px; color: var(--texto-muted); margin-top: 2px; }
+  .score-card .pts-title { font-size: 13px; color: var(--branco); margin-top: 8px; font-weight: 500; }
+  .score-card .pts-items { font-size: 11px; color: var(--texto-muted); margin-top: 6px; line-height: 1.8; }
+
+  /* STICKY NAV */
+  .sticky-nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(26,26,46,0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--cinza-borda);
+    padding: 10px 24px;
+    display: flex;
+    gap: 20px;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+  .sticky-nav a {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--texto-muted);
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: color 0.2s;
+    padding: 4px 0;
+  }
+  .sticky-nav a:hover { color: var(--verde-neon); }
+
+  /* FOOTER */
+  .footer {
+    text-align: center;
+    padding: 32px 24px;
+    color: var(--texto-muted);
+    font-size: 12px;
+    border-top: 1px solid var(--cinza-borda);
+    font-family: 'Space Mono', monospace;
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-tag">Sprint 4 · DDD Java · Quarkus + Oracle</div>
+  <h1>Raiz do Bem<br><span>Guia Completo da Entrega</span></h1>
+  <p class="hero-sub">Análise do código real + o que falta + código pronto para copiar</p>
+
+  <div class="progress-section">
+    <div class="progress-card">
+      <div class="label">Progresso Geral</div>
+      <div class="value">62%</div>
+      <div class="desc">~38% restante para nota máxima</div>
+      <div class="bar-wrap"><div class="bar-fill" style="width:62%"></div></div>
+    </div>
+    <div class="progress-card">
+      <div class="label">Entidades / Models</div>
+      <div class="value">8/8</div>
+      <div class="desc">DTOs com JPA mapeados ✅</div>
+      <div class="bar-wrap"><div class="bar-fill" style="width:100%"></div></div>
+    </div>
+    <div class="progress-card">
+      <div class="label">Controllers com CRUD</div>
+      <div class="value">1/8</div>
+      <div class="desc">Só Endereço tem POST funcional</div>
+      <div class="bar-wrap"><div class="bar-fill" style="width:12%"></div></div>
+    </div>
+    <div class="progress-card">
+      <div class="label">Métodos de Negócio</div>
+      <div class="value">1/4</div>
+      <div class="desc">Só ViaCEP implementado</div>
+      <div class="bar-wrap"><div class="bar-fill" style="width:25%"></div></div>
+    </div>
+    <div class="progress-card">
+      <div class="label">Prazo</div>
+      <div class="value">15d</div>
+      <div class="desc">Entrega: 17/05 — muito viável</div>
+      <div class="bar-wrap"><div class="bar-fill" style="width:100%; background: linear-gradient(90deg, var(--verde-neon), var(--amarelo))"></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- NAV -->
+<div class="sticky-nav">
+  <a href="#diagnostico">Diagnóstico</a>
+  <a href="#exceptions">Exceptions</a>
+  <a href="#metodos">Métodos</a>
+  <a href="#controllers">Controllers</a>
+  <a href="#endpoints">Endpoints</a>
+  <a href="#cronograma">Cronograma</a>
+  <a href="#pontuacao">Pontuação</a>
+</div>
+
+<div class="main">
+
+  <!-- DIAGNÓSTICO -->
+  <div class="section" id="diagnostico">
+    <div class="section-header">
+      <div class="section-icon" style="background:rgba(82,183,136,0.1)">🔍</div>
+      <h2>Diagnóstico Real do Código</h2>
+    </div>
+
+    <div class="alert alert-warn">
+      ⚠️ Análise feita sobre o código enviado — não estimativa. Os itens abaixo refletem o estado real dos arquivos Java.
+    </div>
+
+    <div style="margin-bottom:16px">
+      <strong style="color:var(--verde-neon); font-size:13px">✅ O QUE JÁ FUNCIONA DE VERDADE</strong>
+    </div>
+    <div class="status-grid" style="margin-bottom:24px">
+      <div class="status-item">
+        <div class="status-dot dot-green"></div>
+        <div class="status-text"><strong>8 DTOs com @Entity JPA</strong><span>BeneficiarioDTO, DentistaDTO, PedidoAjudaDTO, AtendimentoDTO, ColaboradorDTO, EnderecoDTO, ProgramaSocialDTO, EspecialidadeDTO</span></div>
+      </div>
+      <div class="status-item">
+        <div class="status-dot dot-green"></div>
+        <div class="status-text"><strong>8 Repositories com Panache</strong><span>Todos implementam PanacheRepository com listAll(), deleteById() etc.</span></div>
+      </div>
+      <div class="status-item">
+        <div class="status-dot dot-green"></div>
+        <div class="status-text"><strong>GET listagem em todos os controllers</strong><span>listarTodos() funcionando em todos os 8 controllers</span></div>
+      </div>
+      <div class="status-item">
+        <div class="status-dot dot-green"></div>
+        <div class="status-text"><strong>DELETE com 404 em 4 controllers</strong><span>Atendimento, Colaborador, Dentista, PedidoAjuda e Endereco</span></div>
+      </div>
+      <div class="status-item">
+        <div class="status-dot dot-green"></div>
+        <div class="status-text"><strong>EnderecoService completo</strong><span>ViaCEP integrado, criar(), validarCep(), listar por cidade, excluir()</span></div>
+      </div>
+      <div class="status-item">
+        <div class="status-dot dot-green"></div>
+        <div class="status-text"><strong>Enums funcionais</strong><span>StatusPedido, Sexo, TipoEndereco</span></div>
+      </div>
+      <div class="status-item">
+        <div class="status-dot dot-green"></div>
+        <div class="status-text"><strong>Swagger/OpenAPI configurado</strong><span>@Tag e @Operation já presentes em vários controllers</span></div>
+      </div>
+    </div>
+
+    <div style="margin-bottom:16px">
+      <strong style="color:var(--amarelo); font-size:13px">🟡 PARCIALMENTE IMPLEMENTADO</strong>
+    </div>
+    <div class="status-grid" style="margin-bottom:24px">
+      <div class="status-item">
+        <div class="status-dot dot-yellow"></div>
+        <div class="status-text"><strong>POST nos controllers</strong><span>Todos retornam string "Criando novo X" — precisam receber body e chamar service.criar()</span></div>
+      </div>
+      <div class="status-item">
+        <div class="status-dot dot-yellow"></div>
+        <div class="status-text"><strong>PUT nos controllers</strong><span>Todos retornam string — lógica de atualização faltando. EnderecoService tem atualizarEndereco() que retorna true hardcoded</span></div>
+      </div>
+      <div class="status-item">
+        <div class="status-dot dot-yellow"></div>
+        <div class="status-text"><strong>buscarPorCpf() nos services</strong><span>BeneficiarioService e AtendimentoService retornam new DTO() vazio — sem lógica real</span></div>
+      </div>
+      <div class="status-item">
+        <div class="status-dot dot-yellow"></div>
+        <div class="status-text"><strong>ValidacaoService</strong><span>Classe existe mas está completamente vazia</span></div>
+      </div>
+    </div>
+
+    <div style="margin-bottom:16px">
+      <strong style="color:var(--vermelho); font-size:13px">🔴 FALTANDO — CAUSA PENALIDADE DIRETA</strong>
+    </div>
+    <div class="status-grid">
+      <div class="status-item">
+        <div class="status-dot dot-red"></div>
+        <div class="status-text"><strong>Camada exception/ — inexistente</strong><span>Nenhuma classe de exceção customizada criada. Penalidade direta de -10pts na camada DAO/BO</span></div>
+      </div>
+      <div class="status-item">
+        <div class="status-dot dot-red"></div>
+        <div class="status-text"><strong>4 métodos de negócio obrigatórios</strong><span>Só ViaCEP conta. Faltam: validarCRO, processarPedido, adicionarBeneficiario + 1</span></div>
+      </div>
+      <div class="status-item">
+        <div class="status-dot dot-red"></div>
+        <div class="status-text"><strong>POST real com body (Beneficiario, Dentista, etc.)</strong><span>Sem @Consumes e sem receber o DTO no body — não é CRUD completo</span></div>
+      </div>
+      <div class="status-item">
+        <div class="status-dot dot-red"></div>
+        <div class="status-text"><strong>buscarPorId() nos services principais</strong><span>Sem método findById nos services de Dentista, Colaborador, PedidoAjuda</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXCEPTIONS -->
+  <div class="section" id="exceptions">
+    <div class="section-header">
+      <div class="section-icon" style="background:rgba(231,111,81,0.1)">🛡️</div>
+      <h2>Camada de Exceções — Criar do Zero</h2>
+      <span class="badge badge-danger">FALTANDO — FAZER PRIMEIRO</span>
+    </div>
+
+    <div class="alert alert-danger">
+      Crie o pacote <code style="background:rgba(255,255,255,0.1);padding:1px 6px;border-radius:3px">br.com.raizdobem.api.exception</code> e adicione os 4 arquivos abaixo. Isso garante os 10pts da camada de Exceções/DAO/BO.
+    </div>
+
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('ex', 'nao-encontrado')">RecursoNaoEncontrado</button>
+      <button class="tab-btn" onclick="switchTab('ex', 'validacao')">ValidacaoException</button>
+      <button class="tab-btn" onclick="switchTab('ex', 'negocio')">RegraDeNegocio</button>
+      <button class="tab-btn" onclick="switchTab('ex', 'mapper')">GlobalExceptionMapper</button>
+    </div>
+
+    <div id="ex-nao-encontrado" class="tab-content active">
+      <div class="code-block">
+        <div class="code-header"><span>RecursoNaoEncontradoException.java</span><button class="copy-btn" onclick="copyCode(this)">copiar</button></div>
+        <pre><span class="kw">package</span> br.com.raizdobem.api.exception;
+
+<span class="kw">public class</span> <span class="cls">RecursoNaoEncontradoException</span> <span class="kw">extends</span> <span class="cls">RuntimeException</span> {
+
+    <span class="kw">public</span> <span class="fn">RecursoNaoEncontradoException</span>(<span class="cls">String</span> mensagem) {
+        <span class="kw">super</span>(mensagem);
+    }
+
+    <span class="kw">public</span> <span class="fn">RecursoNaoEncontradoException</span>(<span class="cls">String</span> entidade, <span class="cls">Long</span> id) {
+        <span class="kw">super</span>(entidade + <span class="str">" com id "</span> + id + <span class="str">" não encontrado(a)."</span>);
+    }
+
+    <span class="kw">public</span> <span class="fn">RecursoNaoEncontradoException</span>(<span class="cls">String</span> entidade, <span class="cls">String</span> campo) {
+        <span class="kw">super</span>(entidade + <span class="str">" com identificador '"</span> + campo + <span class="str">"' não encontrado(a)."</span>);
+    }
+}</pre>
+      </div>
+    </div>
+
+    <div id="ex-validacao" class="tab-content">
+      <div class="code-block">
+        <div class="code-header"><span>ValidacaoException.java</span><button class="copy-btn" onclick="copyCode(this)">copiar</button></div>
+        <pre><span class="kw">package</span> br.com.raizdobem.api.exception;
+
+<span class="kw">public class</span> <span class="cls">ValidacaoException</span> <span class="kw">extends</span> <span class="cls">RuntimeException</span> {
+
+    <span class="kw">public</span> <span class="fn">ValidacaoException</span>(<span class="cls">String</span> mensagem) {
+        <span class="kw">super</span>(mensagem);
+    }
+}</pre>
+      </div>
+    </div>
+
+    <div id="ex-negocio" class="tab-content">
+      <div class="code-block">
+        <div class="code-header"><span>RegraDeNegocioException.java</span><button class="copy-btn" onclick="copyCode(this)">copiar</button></div>
+        <pre><span class="kw">package</span> br.com.raizdobem.api.exception;
+
+<span class="kw">public class</span> <span class="cls">RegraDeNegocioException</span> <span class="kw">extends</span> <span class="cls">RuntimeException</span> {
+
+    <span class="kw">public</span> <span class="fn">RegraDeNegocioException</span>(<span class="cls">String</span> mensagem) {
+        <span class="kw">super</span>(mensagem);
+    }
+}</pre>
+      </div>
+    </div>
+
+    <div id="ex-mapper" class="tab-content">
+      <div class="code-block">
+        <div class="code-header"><span>GlobalExceptionMapper.java</span><button class="copy-btn" onclick="copyCode(this)">copiar</button></div>
+        <pre><span class="kw">package</span> br.com.raizdobem.api.exception;
+
+<span class="kw">import</span> jakarta.ws.rs.core.Response;
+<span class="kw">import</span> jakarta.ws.rs.ext.ExceptionMapper;
+<span class="kw">import</span> jakarta.ws.rs.ext.Provider;
+<span class="kw">import</span> java.util.Map;
+
+<span class="kw">public class</span> <span class="cls">GlobalExceptionMapper</span> {
+
+    <span class="ann">@Provider</span>
+    <span class="kw">public static class</span> <span class="cls">NaoEncontradoMapper</span>
+            <span class="kw">implements</span> <span class="cls">ExceptionMapper</span>&lt;<span class="cls">RecursoNaoEncontradoException</span>&gt; {
+        <span class="ann">@Override</span>
+        <span class="kw">public</span> <span class="cls">Response</span> <span class="fn">toResponse</span>(<span class="cls">RecursoNaoEncontradoException</span> e) {
+            <span class="kw">return</span> <span class="cls">Response</span>.status(<span class="cls">Response</span>.<span class="cls">Status</span>.NOT_FOUND)
+                    .entity(<span class="cls">Map</span>.of(<span class="str">"erro"</span>, e.getMessage()))
+                    .build();
+        }
+    }
+
+    <span class="ann">@Provider</span>
+    <span class="kw">public static class</span> <span class="cls">ValidacaoMapper</span>
+            <span class="kw">implements</span> <span class="cls">ExceptionMapper</span>&lt;<span class="cls">ValidacaoException</span>&gt; {
+        <span class="ann">@Override</span>
+        <span class="kw">public</span> <span class="cls">Response</span> <span class="fn">toResponse</span>(<span class="cls">ValidacaoException</span> e) {
+            <span class="kw">return</span> <span class="cls">Response</span>.status(<span class="cls">Response</span>.<span class="cls">Status</span>.BAD_REQUEST)
+                    .entity(<span class="cls">Map</span>.of(<span class="str">"erro"</span>, e.getMessage()))
+                    .build();
+        }
+    }
+
+    <span class="ann">@Provider</span>
+    <span class="kw">public static class</span> <span class="cls">NegocioMapper</span>
+            <span class="kw">implements</span> <span class="cls">ExceptionMapper</span>&lt;<span class="cls">RegraDeNegocioException</span>&gt; {
+        <span class="ann">@Override</span>
+        <span class="kw">public</span> <span class="cls">Response</span> <span class="fn">toResponse</span>(<span class="cls">RegraDeNegocioException</span> e) {
+            <span class="kw">return</span> <span class="cls">Response</span>.status(<span class="num">422</span>)
+                    .entity(<span class="cls">Map</span>.of(<span class="str">"erro"</span>, e.getMessage()))
+                    .build();
+        }
+    }
+
+    <span class="ann">@Provider</span>
+    <span class="kw">public static class</span> <span class="cls">GenericoMapper</span>
+            <span class="kw">implements</span> <span class="cls">ExceptionMapper</span>&lt;<span class="cls">Exception</span>&gt; {
+        <span class="ann">@Override</span>
+        <span class="kw">public</span> <span class="cls">Response</span> <span class="fn">toResponse</span>(<span class="cls">Exception</span> e) {
+            <span class="kw">return</span> <span class="cls">Response</span>.status(<span class="num">500</span>)
+                    .entity(<span class="cls">Map</span>.of(<span class="str">"erro"</span>, <span class="str">"Erro interno: "</span> + e.getMessage()))
+                    .build();
+        }
+    }
+}</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- MÉTODOS DE NEGÓCIO -->
+  <div class="section" id="metodos">
+    <div class="section-header">
+      <div class="section-icon" style="background:rgba(244,162,97,0.1)">⚙️</div>
+      <h2>4 Métodos de Negócio Obrigatórios</h2>
+      <span class="badge badge-danger">30pts em jogo</span>
+    </div>
+
+    <div class="alert alert-success">
+      ✅ <strong>Método 1 já está pronto:</strong> <code style="background:rgba(255,255,255,0.1);padding:1px 6px;border-radius:3px">EnderecoService.buscarApiViaCep()</code> — integração com ViaCEP completa com validação de CEP.
+    </div>
+    <div class="alert alert-danger">
+      🔴 Faltam 3 métodos. São obrigatórios para não perder 5-10pts por método faltante. Código abaixo funciona direto com sua estrutura.
+    </div>
+
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('met', 'valcro')">Método 2: validarCro()</button>
+      <button class="tab-btn" onclick="switchTab('met', 'processar')">Método 3: processarPedido()</button>
+      <button class="tab-btn" onclick="switchTab('met', 'adicionar')">Método 4: adicionarBeneficiario()</button>
+    </div>
+
+    <div id="met-valcro" class="tab-content active">
+      <p style="font-size:13px;color:var(--texto-muted);margin-bottom:12px">
+        Adicione em <strong style="color:var(--branco)">DentistaService.java</strong> — valida formato e unicidade do CRO antes de cadastrar dentista.
+      </p>
+      <div class="code-block">
+        <div class="code-header"><span>DentistaService.java — adicionar método</span><button class="copy-btn" onclick="copyCode(this)">copiar</button></div>
+        <pre><span class="cmt">// Adicione estes imports no topo:</span>
+<span class="kw">import</span> br.com.raizdobem.api.exception.ValidacaoException;
+<span class="kw">import</span> br.com.raizdobem.api.exception.RegraDeNegocioException;
+<span class="kw">import</span> java.util.Optional;
+
+<span class="cmt">// Adicione este método na classe DentistaService:</span>
+<span class="kw">public boolean</span> <span class="fn">validarCro</span>(<span class="cls">String</span> cro) {
+    <span class="cmt">// Validação 1: campo obrigatório</span>
+    <span class="kw">if</span> (cro == <span class="kw">null</span> || cro.isBlank()) {
+        <span class="kw">throw new</span> <span class="cls">ValidacaoException</span>(<span class="str">"CRO é obrigatório."</span>);
+    }
+
+    <span class="cmt">// Validação 2: formato UF-NNNNN (ex: SP-12345)</span>
+    <span class="kw">if</span> (!cro.matches(<span class="str">"^[A-Z]{2}-\\d{4,6}$"</span>)) {
+        <span class="kw">throw new</span> <span class="cls">ValidacaoException</span>(
+            <span class="str">"CRO inválido. Formato esperado: UF-NNNNN (ex: SP-12345). Recebido: "</span> + cro
+        );
+    }
+
+    <span class="cmt">// Validação 3: CRO único no banco</span>
+    <span class="cls">Optional</span>&lt;<span class="cls">DentistaDTO</span>&gt; existente = repository.find(<span class="str">"croDentista"</span>, cro).firstResultOptional();
+    <span class="kw">if</span> (existente.isPresent()) {
+        <span class="kw">throw new</span> <span class="cls">RegraDeNegocioException</span>(
+            <span class="str">"CRO '"</span> + cro + <span class="str">"' já está cadastrado no sistema."</span>
+        );
+    }
+
+    <span class="kw">return true</span>;
+}
+
+<span class="cmt">// Adicione também o criar() que usa validarCro:</span>
+<span class="ann">@Transactional</span>
+<span class="kw">public</span> <span class="cls">DentistaDTO</span> <span class="fn">criar</span>(<span class="cls">DentistaDTO</span> dto) {
+    validarCro(dto.getCroDentista()); <span class="cmt">// chama a validação</span>
+    repository.criar(dto);
+    <span class="kw">return</span> dto;
+}</pre>
+      </div>
+    </div>
+
+    <div id="met-processar" class="tab-content">
+      <p style="font-size:13px;color:var(--texto-muted);margin-bottom:12px">
+        Adicione em <strong style="color:var(--branco)">PedidoAjudaService.java</strong> — o método mais complexo e mais valorizado. Gerencia transição de status com regras de negócio.
+      </p>
+      <div class="code-block">
+        <div class="code-header"><span>PedidoAjudaService.java — adicionar método</span><button class="copy-btn" onclick="copyCode(this)">copiar</button></div>
+        <pre><span class="cmt">// Adicione estes imports:</span>
+<span class="kw">import</span> br.com.raizdobem.api.exception.*;
+<span class="kw">import</span> br.com.raizdobem.api.model.StatusPedido;
+<span class="kw">import</span> br.com.raizdobem.api.repository.DentistaRepository;
+<span class="kw">import</span> jakarta.inject.Inject;
+<span class="kw">import</span> jakarta.transaction.Transactional;
+<span class="kw">import</span> java.time.LocalDate;
+
+<span class="cmt">// Adicione no topo da classe:</span>
+<span class="ann">@Inject</span>
+<span class="cls">DentistaRepository</span> dentistaRepository;
+
+<span class="cmt">// Método principal:</span>
+<span class="ann">@Transactional</span>
+<span class="kw">public</span> <span class="cls">PedidoAjudaDTO</span> <span class="fn">processarPedido</span>(<span class="cls">Long</span> id, <span class="cls">String</span> novoStatus, <span class="cls">Long</span> idDentista) {
+
+    <span class="cmt">// 1. Buscar pedido — lança 404 se não existir</span>
+    <span class="cls">PedidoAjudaDTO</span> pedido = repository.findById(id);
+    <span class="kw">if</span> (pedido == <span class="kw">null</span>) {
+        <span class="kw">throw new</span> <span class="cls">RecursoNaoEncontradoException</span>(<span class="str">"PedidoAjuda"</span>, id);
+    }
+
+    <span class="cmt">// 2. Validar se o status informado é válido</span>
+    <span class="cls">StatusPedido</span> statusEnum;
+    <span class="kw">try</span> {
+        statusEnum = <span class="cls">StatusPedido</span>.valueOf(novoStatus.toUpperCase());
+    } <span class="kw">catch</span> (<span class="cls">IllegalArgumentException</span> e) {
+        <span class="kw">throw new</span> <span class="cls">ValidacaoException</span>(
+            <span class="str">"Status inválido: '"</span> + novoStatus + <span class="str">"'. Valores válidos: PENDENTE, APROVADO, REJEITADO"</span>
+        );
+    }
+
+    <span class="cmt">// 3. Regra: só PENDENTE pode ser APROVADO</span>
+    <span class="kw">if</span> (statusEnum == <span class="cls">StatusPedido</span>.APROVADO
+            && pedido.getStatus() != <span class="cls">StatusPedido</span>.PENDENTE) {
+        <span class="kw">throw new</span> <span class="cls">RegraDeNegocioException</span>(
+            <span class="str">"Apenas pedidos PENDENTES podem ser APROVADOS. Status atual: "</span>
+            + pedido.getStatus()
+        );
+    }
+
+    <span class="cmt">// 4. Regra: se aprovado com dentista, vincula</span>
+    <span class="kw">if</span> (statusEnum == <span class="cls">StatusPedido</span>.APROVADO && idDentista != <span class="kw">null</span>) {
+        <span class="cls">DentistaDTO</span> dentista = dentistaRepository.findById(idDentista);
+        <span class="kw">if</span> (dentista == <span class="kw">null</span>) {
+            <span class="kw">throw new</span> <span class="cls">RecursoNaoEncontradoException</span>(<span class="str">"Dentista"</span>, idDentista);
+        }
+        pedido.setDentistaDTO(dentista);
+    }
+
+    <span class="cmt">// 5. Regra: pedido REJEITADO não pode ser reaberto</span>
+    <span class="kw">if</span> (pedido.getStatus() == <span class="cls">StatusPedido</span>.REJEITADO) {
+        <span class="kw">throw new</span> <span class="cls">RegraDeNegocioException</span>(
+            <span class="str">"Pedido REJEITADO não pode ter seu status alterado."</span>
+        );
+    }
+
+    pedido.setStatus(statusEnum);
+    <span class="kw">return</span> pedido; <span class="cmt">// @Transactional persiste automaticamente</span>
+}</pre>
+      </div>
+    </div>
+
+    <div id="met-adicionar" class="tab-content">
+      <p style="font-size:13px;color:var(--texto-muted);margin-bottom:12px">
+        Adicione em <strong style="color:var(--branco)">BeneficiarioService.java</strong> — cria beneficiário a partir de pedido aprovado, com validações de negócio.
+      </p>
+      <div class="code-block">
+        <div class="code-header"><span>BeneficiarioService.java — adicionar método</span><button class="copy-btn" onclick="copyCode(this)">copiar</button></div>
+        <pre><span class="cmt">// Adicione imports:</span>
+<span class="kw">import</span> br.com.raizdobem.api.exception.*;
+<span class="kw">import</span> br.com.raizdobem.api.model.StatusPedido;
+<span class="kw">import</span> br.com.raizdobem.api.repository.PedidoAjudaRepository;
+<span class="kw">import</span> br.com.raizdobem.api.repository.ProgramaRepository;
+
+<span class="cmt">// Injete repositórios extras:</span>
+<span class="ann">@Inject</span>
+<span class="cls">PedidoAjudaRepository</span> pedidoRepository;
+
+<span class="ann">@Inject</span>
+<span class="cls">ProgramaRepository</span> programaRepository;
+
+<span class="cmt">// Método:</span>
+<span class="ann">@Transactional</span>
+<span class="kw">public</span> <span class="cls">BeneficiarioDTO</span> <span class="fn">adicionarDePedido</span>(<span class="cls">Long</span> idPedido, <span class="cls">Long</span> idPrograma) {
+
+    <span class="cmt">// 1. Validar pedido existe</span>
+    <span class="cls">PedidoAjudaDTO</span> pedido = pedidoRepository.findById(idPedido);
+    <span class="kw">if</span> (pedido == <span class="kw">null</span>) {
+        <span class="kw">throw new</span> <span class="cls">RecursoNaoEncontradoException</span>(<span class="str">"PedidoAjuda"</span>, idPedido);
+    }
+
+    <span class="cmt">// 2. Regra: pedido precisa estar APROVADO</span>
+    <span class="kw">if</span> (pedido.getStatus() != <span class="cls">StatusPedido</span>.APROVADO) {
+        <span class="kw">throw new</span> <span class="cls">RegraDeNegocioException</span>(
+            <span class="str">"O pedido precisa estar APROVADO para gerar um beneficiário. Status atual: "</span>
+            + pedido.getStatus()
+        );
+    }
+
+    <span class="cmt">// 3. Regra: um pedido gera apenas um beneficiário</span>
+    <span class="kw">long</span> existente = repository.count(<span class="str">"pedido.id"</span>, idPedido);
+    <span class="kw">if</span> (existente > <span class="num">0</span>) {
+        <span class="kw">throw new</span> <span class="cls">RegraDeNegocioException</span>(
+            <span class="str">"Já existe um beneficiário vinculado ao pedido de id "</span> + idPedido
+        );
+    }
+
+    <span class="cmt">// 4. Validar programa social</span>
+    <span class="cls">ProgramaSocialDTO</span> programa = programaRepository.findById(idPrograma);
+    <span class="kw">if</span> (programa == <span class="kw">null</span>) {
+        <span class="kw">throw new</span> <span class="cls">RecursoNaoEncontradoException</span>(<span class="str">"ProgramaSocial"</span>, idPrograma);
+    }
+
+    <span class="cmt">// 5. Criar beneficiário com dados do pedido</span>
+    <span class="cls">BeneficiarioDTO</span> novo = <span class="kw">new</span> <span class="cls">BeneficiarioDTO</span>();
+    novo.setCpf(pedido.getCpf());
+    novo.setNomeCompleto(pedido.getNomeCompleto());
+    novo.setDataNascimento(pedido.getDataNascimento());
+    novo.setTelefone(pedido.getTelefone());
+    novo.setEmail(pedido.getEmail());
+    novo.setPedido(pedido);
+    novo.setProgramaSocialDTO(programa);
+    repository.criar(novo);
+    <span class="kw">return</span> novo;
+}</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTROLLERS -->
+  <div class="section" id="controllers">
+    <div class="section-header">
+      <div class="section-icon" style="background:rgba(130,170,255,0.1)">🔌</div>
+      <h2>Completar Controllers — POST e PUT reais</h2>
+      <span class="badge badge-warn">CRUD incompleto = -10pts</span>
+    </div>
+
+    <div class="alert alert-warn">
+      Todos os seus POSTs retornam uma String hardcoded. Isso não é CRUD. Veja abaixo o padrão que você deve aplicar em cada controller, usando DentistaController como exemplo modelo.
+    </div>
+
+    <div class="code-block">
+      <div class="code-header"><span>DentistaController.java — versão completa com CRUD real</span><button class="copy-btn" onclick="copyCode(this)">copiar</button></div>
+      <pre><span class="kw">package</span> br.com.raizdobem.api.controller;
+
+<span class="kw">import</span> br.com.raizdobem.api.exception.RecursoNaoEncontradoException;
+<span class="kw">import</span> br.com.raizdobem.api.model.Dentista;
+<span class="kw">import</span> br.com.raizdobem.api.service.DentistaService;
+<span class="kw">import</span> jakarta.enterprise.context.RequestScoped;
+<span class="kw">import</span> jakarta.inject.Inject;
+<span class="kw">import</span> jakarta.transaction.Transactional;
+<span class="kw">import</span> jakarta.ws.rs.*;
+<span class="kw">import</span> jakarta.ws.rs.core.MediaType;
+<span class="kw">import</span> jakarta.ws.rs.core.Response;
+<span class="kw">import</span> org.eclipse.microprofile.openapi.annotations.Operation;
+<span class="kw">import</span> org.eclipse.microprofile.openapi.annotations.tags.Tag;
+<span class="kw">import</span> java.util.List;
+
+<span class="ann">@RequestScoped</span>
+<span class="ann">@Path</span>(<span class="str">"/dentista"</span>)
+<span class="ann">@Produces</span>(MediaType.APPLICATION_JSON)
+<span class="ann">@Consumes</span>(MediaType.APPLICATION_JSON)
+<span class="ann">@Tag</span>(name = <span class="str">"Dentista"</span>, description = <span class="str">"Gerenciamento de dentistas parceiros da ONG."</span>)
+<span class="kw">public class</span> <span class="cls">DentistaController</span> {
+
+    <span class="ann">@Inject</span>
+    <span class="cls">DentistaService</span> service;
+
+    <span class="ann">@GET</span>
+    <span class="ann">@Operation</span>(summary = <span class="str">"Lista todos os dentistas cadastrados."</span>)
+    <span class="kw">public</span> <span class="cls">List</span>&lt;<span class="cls">DentistaDTO</span>&gt; <span class="fn">listarTodos</span>() {
+        <span class="kw">return</span> service.listarTodos();
+    }
+
+    <span class="ann">@GET</span>
+    <span class="ann">@Path</span>(<span class="str">"/{cpf}"</span>)
+    <span class="ann">@Operation</span>(summary = <span class="str">"Busca dentista pelo CPF."</span>)
+    <span class="kw">public</span> <span class="cls">Response</span> <span class="fn">buscarPorCpf</span>(<span class="ann">@PathParam</span>(<span class="str">"cpf"</span>) <span class="cls">String</span> cpf) {
+        <span class="kw">return</span> service.buscarPorCpf(cpf)
+                .map(d -> <span class="cls">Response</span>.ok(d).build())
+                .orElseThrow(() -> <span class="kw">new</span> <span class="cls">RecursoNaoEncontradoException</span>(<span class="str">"Dentista"</span>, cpf));
+    }
+
+    <span class="ann">@POST</span>
+    <span class="ann">@Transactional</span>
+    <span class="ann">@Operation</span>(summary = <span class="str">"Cadastra novo dentista com validação de CRO."</span>)
+    <span class="kw">public</span> <span class="cls">Response</span> <span class="fn">criar</span>(<span class="cls">DentistaDTO</span> dto) {
+        <span class="cls">DentistaDTO</span> criado = service.criar(dto); <span class="cmt">// valida CRO internamente</span>
+        <span class="kw">return</span> <span class="cls">Response</span>.status(<span class="cls">Response</span>.<span class="cls">Status</span>.CREATED).entity(criado).build();
+    }
+
+    <span class="ann">@PUT</span>
+    <span class="ann">@Path</span>(<span class="str">"/{cpf}"</span>)
+    <span class="ann">@Transactional</span>
+    <span class="ann">@Operation</span>(summary = <span class="str">"Atualiza dados do dentista pelo CPF."</span>)
+    <span class="kw">public</span> <span class="cls">Response</span> <span class="fn">atualizar</span>(<span class="ann">@PathParam</span>(<span class="str">"cpf"</span>) <span class="cls">String</span> cpf, <span class="cls">DentistaDTO</span> dto) {
+        <span class="cls">DentistaDTO</span> existente = service.buscarPorCpf(cpf)
+                .orElseThrow(() -> <span class="kw">new</span> <span class="cls">RecursoNaoEncontradoException</span>(<span class="str">"Dentista"</span>, cpf));
+        existente.setNomeCompleto(dto.getNomeCompleto());
+        existente.setEmail(dto.getEmail());
+        existente.setTelefone(dto.getTelefone());
+        existente.setDisponivel(dto.getDisponivel());
+        <span class="kw">return</span> <span class="cls">Response</span>.ok(existente).build();
+    }
+
+    <span class="ann">@DELETE</span>
+    <span class="ann">@Path</span>(<span class="str">"/{cpf}"</span>)
+    <span class="ann">@Transactional</span>
+    <span class="ann">@Operation</span>(summary = <span class="str">"Remove dentista pelo CPF."</span>)
+    <span class="kw">public</span> <span class="cls">Response</span> <span class="fn">excluir</span>(<span class="ann">@PathParam</span>(<span class="str">"cpf"</span>) <span class="cls">String</span> cpf) {
+        <span class="kw">long</span> deletado = service.excluir(cpf);
+        <span class="kw">if</span> (deletado == <span class="num">0</span>) <span class="kw">throw new</span> <span class="cls">RecursoNaoEncontradoException</span>(<span class="str">"Dentista"</span>, cpf);
+        <span class="kw">return</span> <span class="cls">Response</span>.noContent().build();
+    }
+
+    <span class="ann">@GET</span>
+    <span class="ann">@Path</span>(<span class="str">"/cidade/{cidade}"</span>)
+    <span class="ann">@Operation</span>(summary = <span class="str">"Lista dentistas por cidade."</span>)
+    <span class="kw">public</span> <span class="cls">List</span>&lt;<span class="cls">DentistaDTO</span>&gt; <span class="fn">listarPorCidade</span>(<span class="ann">@PathParam</span>(<span class="str">"cidade"</span>) <span class="cls">String</span> cidade) {
+        <span class="kw">return</span> service.listarPorCidades(cidade);
+    }
+
+    <span class="cmt">// ENDPOINT DO MÉTODO DE NEGÓCIO:</span>
+    <span class="ann">@POST</span>
+    <span class="ann">@Path</span>(<span class="str">"/validar-cro/{cro}"</span>)
+    <span class="ann">@Operation</span>(summary = <span class="str">"Valida se o CRO informado é válido e único no sistema."</span>)
+    <span class="kw">public</span> <span class="cls">Response</span> <span class="fn">validarCro</span>(<span class="ann">@PathParam</span>(<span class="str">"cro"</span>) <span class="cls">String</span> cro) {
+        <span class="kw">boolean</span> valido = service.validarCro(cro);
+        <span class="kw">return</span> <span class="cls">Response</span>.ok(<span class="cls">Map</span>.of(<span class="str">"cro"</span>, cro, <span class="str">"valido"</span>, valido, <span class="str">"mensagem"</span>, <span class="str">"CRO válido e disponível."</span>)).build();
+    }
+}</pre>
+    </div>
+
+    <div class="alert alert-warn" style="margin-top:16px">
+      📌 <strong>Para DentistaService.buscarPorCpf()</strong>, atualize o método para retornar Optional: <code style="background:rgba(255,255,255,0.08);padding:1px 6px;border-radius:3px">return repository.find("cpf", cpf).firstResultOptional();</code>
+    </div>
+  </div>
+
+  <!-- ENDPOINTS -->
+  <div class="section" id="endpoints">
+    <div class="section-header">
+      <div class="section-icon" style="background:rgba(195,232,141,0.1)">📋</div>
+      <h2>Tabela Completa de Endpoints — Para a Documentação</h2>
+      <span class="badge badge-ok">Use no PDF</span>
+    </div>
+
+    <div style="overflow-x:auto; background:var(--cinza-card); border:1px solid var(--cinza-borda); border-radius:10px">
+      <table class="endpoint-table">
+        <thead>
+          <tr><th>Método</th><th>Endpoint</th><th>Descrição</th><th>Status</th><th>Situação</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><span class="method get">GET</span></td><td class="path-col">/endereco</td><td>Lista todos os endereços</td><td class="status-code">200</td><td><span class="tag-done">✓ pronto</span></td></tr>
+          <tr><td><span class="method get">GET</span></td><td class="path-col">/endereco/id/{id}</td><td>Busca endereço por ID</td><td class="status-code">200 / 404</td><td><span class="tag-done">✓ pronto</span></td></tr>
+          <tr><td><span class="method get">GET</span></td><td class="path-col">/endereco/{cidade}</td><td>Lista endereços por cidade</td><td class="status-code">200</td><td><span class="tag-done">✓ pronto</span></td></tr>
+          <tr><td><span class="method get">GET</span></td><td class="path-col">/endereco/viacep/{cep}</td><td>Consulta CEP na API ViaCEP</td><td class="status-code">200 / 400</td><td><span class="tag-done">✓ pronto</span></td></tr>
+          <tr><td><span class="method post">POST</span></td><td class="path-col">/endereco?cep=&numero=&tipoEndereco=</td><td>Cria endereço via ViaCEP</td><td class="status-code">201 / 400</td><td><span class="tag-done">✓ pronto</span></td></tr>
+          <tr><td><span class="method put">PUT</span></td><td class="path-col">/endereco/{id}</td><td>Atualiza endereço</td><td class="status-code">204 / 404</td><td><span class="tag-done">✓ pronto</span></td></tr>
+          <tr><td><span class="method del">DELETE</span></td><td class="path-col">/endereco/{id}</td><td>Remove endereço</td><td class="status-code">204 / 404</td><td><span class="tag-done">✓ pronto</span></td></tr>
+          <tr><td><span class="method get">GET</span></td><td class="path-col">/dentista</td><td>Lista todos os dentistas</td><td class="status-code">200</td><td><span class="tag-done">✓ pronto</span></td></tr>
+          <tr><td><span class="method get">GET</span></td><td class="path-col">/dentista/{cpf}</td><td>Busca dentista por CPF</td><td class="status-code">200 / 404</td><td><span class="tag-incomplete">implementar</span></td></tr>
+          <tr><td><span class="method post">POST</span></td><td class="path-col">/dentista</td><td>Cadastra dentista (valida CRO)</td><td class="status-code">201 / 400 / 422</td><td><span class="tag-incomplete">implementar</span></td></tr>
+          <tr><td><span class="method post">POST</span></td><td class="path-col">/dentista/validar-cro/{cro}</td><td>Valida formato e unicidade do CRO</td><td class="status-code">200 / 400 / 422</td><td><span class="tag-incomplete">implementar</span></td></tr>
+          <tr><td><span class="method put">PUT</span></td><td class="path-col">/dentista/{cpf}</td><td>Atualiza dados do dentista</td><td class="status-code">200 / 404</td><td><span class="tag-incomplete">implementar</span></td></tr>
+          <tr><td><span class="method del">DELETE</span></td><td class="path-col">/dentista/{cpf}</td><td>Remove dentista</td><td class="status-code">204 / 404</td><td><span class="tag-done">✓ pronto</span></td></tr>
+          <tr><td><span class="method get">GET</span></td><td class="path-col">/beneficiario</td><td>Lista beneficiários</td><td class="status-code">200</td><td><span class="tag-done">✓ pronto</span></td></tr>
+          <tr><td><span class="method post">POST</span></td><td class="path-col">/beneficiario?idPedido=&idPrograma=</td><td>Cria beneficiário de pedido aprovado</td><td class="status-code">201 / 404 / 422</td><td><span class="tag-incomplete">implementar</span></td></tr>
+          <tr><td><span class="method get">GET</span></td><td class="path-col">/pedido-ajuda</td><td>Lista pedidos de ajuda</td><td class="status-code">200</td><td><span class="tag-done">✓ pronto</span></td></tr>
+          <tr><td><span class="method post">POST</span></td><td class="path-col">/pedido-ajuda</td><td>Cria pedido de ajuda</td><td class="status-code">201 / 400</td><td><span class="tag-incomplete">implementar</span></td></tr>
+          <tr><td><span class="method put">PUT</span></td><td class="path-col">/pedido-ajuda/{id}/processar</td><td>Processa status do pedido</td><td class="status-code">200 / 400 / 422</td><td><span class="tag-incomplete">implementar</span></td></tr>
+          <tr><td><span class="method del">DELETE</span></td><td class="path-col">/pedido-ajuda/{id}</td><td>Remove pedido</td><td class="status-code">204 / 404</td><td><span class="tag-done">✓ pronto</span></td></tr>
+          <tr><td><span class="method get">GET</span></td><td class="path-col">/atendimento</td><td>Lista atendimentos</td><td class="status-code">200</td><td><span class="tag-done">✓ pronto</span></td></tr>
+          <tr><td><span class="method post">POST</span></td><td class="path-col">/atendimento</td><td>Registra atendimento</td><td class="status-code">201 / 400</td><td><span class="tag-incomplete">implementar</span></td></tr>
+          <tr><td><span class="method del">DELETE</span></td><td class="path-col">/atendimento/{id}</td><td>Remove atendimento</td><td class="status-code">204 / 404</td><td><span class="tag-done">✓ pronto</span></td></tr>
+          <tr><td><span class="method get">GET</span></td><td class="path-col">/colaborador</td><td>Lista colaboradores</td><td class="status-code">200</td><td><span class="tag-done">✓ pronto</span></td></tr>
+          <tr><td><span class="method post">POST</span></td><td class="path-col">/colaborador</td><td>Cadastra colaborador</td><td class="status-code">201 / 400</td><td><span class="tag-incomplete">implementar</span></td></tr>
+          <tr><td><span class="method del">DELETE</span></td><td class="path-col">/colaborador/{cpf}</td><td>Remove colaborador</td><td class="status-code">204 / 404</td><td><span class="tag-done">✓ pronto</span></td></tr>
+          <tr><td><span class="method get">GET</span></td><td class="path-col">/especialidades</td><td>Lista especialidades odontológicas</td><td class="status-code">200</td><td><span class="tag-done">✓ pronto</span></td></tr>
+          <tr><td><span class="method get">GET</span></td><td class="path-col">/programas-sociais</td><td>Lista programas sociais da ONG</td><td class="status-code">200</td><td><span class="tag-done">✓ pronto</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- CRONOGRAMA -->
+  <div class="section" id="cronograma">
+    <div class="section-header">
+      <div class="section-icon" style="background:rgba(116,198,157,0.1)">📅</div>
+      <h2>Cronograma de 15 Dias — Entrega 17/05</h2>
+      <span class="badge badge-ok">Prazo confortável</span>
+    </div>
+
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-days">Dias 1–2 (Seg/Ter)</div>
+        <div class="tl-title">🛡️ Camada de Exceções — FAZER PRIMEIRO</div>
+        <div class="tl-desc">Criar pacote exception/ com as 4 classes (código está pronto acima). Testar que um GET em ID inexistente retorna JSON de erro 404 no Swagger. Isso é base para tudo.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-days">Dias 3–5 (Qua–Sex)</div>
+        <div class="tl-title">⚙️ 3 Métodos de Negócio + Endpoint /processar</div>
+        <div class="tl-desc">Implementar validarCro(), processarPedido() e adicionarDePedido() nos services. Criar endpoint PUT /pedido-ajuda/{id}/processar no controller. Tirar prints do Swagger de cada um.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-days">Dias 6–8 (Sáb–Seg)</div>
+        <div class="tl-title">🔌 CRUD real nos 4 controllers principais</div>
+        <div class="tl-desc">Completar POST e PUT de: DentistaController, BeneficiarioController, ColaboradorController, PedidoAjudaController. Seguir o padrão do DentistaController acima.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-days">Dias 9–11 (Ter–Qui)</div>
+        <div class="tl-title">🧪 Testes manuais + Prints do Swagger</div>
+        <div class="tl-desc">Testar cada endpoint no Swagger-UI. Tirar print de: GET (200), POST (201), PUT (200), DELETE (204), e erros (404, 422). Organizar em pastas por entidade.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-days">Dias 12–14 (Sex–Dom)</div>
+        <div class="tl-title">📄 Montagem do PDF de Documentação</div>
+        <div class="tl-desc">Capa, objetivo, funcionalidades, explicação dos 4 métodos com prints, tabela de endpoints, prints do Swagger, MER, diagrama de classes, instruções para rodar.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-days">Dia 15 (Seg 16/05)</div>
+        <div class="tl-title">✅ Revisão final + GitHub</div>
+        <div class="tl-desc">Compilação limpa, Swagger funcionando, PDF nomeado corretamente, push no GitHub com README. Entrega 17/05 com folga.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PONTUAÇÃO -->
+  <div class="section" id="pontuacao">
+    <div class="section-header">
+      <div class="section-icon" style="background:rgba(82,183,136,0.1)">🏆</div>
+      <h2>Mapa de Pontuação — Como Atingir 85+</h2>
+    </div>
+
+    <div class="score-grid">
+      <div class="score-card">
+        <div class="pts">15</div>
+        <div class="pts-label">pts — Documentação</div>
+        <div class="pts-title">PDF Completo</div>
+        <div class="pts-items">
+          ✅ Capa com integrantes<br>
+          ✅ Objetivo e escopo<br>
+          ⬜ Explicação dos 4 métodos<br>
+          ⬜ Prints Swagger<br>
+          ✅ MER e Diagrama de Classes<br>
+          ⬜ Tabela de endpoints<br>
+          ⬜ Como rodar a aplicação
+        </div>
+      </div>
+      <div class="score-card">
+        <div class="pts">10</div>
+        <div class="pts-label">pts — Modelo (entities)</div>
+        <div class="pts-title">Camada de Entidades</div>
+        <div class="pts-items">
+          ✅ 8 classes @Entity mapeadas<br>
+          ✅ Atributos, getters/setters (Lombok)<br>
+          ✅ Relacionamentos @ManyToOne<br>
+          ✅ Enums (Sexo, Status, TipoEnd.)<br>
+          <strong style="color:var(--verde-neon)">→ 10/10 já garantido</strong>
+        </div>
+      </div>
+      <div class="score-card">
+        <div class="pts">30</div>
+        <div class="pts-label">pts — Métodos de negócio</div>
+        <div class="pts-title">Lógica + Banco</div>
+        <div class="pts-items">
+          ✅ buscarApiViaCep() — completo<br>
+          ⬜ validarCro() — implementar<br>
+          ⬜ processarPedido() — implementar<br>
+          ⬜ adicionarDePedido() — implementar<br>
+          <strong style="color:var(--amarelo)">→ Atual: ~8/30</strong>
+        </div>
+      </div>
+      <div class="score-card">
+        <div class="pts">10</div>
+        <div class="pts-label">pts — Exceções/DAO/BO</div>
+        <div class="pts-title">Tratamento de Erros</div>
+        <div class="pts-items">
+          ⬜ RecursoNaoEncontrado<br>
+          ⬜ ValidacaoException<br>
+          ⬜ RegraDeNegocioException<br>
+          ⬜ GlobalExceptionMapper<br>
+          <strong style="color:var(--vermelho)">→ Atual: 0/10</strong>
+        </div>
+      </div>
+      <div class="score-card">
+        <div class="pts">35</div>
+        <div class="pts-label">pts — API RESTful</div>
+        <div class="pts-title">Endpoints Quarkus</div>
+        <div class="pts-items">
+          ✅ GETs funcionando<br>
+          ✅ DELETEs com 404<br>
+          ✅ POST Endereço (ViaCEP)<br>
+          ⬜ POSTs restantes (5 entidades)<br>
+          ⬜ PUTs com lógica real<br>
+          <strong style="color:var(--amarelo)">→ Atual: ~12/35</strong>
+        </div>
+      </div>
+    </div>
+
+    <div class="alert alert-success" style="margin-top:20px">
+      🎯 <strong>Meta 85pts é totalmente viável.</strong> Implementar as exceções (+10), os 3 métodos restantes (+22 estimado), os POSTs principais (+15) e documentar (+10 na doc) = ~90pts estimados. O prazo de 15 dias é confortável para esse escopo.
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  Raiz do Bem · Sprint 4 · DDD Java — Quarkus + Oracle · Gerado como guia de entrega
+</div>
+
+<script>
+function switchTab(group, id) {
+  document.querySelectorAll(`[id^="${group}-"]`).forEach(el => {
+    el.classList.remove('active');
+  });
+  document.getElementById(`${group}-${id}`).classList.add('active');
+
+  // update buttons
+  event.target.closest('.tabs').querySelectorAll('.tab-btn').forEach(btn => {
+    btn.classList.remove('active');
+  });
+  event.target.classList.add('active');
+}
+
+function copyCode(btn) {
+  const pre = btn.closest('.code-block').querySelector('pre');
+  const text = pre.innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = 'copiado!';
+    setTimeout(() => btn.textContent = 'copiar', 2000);
+  });
+}
+</script>
+</body>
+</html>

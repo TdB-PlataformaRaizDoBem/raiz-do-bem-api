@@ -1,8 +1,8 @@
 # 📊 STATUS DO PROJETO RAIZ DO BEM — Sprint 4
 
-**Data:** 2 de maio de 2026  
+**Data:** 3 de maio de 2026  
 **Prazo final:** 17 de maio de 2026 (15 dias)  
-**Status global:** 🟡 **49/100 pts estimados**
+**Status global:** 🟡 **~62/100 pts estimados**
 
 > 📄 Auditoria (IA / Claude): `docs/status_projeto_claude/guia-sprint4-raiz-do-bem.html` — **02/05 — 17:37**  
 > Este HTML consolida o **estado real do código** vs. requisitos e um **mapa de pontuação**.
@@ -11,22 +11,22 @@
 
 ## 📈 RESUMO EXECUTIVO
 
-### Números-chave (do relatório IA — 02/05 17:37)
+### Números-chave (código atual + evidências)
 
-- **Progresso geral:** **62%**
-- **Controllers com CRUD “de verdade”:** **1/8** (somente Endereço com POST funcional)
-- **Métodos de negócio obrigatórios:** **1/4** (somente ViaCEP/Endereço conta como método completo)
-- **Camada `exception/`:** faltando no código (requisito direto)
+- **Progresso geral:** **~62%**
+- **Controllers com POST/PUT/DELETE já implementados:** **3/8** (*Endereço, Dentista, Colaborador* — ainda faltam ajustes finos e padronização)
+- **Métodos de negócio obrigatórios (Sprint 3 → Services):** **1/4** (*DentistaService.validarCro*)
+- **Camada `exception/` + mapper global:** ✅ implementada
 
 | Aspecto | Status | Pts | Observação |
 |---|---|---|---|
 | **Arquitetura & Estrutura** | ✅ 100% | 10/10 | Camada modelo organizada (8 entidades + 3 enums) |
 | **Conexão BD (Oracle) + Panache** | ✅ 100% | 15/15 | Dependências OK + `application.properties` via variáveis de ambiente (sem credenciais hardcoded) |
-| **CRUD (estado atual)** | 🟡 35% | 8/23 | GET listagem ok; alguns DELETE ok; POST/PUT ainda com stubs e sem padronização total |
-| **Exceções (camada exception/)** | 🔴 0% | 0/10 | Ainda não existe `exception/` + `GlobalExceptionMapper` |
-| **Métodos de Negócio exigidos (Sprint 3 → Service)** | 🔴 0% | 0/20 | Ainda faltam os 4 métodos obrigatórios (Beneficiário, Dentista, PedidoAjuda, Atendimento) |
-| **Documentação & Evidências** | 🟡 45% | 8/17 | PDF base Sprint 3 + **PDF banco Sprint 4 em evolução** + diagramas + prints Swagger |
-| **TOTAL** | 🟡 **48** | **48/100** | Meta 85+ continua viável em 15 dias com foco nos bloqueadores |
+| **CRUD (estado atual)** | 🟡 50% | 12/23 | GET ok; DELETE ok em vários recursos; POST real em Endereço/Dentista/Colaborador; ainda há stubs em Beneficiário/Atendimento/PedidoAjuda |
+| **Exceções (camada exception/)** | ✅ 100% | 10/10 | Exceções customizadas + `ExceptionsMapperGlobal` retornando `ErroDTO` |
+| **Métodos de Negócio exigidos (Sprint 3 → Service)** | 🟡 25% | 5/20 | `DentistaService.validarCro` implementado; faltam Beneficiário/PedidoAjuda/Atendimento |
+| **Documentação & Evidências** | 🟡 55% | 10/17 | PDFs (Java e DB), diagramas e prints Swagger (GET/DELETE/POST) |
+| **TOTAL** | 🟡 **~62** | **~62/100** | Meta 85+ continua viável em 15 dias com foco nos métodos e CRUD |
 
 ---
 
@@ -46,9 +46,10 @@
 ```
 
 **Comprovação (Swagger):**
-- `docs/prints_swagger/listando_enderecos.png`
-- `docs/prints_swagger/lista_endereco_id.png`
-- `docs/prints_swagger/lista_endereco_cidade.png`
+- `docs/prints_swagger/GET_enderecos.png`
+- `docs/prints_swagger/GET endereco_id.png`
+- `docs/prints_swagger/GET_endereco_cidade.png`
+- `docs/prints_swagger/POST_endereco_sucesso.png`
 
 ### 2️⃣ Endereço com endpoints úteis (GET + DELETE evidenciados)
 
@@ -58,7 +59,7 @@
 ✅ GET /endereco/{cidade}        → filtro por cidade
 ✅ GET /endereco/viacep/{cep}    → consulta externa
 ✅ DELETE /endereco/{id}         → 204 ou 404
-🟡 POST /endereco                → recebe `cep`, `numero`, `tipoEndereco` (query params) e retorna 201
+✅ POST /endereco                → recebe body JSON e retorna 201
 🔴 PUT /endereco/{id}            → ainda está com stub (precisa implementação real)
 ```
 
@@ -95,14 +96,16 @@
 ✅ DDD em camadas: controller → service → repository → model
 ✅ Organizção clara
 ✅ README.md atualizado
-✅ PDF base (Sprint 3) em `docs/Sprint03Java.pdf` (para evoluir para Sprint 4)
-✅ Banco/MER (Sprint 4 em evolução) em `docs/database/Sprint4-Banco-desenvolvendo.pdf`
+✅ PDF base (Sprint 3) em `docs/documentacao-java/Sprint03Java.pdf` (para evoluir para Sprint 4)
+✅ Banco/MER (Sprint 4 em evolução) em `docs/documentacao-database/Sprint4-Banco-desenvolvendo.pdf`
 ✅ Diagramas: `docs/diagrams/`
 ✅ Prints do Swagger: `docs/prints_swagger/` (inclui listagens e tratamentos de erro)
 
 **Novas evidências (prints Swagger):**
-- `lista_especialidades.png`
-- `lista_programas_sociais.png`
+- `GET_especialidades.png`
+- `GET_programa_social.png`
+- `POST_colaborador_sucesso.png`
+- `POST_endereco_sucesso.png`
 - `trata_erro_excluir_dentista.png`
 - `trata_erro_exclusao_atendimento.png`
 - `trata_erro_exclusao_colaborador.png`
@@ -114,20 +117,15 @@
 
 ## 🔴 O QUE FALTA PARA 85+ PTS (CRÍTICO — 15 DIAS)
 
-### 🚨 BLOQUEADOR: Pasta `exception/` (10 pts)
+### ✅ Camada `exception/` (10 pts)
 
-**Precisa:**
-```
-exception/
-  ├── RecursoNaoEncontradoException.java
-  ├── ValidacaoException.java
-  ├── RegraDeNegocioException.java
-  └── GlobalExceptionMapper.java (@Provider)
-```
+Implementada em `src/main/java/br/com/raizdobem/api/exception/` com:
+- `NaoEncontradoException` (404)
+- `ValidacaoException` (422)
+- `RegraNegocioException` (409)
+- `ExceptionsMapperGlobal` (`@Provider`) retornando JSON padronizado (`ErroDTO`)
 
-**Impacto:** Sem isso, os 3 métodos não podem lançar exceções corretas (HTTP 422, 404, 409).
-
-**Tempo estimado:** 1-2 horas
+**Evidência recomendada:** tirar 1 print no Swagger mostrando um 422/409 retornando `ErroDTO`.
 
 ---
 
@@ -146,16 +144,16 @@ exception/
 
 ### 🎮 CRUD COMPLETO EM CONTROLLERS (10 pts)
 
-**O que falta:** Implementar POST, PUT, DELETE REAIS em (falta 5 controllers):
+**O que falta:** eliminar stubs e padronizar POST/PUT/DELETE em todos os recursos:
 
 ```
-✅ EnderecoController       ← JÁ FEITO
-❌ BeneficiarioController  ← POST, PUT, DELETE vazios
-❌ DentistaController      ← POST, PUT, DELETE vazios
-❌ PedidoAjudaController   ← POST, PUT, DELETE vazios
-❌ AtendimentoController   ← POST, PUT, DELETE vazios
-❌ ColaboradorController   ← POST, PUT, DELETE vazios
-(EspecialidadeController, ProgramaSocialController também)
+✅ EnderecoController       ← POST real + GETs + DELETE (PUT ainda stub)
+✅ DentistaController       ← POST/PUT/DELETE implementados
+✅ ColaboradorController    ← POST/PUT/DELETE implementados
+
+🟡 BeneficiarioController   ← GET/PUT/DELETE existem, mas POST e GET/{cpf} ainda estão com stubs
+🟡 AtendimentoController    ← GET e DELETE existem, mas POST/PUT/GET/{cpf} ainda estão com stubs
+🟡 PedidoAjudaController    ← GET e DELETE existem, mas POST/PUT ainda estão com stubs
 ```
 
 **Padrão a seguir (EnderecoController):**
@@ -178,7 +176,7 @@ public Response criar(Beneficiario b) {
 - ✅ Capa (Sprint 3 — copie e mude para Sprint 4)
 - ✅ Diagrama de Classes
 - ✅ Fluxo Central
-- ✅ 3 prints simples de GET
+- ✅ Prints Swagger de GET/POST e tratamentos de erro (404) em exclusões
 
 **Falta adicionar:**
 - ❌ **Descrição dos 4 métodos** (1 pág cada) com print do Swagger mostrando execução
@@ -390,23 +388,22 @@ FINAL:
 
 ## 🚀 PRÓXIMOS PASSOS IMEDIATOS (HOJE)
 
-1. **Crie o arquivo** `exception/RecursoNaoEncontradoException.java`
-2. **Crie o arquivo** `exception/ValidacaoException.java`
-3. **Crie o arquivo** `exception/RegraDeNegocioException.java`
-4. **Crie o arquivo** `exception/GlobalExceptionMapper.java`
-5. **Faça commit:** `git add -A && git commit -m "feat: add exception layer"`
+1. **BeneficiarioService.adicionar(idPedido, idPrograma)** (regra: pedido precisa estar APROVADO)
+2. **PedidoAjudaService.processarPedido(...)** (aprova/rejeita e, se aprovado, cria beneficiário)
+3. **AtendimentoService.encerrar(...)** (data_final + prontuário + colaborador)
+4. **Eliminar stubs** em `BeneficiarioController` / `AtendimentoController` / `PedidoAjudaController`
+5. **Capturar evidências** no Swagger:
+   - 1 print de 422/409 retornando `ErroDTO` via `ExceptionsMapperGlobal`
+   - 1 print de cada um dos 4 métodos obrigatórios
 6. **Teste:** `./mvnw compile`
-
-**Tempo:** ~1 hora  
-**Ganho:** +10 pts bloqueador para os métodos
 
 ---
 
 ## 📞 RESUMO EM UMA LINHA
 
-> **Você está a 55% da nota. Faltam 3 métodos + exceptions + docs. Com 15 dias + 20-26 horas focadas, chega facilmente em 85-90%.**
+> **Você está em ~62% da nota. Faltam 3 métodos obrigatórios + remover stubs dos controllers + fechar PDF. Com 15 dias + 20-26 horas focadas, chega facilmente em 85-90%.**
 
-**Comece HOJE pelas exceptions. Dia 2 começar método 1. Até dia 10, tudo pronto. Dias 11-12, revisão. Dia 13, entrega.**
+**Comece HOJE pelo Beneficiário (método de negócio #1). Até dia 10, tudo pronto. Dias 11-12, revisão. Dia 13, entrega.**
 
-Quer que eu comece implementando as exceptions agora? 🚀
+Quer que eu te ajude agora a implementar o método `BeneficiarioService.adicionar(...)` com as regras da Sprint 3 (e já preparar o endpoint/print no Swagger)?
 
