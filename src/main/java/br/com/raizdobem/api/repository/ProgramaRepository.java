@@ -11,4 +11,8 @@ public class ProgramaRepository implements PanacheRepository<ProgramaSocial> {
     public List<ProgramaSocial> listarTodos(){
         return listAll();
     }
+
+    public ProgramaSocial buscarPorId(long id){
+        return findById(id);
+    }
 }

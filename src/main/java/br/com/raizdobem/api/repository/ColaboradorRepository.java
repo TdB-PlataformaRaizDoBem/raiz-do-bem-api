@@ -7,7 +7,6 @@ import jakarta.enterprise.context.ApplicationScoped;
 
 import java.util.List;
 
-
 @ApplicationScoped
 public class ColaboradorRepository implements PanacheRepository<Colaborador> {
 
@@ -21,6 +20,10 @@ public class ColaboradorRepository implements PanacheRepository<Colaborador> {
 
     public Colaborador buscarPorCpf(String cpf){
         return find("cpf", cpf).firstResult();
+    }
+
+    public Colaborador buscarPorId(long id){
+        return findById(id);
     }
 
     public void atualizar(String cpf, AtualizarColaboradorDTO request){

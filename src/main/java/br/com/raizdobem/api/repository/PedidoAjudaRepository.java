@@ -1,6 +1,5 @@
 package br.com.raizdobem.api.repository;
 
-import br.com.raizdobem.api.dto.AtualizarColaboradorDTO;
 import br.com.raizdobem.api.dto.AtualizarPedidoAjudaDTO;
 import br.com.raizdobem.api.model.PedidoAjuda;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
@@ -17,6 +16,10 @@ public class PedidoAjudaRepository implements PanacheRepository<PedidoAjuda> {
 
     public void criar(PedidoAjuda pedidoAjudaDTO){
         persist(pedidoAjudaDTO);
+    }
+
+    public PedidoAjuda buscarPorCpf(String cpf){
+        return find("cpf", cpf).firstResult();
     }
 
     public void atualizar(String cpf, AtualizarPedidoAjudaDTO request){

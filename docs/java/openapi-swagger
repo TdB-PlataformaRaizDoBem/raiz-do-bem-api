@@ -12,7 +12,7 @@ tags:
 - name: Endereco
   description: Disponibiliza funcionalidades relacionadas aos endereços.
 - name: Especialidades
-  description: Disponibiliza visualizção das especialidades gerais dos dentistas.
+  description: Disponibiliza visualização das especialidades gerais dos dentistas.
 - name: Pedido Ajuda
   description: Disponibiliza funcionalidades relacionadas aos pedidos de ajuda.
 - name: Programas
@@ -37,6 +37,53 @@ components:
           $ref: "#/components/schemas/Dentista"
         colaborador:
           $ref: "#/components/schemas/Colaborador"
+    AtualizarAtendimentoDTO:
+      type: object
+      properties:
+        prontuario:
+          type: string
+        idColaborador:
+          type: integer
+          format: int32
+        dataFinal:
+          $ref: "#/components/schemas/LocalDate"
+    AtualizarBeneficiarioDTO:
+      type: object
+      properties:
+        telefone:
+          type: string
+        email:
+          type: string
+        idEndereco:
+          type: integer
+          format: int32
+    AtualizarColaboradorDTO:
+      type: object
+      properties:
+        email:
+          type: string
+    AtualizarDentistaDTO:
+      type: object
+      properties:
+        telefone:
+          type: string
+        email:
+          type: string
+        categoriaDentista:
+          type: string
+        idEndereco:
+          type: integer
+          format: int32
+        disponivel:
+          type: string
+    AtualizarPedidoAjudaDTO:
+      type: object
+      properties:
+        StatusPedido:
+          type: string
+        idDentista:
+          type: integer
+          format: int32
     Beneficiario:
       type: object
       properties:
@@ -75,7 +122,45 @@ components:
           $ref: "#/components/schemas/LocalDate"
         email:
           type: string
-    ColaboradorRequestDTO:
+    CriarAtendimentoDTO:
+      type: object
+      properties:
+        prontuario:
+          type: string
+        dataInicial:
+          $ref: "#/components/schemas/LocalDate"
+        dataFinal:
+          $ref: "#/components/schemas/LocalDate"
+        idBeneficiario:
+          type: integer
+          format: int64
+        idDentista:
+          type: integer
+          format: int64
+    CriarBeneficiarioDTO:
+      type: object
+      properties:
+        cpf:
+          type: string
+          pattern: "^\\d{11}$"
+        nomeCompleto:
+          type: string
+        dataNascimento:
+          $ref: "#/components/schemas/LocalDate"
+        telefone:
+          type: string
+        email:
+          type: string
+        idPedidoAjuda:
+          type: integer
+          format: int64
+        idEndereco:
+          type: integer
+          format: int64
+        idProgramaSocial:
+          type: integer
+          format: int64
+    CriarColaboradorDTO:
       type: object
       properties:
         cpf:
@@ -88,6 +173,51 @@ components:
           $ref: "#/components/schemas/LocalDate"
         email:
           type: string
+    CriarDentistaDTO:
+      type: object
+      properties:
+        croDentista:
+          type: string
+          pattern: "^(?i)CRO[-/ ]?[A-Z]{2}[-/ ]?\\d{4,7}$"
+        cpf:
+          type: string
+          pattern: "^\\d{11}$"
+        nomeCompleto:
+          type: string
+        sexo:
+          type: string
+        email:
+          type: string
+        telefone:
+          type: string
+        categoria:
+          type: string
+        disponivel:
+          type: string
+        id_endereco:
+          type: integer
+          format: int64
+    CriarPedidoAjudaDTO:
+      type: object
+      properties:
+        cpf:
+          type: string
+          pattern: "^\\d{11}$"
+        nome:
+          type: string
+        dataNascimento:
+          $ref: "#/components/schemas/LocalDate"
+        sexo:
+          type: string
+        telefone:
+          type: string
+        email:
+          type: string
+        descricaoProblema:
+          type: string
+        idEndereco:
+          type: integer
+          format: int64
     Dentista:
       type: object
       properties:
@@ -112,28 +242,6 @@ components:
           type: string
         endereco:
           $ref: "#/components/schemas/Endereco"
-    DentistaRequestCriacaoDTO:
-      type: object
-      properties:
-        croDentista:
-          type: string
-        cpf:
-          type: string
-        nomeCompleto:
-          type: string
-        sexo:
-          type: string
-        email:
-          type: string
-        telefone:
-          type: string
-        categoria:
-          type: string
-        disponivel:
-          type: string
-        id_endereco:
-          type: integer
-          format: int64
     Endereco:
       type: object
       properties:
@@ -247,13 +355,20 @@ paths:
     post:
       tags:
       - Atendimento
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CriarAtendimentoDTO"
+        required: true
       responses:
         "200":
           description: OK
           content:
             application/json:
-              schema:
-                type: string
+              schema: {}
+        "400":
+          description: Bad Request
       summary: Criar
   /atendimento/{cpf}:
     get:
@@ -293,20 +408,20 @@ paths:
     put:
       tags:
       - Atendimento
-      parameters:
-      - name: id
-        in: path
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AtualizarAtendimentoDTO"
         required: true
-        schema:
-          type: integer
-          format: int64
       responses:
         "200":
           description: OK
           content:
             application/json:
-              schema:
-                type: string
+              schema: {}
+        "400":
+          description: Bad Request
       summary: Atualizar
   /beneficiario:
     get:
@@ -326,13 +441,20 @@ paths:
       summary: Endpoint para a criação de beneficiários.
       tags:
       - Beneficiario
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CriarBeneficiarioDTO"
+        required: true
       responses:
         "200":
           description: OK
           content:
             application/json:
-              schema:
-                type: string
+              schema: {}
+        "400":
+          description: Bad Request
   /beneficiario/{cpf}:
     delete:
       summary: Endpoint para apagar beneficiário existente.
@@ -377,12 +499,20 @@ paths:
         required: true
         schema:
           type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AtualizarBeneficiarioDTO"
+        required: true
       responses:
         "200":
           description: OK
           content:
             application/json:
               schema: {}
+        "400":
+          description: Bad Request
   /colaborador:
     get:
       summary: Endpoint para a listagem de colaboradores.
@@ -405,7 +535,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/ColaboradorRequestDTO"
+              $ref: "#/components/schemas/CriarColaboradorDTO"
         required: true
       responses:
         "200":
@@ -432,8 +562,8 @@ paths:
           content:
             application/json:
               schema: {}
-    put:
-      summary: Endpoint para a atualização de colaborador.
+    get:
+      summary: Endpoint para exibir colaborador único.
       tags:
       - Colaborador
       parameters:
@@ -447,7 +577,32 @@ paths:
           description: OK
           content:
             application/json:
+              schema:
+                $ref: "#/components/schemas/Colaborador"
+    put:
+      summary: Endpoint para a atualização de colaborador.
+      tags:
+      - Colaborador
+      parameters:
+      - name: cpf
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AtualizarColaboradorDTO"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
               schema: {}
+        "400":
+          description: Bad Request
   /dentista:
     get:
       summary: Endpoint para a listagem de todos os dentistas.
@@ -470,7 +625,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/DentistaRequestCriacaoDTO"
+              $ref: "#/components/schemas/CriarDentistaDTO"
         required: true
       responses:
         "200":
@@ -480,7 +635,44 @@ paths:
               schema: {}
         "400":
           description: Bad Request
+  /dentista/cidade/{cidade}:
+    get:
+      summary: Endpoint para a listagem de todos os dentistas de uma cidade específica.
+      tags:
+      - Dentista
+      parameters:
+      - name: cidade
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Dentista"
   /dentista/{cpf}:
+    get:
+      summary: Endpoint para a listagem de um único dentista.
+      tags:
+      - Dentista
+      parameters:
+      - name: cpf
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Dentista"
     delete:
       summary: Endpoint para a exclusão de dentista.
       tags:
@@ -507,12 +699,20 @@ paths:
         required: true
         schema:
           type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AtualizarDentistaDTO"
+        required: true
       responses:
         "200":
           description: OK
           content:
             application/json:
               schema: {}
+        "400":
+          description: Bad Request
   /endereco:
     get:
       summary: Endpoint para a listagem de todos os endereços.
@@ -538,12 +738,13 @@ paths:
               $ref: "#/components/schemas/EnderecoRequestDTO"
         required: true
       responses:
-        "201":
-          description: Endereço criado com sucesso
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema: {}
         "400":
-          description: Dados de endereço inválidos
-        "422":
-          description: Regra de negócio inválida
+          description: Bad Request
   /endereco/id/{id}:
     get:
       summary: Endpoint para buscar endereço específico pelo id.
@@ -629,12 +830,20 @@ paths:
         schema:
           type: integer
           format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EnderecoRequestDTO"
+        required: true
       responses:
         "200":
           description: OK
           content:
             application/json:
               schema: {}
+        "400":
+          description: Bad Request
   /especialidades:
     get:
       tags:
@@ -666,13 +875,20 @@ paths:
     post:
       tags:
       - Pedido Ajuda
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CriarPedidoAjudaDTO"
+        required: true
       responses:
         "200":
           description: OK
           content:
             application/json:
-              schema:
-                type: string
+              schema: {}
+        "400":
+          description: Bad Request
       summary: Criar
   /pedido-ajuda/{id}:
     delete:
@@ -701,14 +917,21 @@ paths:
         required: true
         schema:
           type: integer
-          format: int32
+          format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AtualizarPedidoAjudaDTO"
+        required: true
       responses:
         "200":
           description: OK
           content:
             application/json:
-              schema:
-                type: string
+              schema: {}
+        "400":
+          description: Bad Request
       summary: Atualizar
   /programas-sociais:
     get:

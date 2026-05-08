@@ -23,7 +23,7 @@ public class AtendimentoRepository implements PanacheRepository<Atendimento> {
     }
 
     public void atualizar(String cpf, AtualizarAtendimentoDTO request) {
-        update("prontuario = ?1, id_colaborador = ?2, data_final = ?3 where cpf = ?4",
+        update("prontuario = ?1, idColaborador = ?2, dataFinal = ?3 where cpf = ?4",
                 request.getProntuario(), request.getIdColaborador(), request.getDataFinal(), cpf);
     }
 

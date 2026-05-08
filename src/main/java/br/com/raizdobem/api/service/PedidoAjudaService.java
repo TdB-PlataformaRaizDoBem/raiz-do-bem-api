@@ -1,10 +1,13 @@
 package br.com.raizdobem.api.service;
 
+import br.com.raizdobem.api.dto.AtualizarPedidoAjudaDTO;
 import br.com.raizdobem.api.dto.CriarPedidoAjudaDTO;
+import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.model.Endereco;
 import br.com.raizdobem.api.model.PedidoAjuda;
 import br.com.raizdobem.api.model.Sexo;
 import br.com.raizdobem.api.model.StatusPedido;
+import br.com.raizdobem.api.repository.EnderecoRepository;
 import br.com.raizdobem.api.repository.PedidoAjudaRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -21,6 +24,11 @@ public class PedidoAjudaService {
     @Inject
     PedidoAjudaRepository repository;
 
+    @Inject
+    EnderecoRepository enderecoRepository;
+    @Inject
+    PedidoAjudaRepository pedidoAjudaRepository;
+
     @Transactional
     public PedidoAjuda criar(CriarPedidoAjudaDTO dto) {
         PedidoAjuda pedidoAjuda = new PedidoAjuda();
@@ -28,26 +36,26 @@ public class PedidoAjudaService {
         pedidoAjuda.setCpf(dto.getCpf());
         pedidoAjuda.setNomeCompleto(dto.getNome());
         pedidoAjuda.setDataNascimento(dto.getDataNascimento());
-
         pedidoAjuda.setStatus(StatusPedido.PENDENTE);
+
         if(dto.getSexo().equals("M")){
             if(invalidarHomens(dto.getDataNascimento())){
                 pedidoAjuda.setStatus(StatusPedido.REJEITADO);
             }
         }
 
-        Sexo sexoSolicitante = Sexo.valueOf(dto.getSexo());
-        pedidoAjuda.setSexo(sexoSolicitante);
-
-
+        pedidoAjuda.setSexo(Sexo.valueOf(dto.getSexo().toUpperCase()));
         pedidoAjuda.setTelefone(dto.getTelefone());
         pedidoAjuda.setEmail(dto.getEmail());
         pedidoAjuda.setDescricaoProblema(dto.getDescricaoProblema());
         pedidoAjuda.setDataPedido(LocalDate.now());
-        int enderecoSolicitante = dto.getIdEndereco();
 
-//        Corrigir como linkar o endereco ao pedido de ajuda, pois o idEndereco é um inteiro e o pedidoAjuda tem um objeto do tipo Endereco, não um inteiro
-//        pedidoAjuda.setEndereco(dto.getIdEndereco());
+        Endereco endereco = enderecoRepository.buscarPeloId(dto.getIdEndereco());
+        if(endereco == null){
+            throw new NaoEncontradoException("Endereço não encontrado.");
+        }
+        pedidoAjuda.setEndereco(endereco);
+
         repository.criar(pedidoAjuda);
         return pedidoAjuda;
     }
@@ -57,8 +65,9 @@ public class PedidoAjudaService {
     }
 
     @Transactional
-    public void atualizarPedido(){
-
+    public PedidoAjuda processarPedido(long id, AtualizarPedidoAjudaDTO dto){
+        PedidoAjuda pedido = pedidoAjudaRepository.findById(id);
+        return pedido;
     }
     @Transactional
     public boolean excluir(Long id) {

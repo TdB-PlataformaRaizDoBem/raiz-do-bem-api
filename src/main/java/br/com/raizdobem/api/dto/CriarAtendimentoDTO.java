@@ -11,6 +11,6 @@ public class CriarAtendimentoDTO {
     private String prontuario;
     private LocalDate dataInicial;
     private LocalDate dataFinal = null;
-    private int id_beneficiario;
-    private int id_dentista;
+    private long idBeneficiario;
+    private long idDentista;
 }

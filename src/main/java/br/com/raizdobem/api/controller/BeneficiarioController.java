@@ -1,5 +1,6 @@
 package br.com.raizdobem.api.controller;
 
+import br.com.raizdobem.api.dto.AtualizarBeneficiarioDTO;
 import br.com.raizdobem.api.dto.CriarBeneficiarioDTO;
 import br.com.raizdobem.api.exception.RequisicaoInvalidaException;
 import br.com.raizdobem.api.model.Beneficiario;
@@ -10,6 +11,7 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
 import java.util.Collections;
@@ -22,6 +24,8 @@ import java.util.List;
 public class BeneficiarioController {
     @Inject
     BeneficiarioService service;
+    @Inject
+    BeneficiarioService beneficiarioService;
 
     @GET
     @Operation(summary = "Endpoint de listagem dos beneficiários cadastrados.")
@@ -49,9 +53,9 @@ public class BeneficiarioController {
     @PUT
     @Path("/{cpf}")
     @Operation(summary = "Endpoint de atualização de informações de beneficiário.")
-    public Response atualizar(@PathParam("cpf") String cpf){
-        Beneficiario beneficiario = service.atualizar(cpf);
-        return Response.status(Response.Status.OK).entity(beneficiario).build();
+    public Response atualizar(@PathParam("cpf") String cpf, @RequestBody AtualizarBeneficiarioDTO dto){
+        Beneficiario beneficiario = beneficiarioService.atualizar(cpf, dto);
+        return Response.ok().entity(beneficiario).build();
     }
 
     @DELETE

@@ -14,7 +14,7 @@ import java.util.List;
 
 @RequestScoped
 @Path("/especialidades")
-@Tag(name = "Especialidades", description = "Disponibiliza visualizção das especialidades gerais dos dentistas.")
+@Tag(name = "Especialidades", description = "Disponibiliza visualização das especialidades gerais dos dentistas.")
 public class EspecialidadeController {
     @Inject
     EspecialidadeService service;

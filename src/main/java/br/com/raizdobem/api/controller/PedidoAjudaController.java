@@ -1,5 +1,6 @@
 package br.com.raizdobem.api.controller;
 
+import br.com.raizdobem.api.dto.AtualizarPedidoAjudaDTO;
 import br.com.raizdobem.api.dto.CriarPedidoAjudaDTO;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.exception.RequisicaoInvalidaException;
@@ -11,6 +12,7 @@ import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
 import java.util.Collections;
@@ -39,11 +41,12 @@ public class PedidoAjudaController {
         return Response.status(Response.Status.CREATED).entity(pedidoAjuda).build();
     }
 
-//    @PUT
-//    @Path("/{id}")
-//    public String atualizar(@PathParam("id") long id){
-//        return service.atualizarPedido();
-//    }
+    @PUT
+    @Path("/{id}")
+    public Response atualizar(@PathParam("id") long id, @RequestBody AtualizarPedidoAjudaDTO dto){
+        PedidoAjuda pedido = service.processarPedido(id, dto);
+        return Response.ok(pedido).build();
+    }
 
     @DELETE
     @Path("/{id}")

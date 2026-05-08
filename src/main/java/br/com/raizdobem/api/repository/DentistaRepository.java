@@ -22,6 +22,10 @@ public class DentistaRepository implements PanacheRepository<Dentista> {
         return find("cpf", cpf).firstResult();
     }
 
+    public Dentista buscarPorId(long id){
+        return findById(id);
+    }
+
     public List<Dentista> listarPorCidade(String cidade){
         return list("cidade = ?1", cidade);
     }

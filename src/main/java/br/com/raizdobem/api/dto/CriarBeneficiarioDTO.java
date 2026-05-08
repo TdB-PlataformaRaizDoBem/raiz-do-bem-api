@@ -15,7 +15,7 @@ public class CriarBeneficiarioDTO {
     private LocalDate dataNascimento;
     private String telefone;
     private String email;
-    private int idPedidoAjuda;
-    private int idEndereco;
-    private int idProgramaSocial;
+    private long idPedidoAjuda;
+    private long idEndereco;
+    private long idProgramaSocial;
 }

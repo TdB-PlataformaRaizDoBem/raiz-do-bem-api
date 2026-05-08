@@ -21,6 +21,11 @@ public class BeneficiarioRepository implements PanacheRepository<Beneficiario> {
     public Beneficiario buscarPorCpf(String cpf){
         return find("cpf", cpf).firstResult();
     }
+
+    public Beneficiario buscarPorId(long id){
+        return findById(id);
+    }
+
     public Beneficiario atualizar(String cpf, AtualizarBeneficiarioDTO request){
         return find("cpf", cpf).firstResult();
     }

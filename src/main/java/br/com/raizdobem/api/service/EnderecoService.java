@@ -2,6 +2,7 @@ package br.com.raizdobem.api.service;
 
 import br.com.raizdobem.api.dto.EnderecoRequestDTO;
 import br.com.raizdobem.api.dto.ResponseViaCepDTO;
+import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.exception.RegraNegocioException;
 import br.com.raizdobem.api.model.Endereco;
 import br.com.raizdobem.api.repository.EnderecoRepository;
@@ -36,18 +37,18 @@ public class EnderecoService {
 
             Endereco endereco = new Endereco();
 
-            endereco.setCep(cep); //CEP sem parênteses
+            endereco.setCep(cep);
             endereco.setLogradouro(viaCep.getLogradouro());
             endereco.setBairro(viaCep.getBairro());
             endereco.setCidade(viaCep.getLocalidade());
             endereco.setEstado(viaCep.getUf());
-
             endereco.setNumero(dto.getNumero());
+
             TipoEndereco tipoEndereco = null;
 
-            if (dto.getTipoEndereco().equals("RESIDENCIAL")) {
+            if (dto.getTipoEndereco().equalsIgnoreCase("RESIDENCIAL")) {
                 tipoEndereco = TipoEndereco.RESIDENCIAL;
-            } else if(dto.getTipoEndereco().equals("PROFISSIONAL")){
+            } else if(dto.getTipoEndereco().equalsIgnoreCase("PROFISSIONAL")){
                 tipoEndereco = TipoEndereco.PROFISSIONAL;
             }
 
@@ -119,16 +120,36 @@ public class EnderecoService {
     }
 
     @Transactional
-    public boolean atualizarEndereco(Long id) {
-        return true;
+    public Endereco atualizarEndereco(Long id, EnderecoRequestDTO dto) {
+        Gson gson = new Gson();
+        Endereco endereco = buscaPorId(id);
+        if(endereco == null)
+            throw new NaoEncontradoException("Endereço não encontrado.");
+
+        endereco.setCep(dto.getCep());
+
+        String response = buscarApiViaCep(endereco.getCep());
+        ResponseViaCepDTO viaCep = gson.fromJson(response, ResponseViaCepDTO.class);
+
+        endereco.setLogradouro(viaCep.getLogradouro());
+        endereco.setBairro(viaCep.getBairro());
+        endereco.setCidade(viaCep.getLocalidade());
+        endereco.setEstado(viaCep.getUf());
+
+        TipoEndereco tipoEndereco = null;
+
+        if (dto.getTipoEndereco().equalsIgnoreCase("RESIDENCIAL")) {
+            tipoEndereco = TipoEndereco.RESIDENCIAL;
+        } else if(dto.getTipoEndereco().equalsIgnoreCase("PROFISSIONAL")){
+            tipoEndereco = TipoEndereco.PROFISSIONAL;
+        }
+        endereco.setTipoEndereco(tipoEndereco);
+        endereco.setNumero(dto.getNumero());
+
+        repository.persist(endereco);
+        return endereco;
     }
-//
-//    public boolean validarTipoEndereco(int opc){
-//        if (opc != 1 && opc != 2) {
-//            throw new RuntimeException("Tipo de endereço inválido! Escolha 1 para Residencial ou 2 para Profissional.");
-//        }
-//        return true;
-//    }
+
     @Transactional
     public boolean excluir(Long id) {
         return repository.excluir(id);

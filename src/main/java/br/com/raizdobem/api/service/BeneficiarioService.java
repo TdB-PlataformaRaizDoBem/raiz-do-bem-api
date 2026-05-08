@@ -2,9 +2,15 @@ package br.com.raizdobem.api.service;
 
 import br.com.raizdobem.api.dto.AtualizarBeneficiarioDTO;
 import br.com.raizdobem.api.dto.CriarBeneficiarioDTO;
+import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.exception.ValidacaoException;
 import br.com.raizdobem.api.model.Beneficiario;
+import br.com.raizdobem.api.model.Endereco;
+import br.com.raizdobem.api.model.PedidoAjuda;
 import br.com.raizdobem.api.repository.BeneficiarioRepository;
+import br.com.raizdobem.api.repository.EnderecoRepository;
+import br.com.raizdobem.api.repository.PedidoAjudaRepository;
+import br.com.raizdobem.api.repository.ProgramaRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -16,6 +22,16 @@ public class BeneficiarioService {
     @Inject
     BeneficiarioRepository repository;
 
+    @Inject
+    PedidoAjudaRepository pedidoRepository;
+
+    @Inject
+    EnderecoRepository enderecoRepository;
+
+    @Inject
+    ProgramaRepository programaRepository;
+
+
     @Transactional
     public Beneficiario criarBeneficiario(CriarBeneficiarioDTO dto) {
         Beneficiario beneficiario = new Beneficiario();
@@ -26,13 +42,22 @@ public class BeneficiarioService {
         else
             throw new ValidacaoException("CPF inserido é inválido");
 
+        PedidoAjuda pedido = pedidoRepository.buscarPorCpf(dto.getCpf());
+        if(beneficiario.getCpf().equals(pedido.getCpf())){
+            beneficiario.setNomeCompleto(pedido.getNomeCompleto());
+            beneficiario.setDataNascimento(pedido.getDataNascimento());
+            beneficiario.setTelefone(pedido.getTelefone());
+            beneficiario.setEmail(pedido.getEmail());
+            beneficiario.setEndereco(pedido.getEndereco());
+        }
         beneficiario.setNomeCompleto(dto.getNomeCompleto());
         beneficiario.setDataNascimento(dto.getDataNascimento());
         beneficiario.setTelefone(dto.getTelefone());
         beneficiario.setEmail(dto.getEmail());
-        //idPedido
+
+
         //idEndereco
-        //idProgramaSocial - vem do pedido
+        //idProgramaSocial
 
         repository.criar(beneficiario);
         return beneficiario;

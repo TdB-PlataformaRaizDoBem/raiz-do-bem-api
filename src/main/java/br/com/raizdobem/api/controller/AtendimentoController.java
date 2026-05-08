@@ -1,5 +1,6 @@
 package br.com.raizdobem.api.controller;
 
+import br.com.raizdobem.api.dto.AtualizarAtendimentoDTO;
 import br.com.raizdobem.api.dto.CriarAtendimentoDTO;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.exception.RequisicaoInvalidaException;
@@ -10,6 +11,7 @@ import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
 import java.util.Collections;
@@ -48,11 +50,12 @@ public class AtendimentoController {
         }
     }
 
-//    @PUT
-//    @Path("/{id}")
-//    public String atualizar(@PathParam("id") long id){
-//        return service.atualizarAtendimento(cpf, request);
-//    }
+    @PUT
+    @Path("/{id}")
+    public Response atualizar(@PathParam("cpf") String cpf, @RequestBody AtualizarAtendimentoDTO dto){
+        service.encerrarAtendimento(cpf, dto);
+        return Response.ok().build();
+    }
 
     @DELETE
     @Path("/{id}")
