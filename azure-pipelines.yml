@@ -14,19 +14,19 @@ variables:
   # resourceGroup: 'rg-seu-projeto'   # comentado por enquanto
 steps:
   # Tarefa CORRETA para instalar Java 21
-  - task: JavaToolInstaller@0
-    inputs:
-      versionSpec: '21'
-      jdkArchitectureOption: 'x64'
-      jdkSourceOption: 'PreInstalled'
+ # - task: JavaToolInstaller@0
+ #   inputs:
+ #     versionSpec: '21'
+ #     jdkArchitectureOption: 'x64'
+ #     jdkSourceOption: 'PreInstalled'
 
   - script: mvn -B clean package -DskipTests
     displayName: 'Build Maven'
 
- # - task: PublishBuildArtifacts@1
- #   inputs:
- #     PathtoPublish: 'target'
- #     ArtifactName: 'drop'            
+  - task: PublishBuildArtifacts@1
+    inputs:
+      PathtoPublish: 'target'
+      ArtifactName: 'drop'            
 
   # - task: AzureWebApp@1          
   #   displayName: 'Deploy to Azure Web App'
