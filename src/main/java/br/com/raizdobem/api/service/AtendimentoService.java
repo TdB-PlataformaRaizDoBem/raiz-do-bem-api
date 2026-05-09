@@ -7,12 +7,11 @@ import br.com.raizdobem.api.entity.Atendimento;
 import br.com.raizdobem.api.entity.Beneficiario;
 import br.com.raizdobem.api.entity.Dentista;
 import br.com.raizdobem.api.repository.AtendimentoRepository;
-import br.com.raizdobem.api.repository.BeneficiarioRepository;
-import br.com.raizdobem.api.repository.DentistaRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @ApplicationScoped
@@ -21,25 +20,25 @@ public class AtendimentoService {
     AtendimentoRepository repository;
 
     @Inject
-    BeneficiarioRepository beneficiarioRepository;
+    BeneficiarioService beneficiarioService;
 
     @Inject
-    DentistaRepository dentistaRepository;
+    DentistaService dentistaService;
 
     @Transactional
     public Atendimento criarAtendimento(CriarAtendimentoDTO dto){
         Atendimento atendimento = new Atendimento();
 
-        Beneficiario beneficiario = beneficiarioRepository.buscarPorId(dto.getIdBeneficiario());
+        Beneficiario beneficiario = beneficiarioService.buscarPorId(dto.getBeneficiario().getId());
         if(beneficiario == null)
             throw new NaoEncontradoException("Beneficiário não foi encontrado.");
 
-        Dentista dentista = dentistaRepository.buscarPorId(dto.getIdDentista());
+        Dentista dentista = dentistaService.buscarPorId(dto.getDentista().getId());
         if(dentista == null)
             throw new NaoEncontradoException("Dentista não foi encontrado.");
 
         atendimento.setProntuario(dto.getProntuario());
-        atendimento.setDataInicial(dto.getDataInicial());
+        atendimento.setDataInicial(LocalDate.now());
         atendimento.setBeneficiario(beneficiario);
         atendimento.setDentista(dentista);
 

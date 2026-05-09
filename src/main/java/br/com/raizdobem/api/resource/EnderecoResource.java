@@ -1,4 +1,4 @@
-package br.com.raizdobem.api.controller;
+package br.com.raizdobem.api.resource;
 
 import br.com.raizdobem.api.dto.EnderecoRequestDTO;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
@@ -19,7 +19,7 @@ import java.util.List;
 @Path("/endereco")
 @Tag(name = "Endereco", description = "Disponibiliza funcionalidades relacionadas aos endereços.")
 @Produces(MediaType.APPLICATION_JSON)
-public class EnderecoController {
+public class EnderecoResource {
     @Inject
     EnderecoService service;
 

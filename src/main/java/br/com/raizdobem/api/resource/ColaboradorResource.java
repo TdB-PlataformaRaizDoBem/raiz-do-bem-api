@@ -1,4 +1,4 @@
-package br.com.raizdobem.api.controller;
+package br.com.raizdobem.api.resource;
 
 import br.com.raizdobem.api.dto.AtualizarColaboradorDTO;
 import br.com.raizdobem.api.dto.CriarColaboradorDTO;
@@ -20,7 +20,7 @@ import java.util.List;
 @Path("/colaborador")
 @Tag(name = "Colaborador", description = "Disponibiliza funcionalidades relacionadas a colaboradores.")
 @Produces(MediaType.APPLICATION_JSON)
-public class ColaboradorController {
+public class ColaboradorResource {
     @Inject
     ColaboradorService service;
 

@@ -3,6 +3,7 @@ package br.com.raizdobem.api.service;
 import br.com.raizdobem.api.dto.AtualizarColaboradorDTO;
 import br.com.raizdobem.api.dto.CriarColaboradorDTO;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
+import br.com.raizdobem.api.exception.ValidacaoException;
 import br.com.raizdobem.api.entity.Colaborador;
 import br.com.raizdobem.api.repository.ColaboradorRepository;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -20,9 +21,10 @@ public class ColaboradorService {
     public Colaborador criarColaborador(CriarColaboradorDTO dto) {
         Colaborador colaborador = new Colaborador();
 
-        if(ValidacaoService.validarCpf(dto.getCpf())){
-            colaborador.setCpf(dto.getCpf());
+        if (!ValidacaoService.validarCpf(dto.getCpf())) {
+            throw new ValidacaoException("CPF inserido é inválido");
         }
+        colaborador.setCpf(dto.getCpf());
 
         colaborador.setNomeCompleto(dto.getNomeCompleto());
         colaborador.setDataNascimento(dto.getDataNascimento());

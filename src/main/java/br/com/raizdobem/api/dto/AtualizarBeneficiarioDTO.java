@@ -8,5 +8,5 @@ import lombok.NoArgsConstructor;
 public class AtualizarBeneficiarioDTO {
     private String telefone;
     private String email;
-    private int idEndereco;
+//    private Long idEndereco;
 }

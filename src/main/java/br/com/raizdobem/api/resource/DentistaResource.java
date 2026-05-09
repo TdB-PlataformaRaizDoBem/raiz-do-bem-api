@@ -1,4 +1,4 @@
-package br.com.raizdobem.api.controller;
+package br.com.raizdobem.api.resource;
 
 import br.com.raizdobem.api.dto.AtualizarDentistaDTO;
 import br.com.raizdobem.api.dto.CriarDentistaDTO;
@@ -22,7 +22,8 @@ import java.util.List;
 @Path("/dentista")
 @Tag(name = "Dentista", description = "Disponibiliza funcionalidades relacionadas a dentistas.")
 @Produces(MediaType.APPLICATION_JSON)
-public class DentistaController {
+@Consumes(MediaType.APPLICATION_JSON)
+public class DentistaResource {
     @Inject
     DentistaService service;
 
@@ -40,6 +41,13 @@ public class DentistaController {
     @Operation(summary = "Endpoint para a listagem de todos os dentistas.")
     public List<Dentista> listarTodos(){
         return service.listarTodos();
+    }
+
+    @GET
+    @Path("/disponiveis")
+    @Operation(summary = "Endpoint para a listagem de dentistas disponíveis.")
+    public List<Dentista> listarDisponiveis() {
+        return service.listarDisponiveis();
     }
 
     @GET

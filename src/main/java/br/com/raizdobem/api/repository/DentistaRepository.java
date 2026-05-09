@@ -27,7 +27,11 @@ public class DentistaRepository implements PanacheRepository<Dentista> {
     }
 
     public List<Dentista> listarPorCidade(String cidade){
-        return list("cidade = ?1", cidade);
+        return list("endereco.cidade = ?1", cidade);
+    }
+
+    public List<Dentista> listarDisponiveis() {
+        return list("disponivel", "S");
     }
 
     public Dentista atualizar(String cpf, AtualizarDentistaDTO request) {

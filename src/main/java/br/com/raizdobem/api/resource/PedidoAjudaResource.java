@@ -1,4 +1,4 @@
-package br.com.raizdobem.api.controller;
+package br.com.raizdobem.api.resource;
 
 import br.com.raizdobem.api.dto.AtualizarPedidoAjudaDTO;
 import br.com.raizdobem.api.dto.CriarPedidoAjudaDTO;
@@ -14,6 +14,7 @@ import jakarta.ws.rs.core.Response;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RequestScoped
@@ -21,13 +22,19 @@ import java.util.List;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Tag(name = "Pedido Ajuda", description = "Disponibiliza funcionalidades relacionadas aos pedidos de ajuda.")
-public class PedidoAjudaController {
+public class PedidoAjudaResource {
     @Inject
     PedidoAjudaService service;
 
     @GET
     public List<PedidoAjuda> listarTodos(){
         return service.listarTodos();
+    }
+
+    @GET
+    @Path("/data/{data}")
+    public List<PedidoAjuda> listarPorData(@PathParam("data") String data) {
+        return service.listarPorData(LocalDate.parse(data));
     }
 
     @POST

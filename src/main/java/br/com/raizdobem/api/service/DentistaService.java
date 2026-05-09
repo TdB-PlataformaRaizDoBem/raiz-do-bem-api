@@ -2,6 +2,7 @@ package br.com.raizdobem.api.service;
 
 import br.com.raizdobem.api.dto.AtualizarDentistaDTO;
 import br.com.raizdobem.api.dto.CriarDentistaDTO;
+import br.com.raizdobem.api.entity.Especialidade;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.exception.ValidacaoException;
 import br.com.raizdobem.api.entity.Dentista;
@@ -15,13 +16,15 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 @ApplicationScoped
 public class DentistaService {
     @Inject
     DentistaRepository repository;
+
     @Inject
-    EnderecoRepository enderecoRepository;
+    EnderecoService enderecoService;
 
     @Transactional
     public Dentista criarDentista(@Valid CriarDentistaDTO dto){
@@ -41,7 +44,7 @@ public class DentistaService {
         dentista.setTelefone(dto.getTelefone());
         dentista.setEmail(dto.getEmail());
         dentista.setCategoria(dto.getCategoria());
-        Endereco endereco = enderecoRepository.buscarPeloId(dto.getId_endereco());
+        Endereco endereco = enderecoService.buscaPorId(dto.getId_endereco());
         if(endereco == null)
             throw new NaoEncontradoException("Endereço não encontrado!");
         else
@@ -55,6 +58,14 @@ public class DentistaService {
 
     public List<Dentista> listarTodos() {
         return repository.listarTodos();
+    }
+
+    public List<Dentista> listarDisponiveis() {
+        return repository.listarDisponiveis();
+    }
+
+    public Dentista buscarPorId(Long id) {
+        return repository.findById(id);
     }
 
     public Dentista exibirDentista(String cpf) {
@@ -74,8 +85,4 @@ public class DentistaService {
     public long excluir(String cpf) {
         return repository.excluir(cpf);
     }
-
-//    public boolean validarCro(String cro){
-//        return cro!=null && cro.matches("^[a-zA-Z]{2,}\\d{2}$");
-//    }
 }

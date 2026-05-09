@@ -2,12 +2,12 @@ package br.com.raizdobem.api.service;
 
 import br.com.raizdobem.api.dto.AtualizarPedidoAjudaDTO;
 import br.com.raizdobem.api.dto.CriarPedidoAjudaDTO;
+import br.com.raizdobem.api.entity.*;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
-import br.com.raizdobem.api.entity.Endereco;
-import br.com.raizdobem.api.entity.PedidoAjuda;
-import br.com.raizdobem.api.entity.Sexo;
-import br.com.raizdobem.api.entity.StatusPedido;
+import br.com.raizdobem.api.exception.RegraNegocioException;
+import br.com.raizdobem.api.exception.ValidacaoException;
 import br.com.raizdobem.api.repository.EnderecoRepository;
+import br.com.raizdobem.api.repository.DentistaRepository;
 import br.com.raizdobem.api.repository.PedidoAjudaRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -23,9 +23,13 @@ public class PedidoAjudaService {
     PedidoAjudaRepository repository;
 
     @Inject
-    EnderecoRepository enderecoRepository;
+    EnderecoService enderecoService;
+
     @Inject
-    PedidoAjudaRepository pedidoAjudaRepository;
+    DentistaService dentistaService;
+
+    @Inject
+    BeneficiarioService beneficiarioService;
 
     @Transactional
     public PedidoAjuda criar(CriarPedidoAjudaDTO dto) {
@@ -36,10 +40,8 @@ public class PedidoAjudaService {
         pedidoAjuda.setDataNascimento(dto.getDataNascimento());
         pedidoAjuda.setStatus(StatusPedido.PENDENTE);
 
-        if(dto.getSexo().equals("M")){
-            if(invalidarHomens(dto.getDataNascimento())){
-                pedidoAjuda.setStatus(StatusPedido.REJEITADO);
-            }
+        if (!validarIdade(dto.getDataNascimento())) {
+            pedidoAjuda.setStatus(StatusPedido.REJEITADO);
         }
 
         pedidoAjuda.setSexo(Sexo.valueOf(dto.getSexo().toUpperCase()));
@@ -48,7 +50,7 @@ public class PedidoAjudaService {
         pedidoAjuda.setDescricaoProblema(dto.getDescricaoProblema());
         pedidoAjuda.setDataPedido(LocalDate.now());
 
-        Endereco endereco = enderecoRepository.buscarPeloId(dto.getIdEndereco());
+        Endereco endereco = enderecoService.buscaPorId(dto.getIdEndereco());
         if(endereco == null){
             throw new NaoEncontradoException("Endereço não encontrado.");
         }
@@ -62,9 +64,17 @@ public class PedidoAjudaService {
         return repository.listarTodos();
     }
 
+    public PedidoAjuda buscarPorCpf(String cpf) {
+        return repository.buscarPorCpf(cpf);
+    }
+
+    public List<PedidoAjuda> listarPorData(LocalDate dataPedido) {
+        return repository.listarPorData(dataPedido);
+    }
+
     @Transactional
     public PedidoAjuda processarPedido(long id, AtualizarPedidoAjudaDTO dto){
-        PedidoAjuda pedido = pedidoAjudaRepository.findById(id);
+        PedidoAjuda pedido = repository.findById(id);
         return pedido;
     }
     @Transactional
@@ -72,7 +82,10 @@ public class PedidoAjudaService {
         return repository.excluir(id);
     }
 
-    public static boolean invalidarHomens(LocalDate dataNasc){
+    public static boolean validarIdade(LocalDate dataNasc){
+        if (dataNasc == null) {
+            return false;
+        }
         Period idade = Period.between(dataNasc, LocalDate.now());
         return idade.getYears() >= 18;
     }

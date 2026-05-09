@@ -1,4 +1,4 @@
-package br.com.raizdobem.api.controller;
+package br.com.raizdobem.api.resource;
 
 import br.com.raizdobem.api.dto.AtualizarAtendimentoDTO;
 import br.com.raizdobem.api.dto.CriarAtendimentoDTO;
@@ -20,7 +20,8 @@ import java.util.List;
 @Path("/atendimento")
 @Tag(name = "Atendimento", description = "Disponibiliza funcionalidades relacionadas aos atendimentos.")
 @Produces(MediaType.APPLICATION_JSON)
-public class AtendimentoController {
+@Consumes(MediaType.APPLICATION_JSON)
+public class AtendimentoResource {
     @Inject
     AtendimentoService service;
     
@@ -30,27 +31,26 @@ public class AtendimentoController {
     }
 
     @POST
-    public Response criar(CriarAtendimentoDTO request){
+    public Response criar(CriarAtendimentoDTO request) {
         Atendimento atendimento = service.criarAtendimento(request);
-        if(atendimento == null){
-            throw new RequisicaoInvalidaException("Não foi possível criar o atendimento. Dados inválidos.");
+        if (atendimento == null) {
+            throw new RequisicaoInvalidaException("Não foi possível criar atendimento.");
         }
-        return Response.status(Response.Status.CREATED).entity(atendimento).build();
+        return Response.ok(atendimento).build();
     }
 
     @GET
     @Path("/{cpf}")
     public Response buscarPorCpf(@PathParam("cpf") String cpf){
-        try{
-            Atendimento atendimento = service.buscarPorCpf(cpf);
-            return Response.ok(atendimento).build();
-        } catch (RuntimeException e) {
-            return Response.status(Response.Status.BAD_REQUEST).build();
+        Atendimento atendimento = service.buscarPorCpf(cpf);
+        if (atendimento == null) {
+            throw new NaoEncontradoException("Não foi possível encontrar atendimento com o CPF inserido.");
         }
+        return Response.ok(atendimento).build();
     }
 
     @PUT
-    @Path("/{id}")
+    @Path("/{cpf}")
     public Response atualizar(@PathParam("cpf") String cpf, @RequestBody AtualizarAtendimentoDTO dto){
         service.encerrarAtendimento(cpf, dto);
         return Response.ok().build();

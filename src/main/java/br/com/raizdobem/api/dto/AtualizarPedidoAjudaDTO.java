@@ -6,6 +6,6 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class AtualizarPedidoAjudaDTO {
-    private String StatusPedido;
-    private int idDentista;
+    private String statusPedido;
+    private Long idDentista;
 }

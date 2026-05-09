@@ -2,6 +2,10 @@ package br.com.raizdobem.api.service;
 
 import br.com.raizdobem.api.dto.AtualizarBeneficiarioDTO;
 import br.com.raizdobem.api.dto.CriarBeneficiarioDTO;
+import br.com.raizdobem.api.dto.EnderecoRequestDTO;
+import br.com.raizdobem.api.entity.Endereco;
+import br.com.raizdobem.api.entity.ProgramaSocial;
+import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.exception.ValidacaoException;
 import br.com.raizdobem.api.entity.Beneficiario;
 import br.com.raizdobem.api.entity.PedidoAjuda;
@@ -21,13 +25,13 @@ public class BeneficiarioService {
     BeneficiarioRepository repository;
 
     @Inject
-    PedidoAjudaRepository pedidoRepository;
+    PedidoAjudaService pedidoAjudaService;
 
     @Inject
-    EnderecoRepository enderecoRepository;
+    EnderecoService enderecoService;
 
     @Inject
-    ProgramaRepository programaRepository;
+    ProgramaService programaService;
 
 
     @Transactional
@@ -40,7 +44,7 @@ public class BeneficiarioService {
         else
             throw new ValidacaoException("CPF inserido é inválido");
 
-        PedidoAjuda pedido = pedidoRepository.buscarPorCpf(dto.getCpf());
+        PedidoAjuda pedido = pedidoAjudaService.buscarPorCpf(dto.getCpf());
         if(beneficiario.getCpf().equals(pedido.getCpf())){
             beneficiario.setNomeCompleto(pedido.getNomeCompleto());
             beneficiario.setDataNascimento(pedido.getDataNascimento());
@@ -53,10 +57,11 @@ public class BeneficiarioService {
         beneficiario.setTelefone(dto.getTelefone());
         beneficiario.setEmail(dto.getEmail());
 
+        ProgramaSocial programaSocial = programaService.buscarPorId(dto.getIdProgramaSocial());
+        if(programaSocial == null)
+            throw new NaoEncontradoException("Programa social não encontrado.");
 
-        //idEndereco
-        //idProgramaSocial
-
+        beneficiario.setProgramaSocial(programaSocial);
         repository.criar(beneficiario);
         return beneficiario;
     }
@@ -65,8 +70,20 @@ public class BeneficiarioService {
         return repository.buscarPorCpf(cpf);
     }
 
+    public Beneficiario buscarPorId(Long id) {
+        return repository.buscarPorId(id);
+    }
+
     public List<Beneficiario> listarTodos() {
         return repository.listarTodos();
+    }
+
+    public List<Beneficiario> listarPorCidade(String cidade) {
+        return repository.listarPorCidade(cidade);
+    }
+
+    public List<Beneficiario> listarPorPrograma(long idProgramaSocial) {
+        return repository.listarPorPrograma(idProgramaSocial);
     }
 
     @Transactional

@@ -15,4 +15,8 @@ public class EspecialidadeService {
     public List<Especialidade> listarEspecialidades() {
         return repository.listarTodas();
     }
+
+    public Especialidade buscarPorId(Long id) {
+        return repository.findById(id);
+    }
 }

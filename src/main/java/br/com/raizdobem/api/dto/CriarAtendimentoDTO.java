@@ -1,5 +1,7 @@
 package br.com.raizdobem.api.dto;
 
+import br.com.raizdobem.api.entity.Beneficiario;
+import br.com.raizdobem.api.entity.Dentista;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -11,6 +13,6 @@ public class CriarAtendimentoDTO {
     private String prontuario;
     private LocalDate dataInicial;
     private LocalDate dataFinal = null;
-    private long idBeneficiario;
-    private long idDentista;
+    private Beneficiario beneficiario;
+    private Dentista dentista;
 }

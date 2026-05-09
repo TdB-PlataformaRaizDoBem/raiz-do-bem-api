@@ -1,4 +1,4 @@
-package br.com.raizdobem.api.controller;
+package br.com.raizdobem.api.resource;
 
 import br.com.raizdobem.api.dto.AtualizarBeneficiarioDTO;
 import br.com.raizdobem.api.dto.CriarBeneficiarioDTO;
@@ -20,11 +20,10 @@ import java.util.List;
 @Path("/beneficiario")
 @Tag(name = "Beneficiario", description = "Disponibiliza funcionalidades relacionadas aos beneficiários.")
 @Produces(MediaType.APPLICATION_JSON)
-public class BeneficiarioController {
+@Consumes(MediaType.APPLICATION_JSON)
+public class BeneficiarioResource {
     @Inject
     BeneficiarioService service;
-    @Inject
-    BeneficiarioService beneficiarioService;
 
     @GET
     @Operation(summary = "Endpoint de listagem dos beneficiários cadastrados.")
@@ -49,11 +48,25 @@ public class BeneficiarioController {
         return service.buscarPorCpf(cpf);
     }
 
+    @GET
+    @Path("/cidade/{cidade}")
+    @Operation(summary = "Endpoint para listar beneficiários por cidade.")
+    public List<Beneficiario> listarPorCidade(@PathParam("cidade") String cidade) {
+        return service.listarPorCidade(cidade);
+    }
+
+    @GET
+    @Path("/programa/{idProgramaSocial}")
+    @Operation(summary = "Endpoint para listar beneficiários por programa social.")
+    public List<Beneficiario> listarPorPrograma(@PathParam("idProgramaSocial") long idProgramaSocial) {
+        return service.listarPorPrograma(idProgramaSocial);
+    }
+
     @PUT
     @Path("/{cpf}")
     @Operation(summary = "Endpoint de atualização de informações de beneficiário.")
     public Response atualizar(@PathParam("cpf") String cpf, @RequestBody AtualizarBeneficiarioDTO dto){
-        Beneficiario beneficiario = beneficiarioService.atualizar(cpf, dto);
+        Beneficiario beneficiario = service.atualizar(cpf, dto);
         return Response.ok().entity(beneficiario).build();
     }
 

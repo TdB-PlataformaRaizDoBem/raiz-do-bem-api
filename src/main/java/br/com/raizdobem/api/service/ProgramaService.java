@@ -15,4 +15,8 @@ public class ProgramaService {
     public List<ProgramaSocial> listarProgramasSociais() {
         return repository.listarTodos();
     }
+
+    public ProgramaSocial buscarPorId(Long id) {
+        return repository.findById(id);
+    }
 }

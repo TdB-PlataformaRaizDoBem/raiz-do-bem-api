@@ -12,7 +12,6 @@ import lombok.NoArgsConstructor;
 @Table(name = "programa_social")
 public class ProgramaSocial {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_programa")
     private Long id;
     private String programa;

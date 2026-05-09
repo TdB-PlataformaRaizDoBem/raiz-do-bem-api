@@ -26,6 +26,14 @@ public class BeneficiarioRepository implements PanacheRepository<Beneficiario> {
         return findById(id);
     }
 
+    public List<Beneficiario> listarPorCidade(String cidade) {
+        return list("endereco.cidade = ?1", cidade);
+    }
+
+    public List<Beneficiario> listarPorPrograma(long idProgramaSocial) {
+        return list("programaSocial.id = ?1", idProgramaSocial);
+    }
+
     public Beneficiario atualizar(String cpf, AtualizarBeneficiarioDTO request){
         return find("cpf", cpf).firstResult();
     }

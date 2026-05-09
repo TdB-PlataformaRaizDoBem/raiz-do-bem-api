@@ -19,12 +19,11 @@ public class AtendimentoRepository implements PanacheRepository<Atendimento> {
     }
 
     public Atendimento buscarPeloCpf(String cpf){
-        return find("cpf", cpf).firstResult();
+        return find("beneficiario.cpf", cpf).firstResult();
     }
 
     public void atualizar(String cpf, AtualizarAtendimentoDTO request) {
-        update("prontuario = ?1, idColaborador = ?2, dataFinal = ?3 where cpf = ?4",
-                request.getProntuario(), request.getIdColaborador(), request.getDataFinal(), cpf);
+        buscarPeloCpf(cpf);
     }
 
     public boolean excluir(Long id) {

@@ -35,7 +35,7 @@ public class ExceptionsMapperGlobal implements ExceptionMapper<Exception> {
         }
 
         return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                .entity(new ErroDTO(500, "Erro interno do servidor: " + e.getMessage()))
+                .entity(new ErroDTO(500, "Erro interno do servidor."))
                 .build();
     }
 

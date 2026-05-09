@@ -21,6 +21,7 @@ public class Dentista {
     @Column(name = "cro")
     private String croDentista;
 
+    @Column(name = "cpf")
     private String cpf;
 
     @JsonProperty("nomeCompleto")
@@ -28,12 +29,19 @@ public class Dentista {
     private String nomeCompleto;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "sexo")
     private Sexo sexo;
 
+    @Column(name = "email")
     private String email;
+
+    @Column(name = "telefone")
     private String telefone;
+
+    @Column(name = "categoria")
     private String categoria;
 
+    @Column(name = "disponivel")
     private String disponivel;
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_endereco")
