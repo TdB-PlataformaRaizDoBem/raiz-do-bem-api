@@ -42,6 +42,10 @@ public class ColaboradorService {
         return repository.buscarPorCpf(cpf);
     }
 
+    public Colaborador buscarPorId(Long id){
+        return repository.buscarPorId(id);
+    }
+
     @Transactional
     public void atualizarColaborador(String cpf, AtualizarColaboradorDTO request) {
         Colaborador colaboradorEncontrado = repository.buscarPorCpf(cpf);

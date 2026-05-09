@@ -72,26 +72,16 @@ public class EnderecoService {
         return repository.listarPorCidade(cidade);
     }
 
-//    public void atualizar(int id, Endereco enderecoAtualizado) {
-//        Endereco endereco = repository.buscarPorId(id);
+//    public Endereco validarEndereco(String cep, String numero, TipoEndereco tipoEndereco) {
+//        String enderecoResponse = buscarApiViaCep(cep);
+//        Gson gson = new Gson();
+//        JsonObject jsonObject = gson.fromJson(enderecoResponse, JsonObject.class);
 //
-//        if(endereco == null){
-//            throw new RuntimeException("Endereço não encontrado!!!");
-//        }
-//        repository.atualizar(id, enderecoAtualizado);
+//        Endereco endereco = gson.fromJson(enderecoResponse, Endereco.class);
+//        endereco.setCidade(jsonObject.get("cidade").getAsString());
+//
+//        return endereco;
 //    }
-
-
-    public Endereco validarEndereco(String cep, String numero, TipoEndereco tipoEndereco) {
-        String enderecoResponse = buscarApiViaCep(cep);
-        Gson gson = new Gson();
-        JsonObject jsonObject = gson.fromJson(enderecoResponse, JsonObject.class);
-
-        Endereco endereco = gson.fromJson(enderecoResponse, Endereco.class);
-        endereco.setCidade(jsonObject.get("cidade").getAsString());
-
-        return endereco;
-    }
 
     public String buscarApiViaCep(String cep) {
         String url = "https://viacep.com.br/ws/%s/json/".formatted(cep);

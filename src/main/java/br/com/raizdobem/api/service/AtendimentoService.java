@@ -2,6 +2,7 @@ package br.com.raizdobem.api.service;
 
 import br.com.raizdobem.api.dto.AtualizarAtendimentoDTO;
 import br.com.raizdobem.api.dto.CriarAtendimentoDTO;
+import br.com.raizdobem.api.entity.Colaborador;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.entity.Atendimento;
 import br.com.raizdobem.api.entity.Beneficiario;
@@ -24,6 +25,9 @@ public class AtendimentoService {
 
     @Inject
     DentistaService dentistaService;
+
+    @Inject
+    ColaboradorService colaboradorService;
 
     @Transactional
     public Atendimento criarAtendimento(CriarAtendimentoDTO dto){
@@ -55,12 +59,26 @@ public class AtendimentoService {
     }
 
     @Transactional
-    public void encerrarAtendimento(String cpf, AtualizarAtendimentoDTO request){
-        Atendimento atendimentoEncontrado = repository.buscarPeloCpf(cpf);
-        if(atendimentoEncontrado == null){
+    public void encerrarAtendimento(String cpf, AtualizarAtendimentoDTO dto){
+        Atendimento atendimento = repository.buscarPeloCpf(cpf);
+        if(atendimento == null){
             throw new NaoEncontradoException("Atendimento não encontrado");
         }
-        repository.atualizar(cpf, request);
+
+        if(dto.getProntuario() == null)
+            throw new NaoEncontradoException("Prontuário inválido, não foi possível atualizar atendimento.");
+        atendimento.setProntuario(dto.getProntuario());
+
+        if(dto.getIdColaborador() != null) {
+            Colaborador colaborador = colaboradorService.buscarPorId(dto.getIdColaborador());
+            if (colaborador == null) {
+                throw new NaoEncontradoException("Colaborador inválido, não foi possível atualizar atendimento.");
+            }
+        } else {
+            throw new NaoEncontradoException("Id de colaborador inválido.");
+        }
+
+        atendimento.setDataFinal(LocalDate.now());
     }
 
     @Transactional

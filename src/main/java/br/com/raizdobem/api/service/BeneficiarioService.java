@@ -38,9 +38,8 @@ public class BeneficiarioService {
     public Beneficiario criarBeneficiario(CriarBeneficiarioDTO dto) {
         Beneficiario beneficiario = new Beneficiario();
 
-        String cpf = dto.getCpf();
-        if(ValidacaoService.validarCpf(cpf))
-            beneficiario.setCpf(cpf);
+        if(ValidacaoService.validarCpf(dto.getCpf()))
+            beneficiario.setCpf(dto.getCpf());
         else
             throw new ValidacaoException("CPF inserido é inválido");
 
@@ -52,16 +51,14 @@ public class BeneficiarioService {
             beneficiario.setEmail(pedido.getEmail());
             beneficiario.setEndereco(pedido.getEndereco());
         }
-        beneficiario.setNomeCompleto(dto.getNomeCompleto());
-        beneficiario.setDataNascimento(dto.getDataNascimento());
-        beneficiario.setTelefone(dto.getTelefone());
-        beneficiario.setEmail(dto.getEmail());
 
         ProgramaSocial programaSocial = programaService.buscarPorId(dto.getIdProgramaSocial());
         if(programaSocial == null)
             throw new NaoEncontradoException("Programa social não encontrado.");
+        else{
+            beneficiario.setProgramaSocial(programaSocial);
+        }
 
-        beneficiario.setProgramaSocial(programaSocial);
         repository.criar(beneficiario);
         return beneficiario;
     }
@@ -88,7 +85,7 @@ public class BeneficiarioService {
 
     @Transactional
     public Beneficiario atualizar(String cpf, AtualizarBeneficiarioDTO request) {
-        return repository.atualizar(cpf, request);
+        return repository.atualizar(cpf);
     }
 
     @Transactional

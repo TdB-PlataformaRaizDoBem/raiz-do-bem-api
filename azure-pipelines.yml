@@ -5,13 +5,13 @@ trigger:
       - develop
 
 pool:
-  # vmImage: 'ubuntu-latest'
-  name: Default
+  vmImage: 'ubuntu-latest'
+  # name: Default
 
 variables:
   javaVersion: '21'
-  # appName: 'nome-do-app-service'   # comentado por enquanto
-  # resourceGroup: 'rg-seu-projeto'   # comentado por enquanto
+  # appName: 'nome-do-app-service'
+  # resourceGroup: 'rg-seu-projeto'
 steps:
   # Tarefa CORRETA para instalar Java 21
  # - task: JavaToolInstaller@0

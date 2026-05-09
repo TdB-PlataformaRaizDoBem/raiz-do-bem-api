@@ -1,5 +1,6 @@
 package br.com.raizdobem.api.dto;
 
+import br.com.raizdobem.api.entity.Colaborador;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -9,6 +10,6 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class AtualizarAtendimentoDTO {
     private String prontuario;
-    private int idColaborador;
-    private final LocalDate dataFinal = LocalDate.now();
+    private Long idColaborador;
+    private LocalDate dataFinal;
 }

@@ -34,7 +34,7 @@ public class BeneficiarioRepository implements PanacheRepository<Beneficiario> {
         return list("programaSocial.id = ?1", idProgramaSocial);
     }
 
-    public Beneficiario atualizar(String cpf, AtualizarBeneficiarioDTO request){
+    public Beneficiario atualizar(String cpf){
         return find("cpf", cpf).firstResult();
     }
 

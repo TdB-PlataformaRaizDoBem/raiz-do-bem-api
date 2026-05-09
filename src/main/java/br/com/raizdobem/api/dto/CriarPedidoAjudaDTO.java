@@ -1,5 +1,6 @@
 package br.com.raizdobem.api.dto;
 
+import br.com.raizdobem.api.entity.Endereco;
 import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,5 +18,5 @@ public class CriarPedidoAjudaDTO {
     private String telefone;
     private String email;
     private String descricaoProblema;
-    private long idEndereco;
+    private EnderecoRequestDTO endereco;
 }

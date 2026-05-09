@@ -4,9 +4,6 @@ import br.com.raizdobem.api.dto.AtualizarPedidoAjudaDTO;
 import br.com.raizdobem.api.dto.CriarPedidoAjudaDTO;
 import br.com.raizdobem.api.entity.*;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
-import br.com.raizdobem.api.exception.RegraNegocioException;
-import br.com.raizdobem.api.exception.ValidacaoException;
-import br.com.raizdobem.api.repository.EnderecoRepository;
 import br.com.raizdobem.api.repository.DentistaRepository;
 import br.com.raizdobem.api.repository.PedidoAjudaRepository;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -28,9 +25,6 @@ public class PedidoAjudaService {
     @Inject
     DentistaService dentistaService;
 
-    @Inject
-    BeneficiarioService beneficiarioService;
-
     @Transactional
     public PedidoAjuda criar(CriarPedidoAjudaDTO dto) {
         PedidoAjuda pedidoAjuda = new PedidoAjuda();
@@ -40,8 +34,9 @@ public class PedidoAjudaService {
         pedidoAjuda.setDataNascimento(dto.getDataNascimento());
         pedidoAjuda.setStatus(StatusPedido.PENDENTE);
 
-        if (!validarIdade(dto.getDataNascimento())) {
-            pedidoAjuda.setStatus(StatusPedido.REJEITADO);
+        if (dto.getSexo().equals("M")) {
+            if(invalidarHomens(dto.getDataNascimento()))
+                pedidoAjuda.setStatus(StatusPedido.REJEITADO);
         }
 
         pedidoAjuda.setSexo(Sexo.valueOf(dto.getSexo().toUpperCase()));
@@ -50,7 +45,7 @@ public class PedidoAjudaService {
         pedidoAjuda.setDescricaoProblema(dto.getDescricaoProblema());
         pedidoAjuda.setDataPedido(LocalDate.now());
 
-        Endereco endereco = enderecoService.buscaPorId(dto.getIdEndereco());
+        Endereco endereco = enderecoService.criar(dto.getEndereco());
         if(endereco == null){
             throw new NaoEncontradoException("Endereço não encontrado.");
         }
@@ -82,7 +77,7 @@ public class PedidoAjudaService {
         return repository.excluir(id);
     }
 
-    public static boolean validarIdade(LocalDate dataNasc){
+    public static boolean invalidarHomens(LocalDate dataNasc){
         if (dataNasc == null) {
             return false;
         }
