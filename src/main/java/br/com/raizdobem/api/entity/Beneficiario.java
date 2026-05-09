@@ -37,5 +37,4 @@ public class Beneficiario {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_endereco")
     private Endereco endereco;
-
 }

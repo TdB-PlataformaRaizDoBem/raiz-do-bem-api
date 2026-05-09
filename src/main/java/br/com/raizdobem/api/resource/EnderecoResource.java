@@ -1,5 +1,6 @@
 package br.com.raizdobem.api.resource;
 
+import br.com.raizdobem.api.dto.external.ViaCepDTO;
 import br.com.raizdobem.api.dto.request.EnderecoRequestDTO;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.entity.Endereco;
@@ -64,10 +65,9 @@ public class EnderecoResource {
     @Operation(summary = "Endpoint para buscar endereços na API do ViaCep.")
     @Path("/viacep/{cep}")
     public Response buscarViaCep(@PathParam("cep") String cep){
-        String responseViaCep = service.buscarApiViaCep(cep);
-        if(responseViaCep.isEmpty()){
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("Endereço não encontrado!").build();
+        ViaCepDTO responseViaCep = service.buscarEndereco(cep);
+        if(responseViaCep == null){
+            throw new NaoEncontradoException("Endereço não enconrado na Api do ViaCep.");
         }
         return Response.ok(responseViaCep).build();
     }

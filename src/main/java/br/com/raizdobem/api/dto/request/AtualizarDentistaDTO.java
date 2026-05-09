@@ -9,6 +9,6 @@ public class AtualizarDentistaDTO {
     private String telefone;
     private String email;
     private String categoriaDentista;
-    private int idEndereco;
+    private EnderecoRequestDTO endereco;
     private String disponivel;
 }

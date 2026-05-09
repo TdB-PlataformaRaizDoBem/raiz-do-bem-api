@@ -4,6 +4,8 @@ import br.com.raizdobem.api.dto.request.AtualizarPedidoAjudaDTO;
 import br.com.raizdobem.api.dto.request.CriarPedidoAjudaDTO;
 import br.com.raizdobem.api.entity.*;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
+import br.com.raizdobem.api.exception.RegraNegocioException;
+import br.com.raizdobem.api.exception.ValidacaoException;
 import br.com.raizdobem.api.repository.PedidoAjudaRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -69,6 +71,34 @@ public class PedidoAjudaService {
     @Transactional
     public PedidoAjuda processarPedido(long id, AtualizarPedidoAjudaDTO dto){
         PedidoAjuda pedido = repository.findById(id);
+        if(pedido == null)
+            throw new NaoEncontradoException("Pedido de ajuda não encontrado.");
+
+        if(pedido.getStatus() == StatusPedido.REJEITADO)
+            throw new RegraNegocioException("Pedido REJEITADO não pode ser processado.");
+
+        if(dto.getStatusPedido().equals(StatusPedido.PENDENTE))
+            throw new ValidacaoException("Pedido só pode ser atualizado para APROVADO/REJEITADO.");
+
+        StatusPedido novoStatus;
+        try{
+            novoStatus = dto.getStatusPedido();
+        } catch(Exception e){
+            throw new ValidacaoException("Status INVÁLIDO. Novo status pode ser APROVADO ou REJEITADO");
+        }
+
+        if(novoStatus == StatusPedido.APROVADO && dto.getIdDentista() > 0){
+            Dentista dentista = dentistaService.buscarPorId(id);
+            if(dentista == null)
+                throw new NaoEncontradoException("Dentista aprovador não encontrado.");
+
+            if(dentista.getCategoria().equals("COORDENADOR"))
+                pedido.setDentista(dentista);
+            else{
+                throw new RegraNegocioException("Apenas um Dentista Coordenador pode aprovar um pedido de ajuda.");
+            }
+        }
+        pedido.setStatus(novoStatus);
         return pedido;
     }
     @Transactional

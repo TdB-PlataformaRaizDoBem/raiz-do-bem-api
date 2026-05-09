@@ -1,5 +1,6 @@
 package br.com.raizdobem.api.repository;
 
+import br.com.raizdobem.api.dto.request.AtualizarBeneficiarioDTO;
 import br.com.raizdobem.api.entity.Beneficiario;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -33,8 +34,17 @@ public class BeneficiarioRepository implements PanacheRepository<Beneficiario> {
         return list("programaSocial.id = ?1", idProgramaSocial);
     }
 
-    public Beneficiario atualizar(String cpf){
-        return find("cpf", cpf).firstResult();
+    public Beneficiario atualizar(String cpf, AtualizarBeneficiarioDTO dto){
+        Beneficiario beneficiario = find("cpf", cpf).firstResult();
+        if(beneficiario == null)
+            return null;
+
+
+        beneficiario.setTelefone(dto.getTelefone());
+        beneficiario.setEmail(dto.getEmail());
+        beneficiario.setEndereco(dto.getEndereco());
+
+        return beneficiario;
     }
 
     public long excluir(String cpf) {

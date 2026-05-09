@@ -35,7 +35,7 @@ public class DentistaRepository implements PanacheRepository<Dentista> {
     }
 
     public Dentista atualizar(String cpf, AtualizarDentistaDTO request) {
-        return find("cpf", cpf).firstResult();
+        Dentista dentista = find("cpf", cpf).firstResult();
     }
     public long excluir(String cpf) {
         return delete("cpf", cpf);
