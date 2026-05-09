@@ -1,6 +1,6 @@
 package br.com.raizdobem.api.controller;
 
-import br.com.raizdobem.api.model.ProgramaSocial;
+import br.com.raizdobem.api.entity.ProgramaSocial;
 import br.com.raizdobem.api.service.ProgramaService;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;

@@ -4,7 +4,7 @@ import br.com.raizdobem.api.dto.AtualizarAtendimentoDTO;
 import br.com.raizdobem.api.dto.CriarAtendimentoDTO;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.exception.RequisicaoInvalidaException;
-import br.com.raizdobem.api.model.Atendimento;
+import br.com.raizdobem.api.entity.Atendimento;
 import br.com.raizdobem.api.service.AtendimentoService;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
@@ -14,7 +14,6 @@ import jakarta.ws.rs.core.Response;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
-import java.util.Collections;
 import java.util.List;
 
 @RequestScoped

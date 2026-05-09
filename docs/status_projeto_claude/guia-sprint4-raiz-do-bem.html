@@ -767,7 +767,7 @@
         <div class="code-header"><span>PedidoAjudaService.java — adicionar método</span><button class="copy-btn" onclick="copyCode(this)">copiar</button></div>
         <pre><span class="cmt">// Adicione estes imports:</span>
 <span class="kw">import</span> br.com.raizdobem.api.exception.*;
-<span class="kw">import</span> br.com.raizdobem.api.model.StatusPedido;
+<span class="kw">import</span> br.com.raizdobem.api.entity.StatusPedido;
 <span class="kw">import</span> br.com.raizdobem.api.repository.DentistaRepository;
 <span class="kw">import</span> jakarta.inject.Inject;
 <span class="kw">import</span> jakarta.transaction.Transactional;
@@ -836,7 +836,7 @@
         <div class="code-header"><span>BeneficiarioService.java — adicionar método</span><button class="copy-btn" onclick="copyCode(this)">copiar</button></div>
         <pre><span class="cmt">// Adicione imports:</span>
 <span class="kw">import</span> br.com.raizdobem.api.exception.*;
-<span class="kw">import</span> br.com.raizdobem.api.model.StatusPedido;
+<span class="kw">import</span> br.com.raizdobem.api.entity.StatusPedido;
 <span class="kw">import</span> br.com.raizdobem.api.repository.PedidoAjudaRepository;
 <span class="kw">import</span> br.com.raizdobem.api.repository.ProgramaRepository;
 
@@ -912,7 +912,7 @@
       <pre><span class="kw">package</span> br.com.raizdobem.api.controller;
 
 <span class="kw">import</span> br.com.raizdobem.api.exception.RecursoNaoEncontradoException;
-<span class="kw">import</span> br.com.raizdobem.api.model.Dentista;
+<span class="kw">import</span> br.com.raizdobem.api.entity.Dentista;
 <span class="kw">import</span> br.com.raizdobem.api.service.DentistaService;
 <span class="kw">import</span> jakarta.enterprise.context.RequestScoped;
 <span class="kw">import</span> jakarta.inject.Inject;

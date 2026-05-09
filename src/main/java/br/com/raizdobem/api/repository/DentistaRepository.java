@@ -1,7 +1,7 @@
 package br.com.raizdobem.api.repository;
 
 import br.com.raizdobem.api.dto.AtualizarDentistaDTO;
-import br.com.raizdobem.api.model.Dentista;
+import br.com.raizdobem.api.entity.Dentista;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 

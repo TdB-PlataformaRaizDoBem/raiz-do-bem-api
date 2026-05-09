@@ -3,7 +3,7 @@ package br.com.raizdobem.api.service;
 import br.com.raizdobem.api.dto.AtualizarColaboradorDTO;
 import br.com.raizdobem.api.dto.CriarColaboradorDTO;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
-import br.com.raizdobem.api.model.Colaborador;
+import br.com.raizdobem.api.entity.Colaborador;
 import br.com.raizdobem.api.repository.ColaboradorRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;

@@ -4,8 +4,7 @@ import br.com.raizdobem.api.dto.AtualizarPedidoAjudaDTO;
 import br.com.raizdobem.api.dto.CriarPedidoAjudaDTO;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.exception.RequisicaoInvalidaException;
-import br.com.raizdobem.api.model.Colaborador;
-import br.com.raizdobem.api.model.PedidoAjuda;
+import br.com.raizdobem.api.entity.PedidoAjuda;
 import br.com.raizdobem.api.service.PedidoAjudaService;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
@@ -15,7 +14,6 @@ import jakarta.ws.rs.core.Response;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
-import java.util.Collections;
 import java.util.List;
 
 @RequestScoped

@@ -3,7 +3,7 @@ package br.com.raizdobem.api.controller;
 import br.com.raizdobem.api.dto.AtualizarBeneficiarioDTO;
 import br.com.raizdobem.api.dto.CriarBeneficiarioDTO;
 import br.com.raizdobem.api.exception.RequisicaoInvalidaException;
-import br.com.raizdobem.api.model.Beneficiario;
+import br.com.raizdobem.api.entity.Beneficiario;
 import br.com.raizdobem.api.service.BeneficiarioService;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
@@ -14,7 +14,6 @@ import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
-import java.util.Collections;
 import java.util.List;
 
 @RequestScoped

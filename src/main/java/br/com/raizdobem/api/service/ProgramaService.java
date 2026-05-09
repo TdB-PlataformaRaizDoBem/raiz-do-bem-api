@@ -1,6 +1,6 @@
 package br.com.raizdobem.api.service;
 
-import br.com.raizdobem.api.model.ProgramaSocial;
+import br.com.raizdobem.api.entity.ProgramaSocial;
 import br.com.raizdobem.api.repository.ProgramaRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;

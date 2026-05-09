@@ -4,9 +4,9 @@ import br.com.raizdobem.api.dto.EnderecoRequestDTO;
 import br.com.raizdobem.api.dto.ResponseViaCepDTO;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.exception.RegraNegocioException;
-import br.com.raizdobem.api.model.Endereco;
+import br.com.raizdobem.api.entity.Endereco;
 import br.com.raizdobem.api.repository.EnderecoRepository;
-import br.com.raizdobem.api.model.TipoEndereco;
+import br.com.raizdobem.api.entity.TipoEndereco;
 
 import java.net.URI;
 import java.net.http.HttpClient;

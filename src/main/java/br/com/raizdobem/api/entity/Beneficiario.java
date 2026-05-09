@@ -1,4 +1,4 @@
-package br.com.raizdobem.api.model;
+package br.com.raizdobem.api.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
@@ -11,10 +11,10 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Entity
-public class Colaborador {
+public class Beneficiario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_colaborador")
+    @Column(name = "id_beneficiario")
     private Long id;
     private String cpf;
 
@@ -23,8 +23,19 @@ public class Colaborador {
 
     @Column(name = "data_nascimento")
     private LocalDate dataNascimento;
-
-    @Column(name = "data_contratacao")
-    private LocalDate dataContratacao;
+    private String telefone;
     private String email;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_pedido_ajuda")
+    private PedidoAjuda pedido;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_programa_social")
+    private ProgramaSocial programaSocial;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_endereco")
+    private Endereco endereco;
+
 }

@@ -2,11 +2,9 @@ package br.com.raizdobem.api.service;
 
 import br.com.raizdobem.api.dto.AtualizarBeneficiarioDTO;
 import br.com.raizdobem.api.dto.CriarBeneficiarioDTO;
-import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.exception.ValidacaoException;
-import br.com.raizdobem.api.model.Beneficiario;
-import br.com.raizdobem.api.model.Endereco;
-import br.com.raizdobem.api.model.PedidoAjuda;
+import br.com.raizdobem.api.entity.Beneficiario;
+import br.com.raizdobem.api.entity.PedidoAjuda;
 import br.com.raizdobem.api.repository.BeneficiarioRepository;
 import br.com.raizdobem.api.repository.EnderecoRepository;
 import br.com.raizdobem.api.repository.PedidoAjudaRepository;
