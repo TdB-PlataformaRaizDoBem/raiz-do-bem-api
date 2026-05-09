@@ -1,6 +1,6 @@
 package br.com.raizdobem.api.resource;
 
-import br.com.raizdobem.api.dto.EnderecoRequestDTO;
+import br.com.raizdobem.api.dto.request.EnderecoRequestDTO;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.entity.Endereco;
 import br.com.raizdobem.api.service.EnderecoService;

@@ -1,7 +1,7 @@
 package br.com.raizdobem.api.resource;
 
-import br.com.raizdobem.api.dto.AtualizarBeneficiarioDTO;
-import br.com.raizdobem.api.dto.CriarBeneficiarioDTO;
+import br.com.raizdobem.api.dto.request.AtualizarBeneficiarioDTO;
+import br.com.raizdobem.api.dto.request.CriarBeneficiarioDTO;
 import br.com.raizdobem.api.exception.RequisicaoInvalidaException;
 import br.com.raizdobem.api.entity.Beneficiario;
 import br.com.raizdobem.api.service.BeneficiarioService;

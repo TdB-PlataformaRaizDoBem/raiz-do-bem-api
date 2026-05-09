@@ -1,6 +1,6 @@
 package br.com.raizdobem.api.repository;
 
-import br.com.raizdobem.api.dto.AtualizarPedidoAjudaDTO;
+import br.com.raizdobem.api.dto.request.AtualizarPedidoAjudaDTO;
 import br.com.raizdobem.api.entity.PedidoAjuda;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import jakarta.enterprise.context.ApplicationScoped;

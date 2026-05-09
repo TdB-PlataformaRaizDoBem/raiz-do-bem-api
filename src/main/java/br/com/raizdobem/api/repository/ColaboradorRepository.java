@@ -1,6 +1,6 @@
 package br.com.raizdobem.api.repository;
 
-import br.com.raizdobem.api.dto.AtualizarColaboradorDTO;
+import br.com.raizdobem.api.dto.request.AtualizarColaboradorDTO;
 import br.com.raizdobem.api.entity.Colaborador;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import jakarta.enterprise.context.ApplicationScoped;

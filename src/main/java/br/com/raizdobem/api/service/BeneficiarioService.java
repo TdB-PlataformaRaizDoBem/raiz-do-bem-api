@@ -1,18 +1,13 @@
 package br.com.raizdobem.api.service;
 
-import br.com.raizdobem.api.dto.AtualizarBeneficiarioDTO;
-import br.com.raizdobem.api.dto.CriarBeneficiarioDTO;
-import br.com.raizdobem.api.dto.EnderecoRequestDTO;
-import br.com.raizdobem.api.entity.Endereco;
+import br.com.raizdobem.api.dto.request.AtualizarBeneficiarioDTO;
+import br.com.raizdobem.api.dto.request.CriarBeneficiarioDTO;
 import br.com.raizdobem.api.entity.ProgramaSocial;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.exception.ValidacaoException;
 import br.com.raizdobem.api.entity.Beneficiario;
 import br.com.raizdobem.api.entity.PedidoAjuda;
 import br.com.raizdobem.api.repository.BeneficiarioRepository;
-import br.com.raizdobem.api.repository.EnderecoRepository;
-import br.com.raizdobem.api.repository.PedidoAjudaRepository;
-import br.com.raizdobem.api.repository.ProgramaRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;

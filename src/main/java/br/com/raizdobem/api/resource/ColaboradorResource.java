@@ -1,7 +1,7 @@
 package br.com.raizdobem.api.resource;
 
-import br.com.raizdobem.api.dto.AtualizarColaboradorDTO;
-import br.com.raizdobem.api.dto.CriarColaboradorDTO;
+import br.com.raizdobem.api.dto.request.AtualizarColaboradorDTO;
+import br.com.raizdobem.api.dto.request.CriarColaboradorDTO;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.entity.Colaborador;
 import br.com.raizdobem.api.service.ColaboradorService;

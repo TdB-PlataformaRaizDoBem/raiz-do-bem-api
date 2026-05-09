@@ -1,7 +1,7 @@
 package br.com.raizdobem.api.resource;
 
-import br.com.raizdobem.api.dto.AtualizarDentistaDTO;
-import br.com.raizdobem.api.dto.CriarDentistaDTO;
+import br.com.raizdobem.api.dto.request.AtualizarDentistaDTO;
+import br.com.raizdobem.api.dto.request.CriarDentistaDTO;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.exception.RequisicaoInvalidaException;
 import br.com.raizdobem.api.entity.Dentista;

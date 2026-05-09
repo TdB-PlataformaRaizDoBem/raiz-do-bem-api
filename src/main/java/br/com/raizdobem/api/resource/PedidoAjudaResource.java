@@ -1,7 +1,7 @@
 package br.com.raizdobem.api.resource;
 
-import br.com.raizdobem.api.dto.AtualizarPedidoAjudaDTO;
-import br.com.raizdobem.api.dto.CriarPedidoAjudaDTO;
+import br.com.raizdobem.api.dto.request.AtualizarPedidoAjudaDTO;
+import br.com.raizdobem.api.dto.request.CriarPedidoAjudaDTO;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.exception.RequisicaoInvalidaException;
 import br.com.raizdobem.api.entity.PedidoAjuda;

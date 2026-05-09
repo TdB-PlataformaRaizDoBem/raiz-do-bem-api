@@ -1,22 +1,19 @@
 package br.com.raizdobem.api.service;
 
-import br.com.raizdobem.api.dto.AtualizarDentistaDTO;
-import br.com.raizdobem.api.dto.CriarDentistaDTO;
-import br.com.raizdobem.api.entity.Especialidade;
+import br.com.raizdobem.api.dto.request.AtualizarDentistaDTO;
+import br.com.raizdobem.api.dto.request.CriarDentistaDTO;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.exception.ValidacaoException;
 import br.com.raizdobem.api.entity.Dentista;
 import br.com.raizdobem.api.entity.Endereco;
 import br.com.raizdobem.api.entity.Sexo;
 import br.com.raizdobem.api.repository.DentistaRepository;
-import br.com.raizdobem.api.repository.EnderecoRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 
 import java.util.List;
-import java.util.regex.Pattern;
 
 @ApplicationScoped
 public class DentistaService {

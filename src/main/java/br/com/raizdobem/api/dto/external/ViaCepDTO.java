@@ -1,11 +1,11 @@
-package br.com.raizdobem.api.dto;
+package br.com.raizdobem.api.dto.external;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class ResponseViaCepDTO {
+public class ViaCepDTO {
     private String cep;
     private String logradouro;
     private String bairro;

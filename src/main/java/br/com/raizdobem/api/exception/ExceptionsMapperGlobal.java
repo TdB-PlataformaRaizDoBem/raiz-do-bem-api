@@ -1,6 +1,6 @@
 package br.com.raizdobem.api.exception;
 
-import br.com.raizdobem.api.dto.ErroDTO;
+import br.com.raizdobem.api.dto.response.ErroDTO;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;

@@ -1,4 +1,4 @@
-package br.com.raizdobem.api.dto;
+package br.com.raizdobem.api.dto.request;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
