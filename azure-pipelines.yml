@@ -8,14 +8,16 @@ pool:
   vmImage: 'ubuntu-latest'
 
 variables:
-  javaVersion: '21'             
+  javaVersion: '21'
   # appName: 'nome-do-app-service'   # comentado por enquanto
   # resourceGroup: 'rg-seu-projeto'   # comentado por enquanto
-
 steps:
-  - task: UseJava@1
+  # Tarefa CORRETA para instalar Java 21
+  - task: JavaToolInstaller@0
     inputs:
-      versionSpec: '$(javaVersion)'
+      versionSpec: '21'
+      jdkArchitectureOption: 'x64'
+      jdkSourceOption: 'PreInstalled'
 
   - script: mvn -B clean package -DskipTests
     displayName: 'Build Maven'
@@ -23,7 +25,7 @@ steps:
   - task: PublishBuildArtifacts@1
     inputs:
       PathtoPublish: 'target'
-      ArtifactName: 'drop'
+      ArtifactName: 'drop'            
 
   # - task: AzureWebApp@1          
   #   displayName: 'Deploy to Azure Web App'
