@@ -23,10 +23,10 @@ steps:
   - script: mvn -B clean package -DskipTests
     displayName: 'Build Maven'
 
-  - task: PublishBuildArtifacts@1
-    inputs:
-      PathtoPublish: 'target'
-      ArtifactName: 'drop'            
+ # - task: PublishBuildArtifacts@1
+ #   inputs:
+ #     PathtoPublish: 'target'
+ #     ArtifactName: 'drop'            
 
   # - task: AzureWebApp@1          
   #   displayName: 'Deploy to Azure Web App'
