@@ -1,0 +1,36 @@
+trigger:
+  branches:
+    include:
+      - main
+      - develop
+
+pool:
+  # vmImage: 'ubuntu-latest'
+  name: Default
+
+variables:
+  javaVersion: '21'
+  # appName: 'nome-do-app-service'   # comentado por enquanto
+  # resourceGroup: 'rg-seu-projeto'   # comentado por enquanto
+steps:
+  # Tarefa CORRETA para instalar Java 21
+ # - task: JavaToolInstaller@0
+ #   inputs:
+ #     versionSpec: '21'
+ #     jdkArchitectureOption: 'x64'
+ #     jdkSourceOption: 'PreInstalled'
+
+  - script: mvn -B clean package -DskipTests
+    displayName: 'Build Maven'
+
+  - task: PublishBuildArtifacts@1
+    inputs:
+      PathtoPublish: 'target'
+      ArtifactName: 'drop'            
+
+  # - task: AzureWebApp@1          
+  #   displayName: 'Deploy to Azure Web App'
+  #   inputs:
+  #     azureSubscription: 'NomeDaServiceConnection'
+  #     appName: '$(appName)'
+  #     package: '$(System.DefaultWorkingDirectory)/target/*-runner.jar'
