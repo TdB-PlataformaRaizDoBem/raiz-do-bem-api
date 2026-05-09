@@ -1,402 +1,260 @@
 # 🌱 Raiz do Bem — API
 
-> Plataforma de gestão de beneficiários, atendimentos odontológicos, colaboradores e programas sociais para uma ONG de saúde bucal.
+> Backend REST da plataforma Raiz do Bem, voltada à gestão de beneficiários, atendimentos odontológicos, colaboradores, pedidos de ajuda e programas sociais.
 
 [![Java](https://img.shields.io/badge/Java-21-orange?logo=java)](https://openjdk.org/projects/jdk/21/)
 [![Quarkus](https://img.shields.io/badge/Quarkus-3.34.5-blue?logo=quarkus)](https://quarkus.io/)
 [![Oracle DB](https://img.shields.io/badge/Oracle-DB-red?logo=oracle)](https://www.oracle.com/database/)
 [![OpenAPI](https://img.shields.io/badge/OpenAPI-Swagger_UI-green?logo=swagger)](http://localhost:8080/q/swagger-ui)
 
----
+## Visão geral
 
-## 📋 Sobre o projeto
+A **Raiz do Bem API** foi desenvolvida como entrega acadêmica do **FIAP Challenge 2025-26** para a disciplina *Domain Driven Design Using Java* — **Sprint 4 (entrega final)**.
 
-A **Raiz do Bem API** é o backend REST da plataforma Raiz do Bem, desenvolvida como projeto acadêmico para o **FIAP Challenge 2025-26**, na disciplina *Domain Driven Design Using Java* — **Sprint 4 (entrega final)**.
+O projeto evoluiu de uma solução Java/JDBC da Sprint 3 para uma API em **Quarkus 3**, com **Hibernate ORM + Panache**, **Oracle DB**, **OpenAPI/Swagger** e tratamento centralizado de exceções. O objetivo é entregar uma base robusta, documentada e pronta para integração com front-end.
 
-O projeto migrou de um backend Java puro com JDBC (Sprint 3, disponível em [`raiz-do-bem-backend-java`](https://github.com/TdB-PlataformaRaizDoBem/raiz-do-bem-backend-java)) para **Quarkus com Panache**, mantendo todas as regras de negócio e o schema Oracle já existentes.
+### Repositório e histórico de evolução
 
----
+- Repositório principal no Azure DevOps: [raiz-do-bem-backend](https://dev.azure.com/Tdb-Raiz-do-Bem/raiz-do-bem-backend/_git/raiz-do-bem-backend)
+- Base histórica da Sprint 3: backend Java/JDBC migrado para a stack atual em Quarkus
 
-## 🏗️ Arquitetura — Domain Driven Design
+### Diferenciais da solução
 
-A aplicação segue uma estrutura em camadas baseada em DDD:
+- Arquitetura em camadas com organização por responsabilidade.
+- Persistência com Panache, facilitando CRUD e consultas JPQL.
+- Integração com Oracle e mapeamento de tabelas já existentes.
+- Regras de negócio concentradas em `service/`, não nos recursos REST.
+- Integração com ViaCEP para acelerar o cadastro de endereços.
+- Documentação de API disponível via Swagger UI.
 
-```
+## Arquitetura do projeto
+
+O código-fonte está organizado no pacote raiz `br.com.raizdobem.api`:
+
+```text
 src/main/java/br/com/raizdobem/api/
-├── controller/     Recursos REST (JAX-RS) — camada de apresentação
-├── service/        Regras de negócio (BO) — camada de domínio
-├── repository/     Acesso a dados com Panache (DAO) — camada de infraestrutura
-├── model/          Entidades e enums — camada de domínio
-└── exception/      Exceções customizadas — camada transversal
+├── dto/         Objetos de entrada e saída da API
+├── entity/      Entidades JPA e enums do domínio
+├── exception/   Exceções customizadas e mapper global
+├── repository/  Acesso a dados com PanacheRepository
+├── resource/    Endpoints REST (JAX-RS)
+└── service/     Regras de negócio e validações
 ```
 
----
+### Domínios principais
 
-## 🗂️ Entidades do domínio
+| Entidade | Finalidade |
+|---|---|
+| `Beneficiario` | Pessoa atendida pela ONG |
+| `PedidoAjuda` | Solicitação de auxílio e triagem |
+| `ProgramaSocial` | Programa de assistência social |
+| `Atendimento` | Consulta odontológica / prontuário |
+| `Dentista` | Profissional com CRO, categoria e disponibilidade |
+| `Especialidade` | Especialidade odontológica |
+| `Colaborador` | Voluntário ou funcionário |
+| `Endereco` | Endereço com integração ViaCEP |
 
-| Classe | Tipo | Descrição |
-|---|---|---|
-| `BeneficiarioDTO` | Entidade JPA | Pessoa atendida pelos programas sociais *(atualmente as entidades estão em `model/dto`)* |
-| `PedidoAjudaDTO` | Entidade JPA | Solicitação de auxílio do beneficiário |
-| `ProgramaSocialDTO` | Entidade JPA | Programa de assistência vinculado ao beneficiário |
-| `AtendimentoDTO` | Entidade JPA | Consulta odontológica (campo `prontuario`) |
-| `DentistaDTO` | Entidade JPA | Profissional com CRO, categoria e disponibilidade |
-| `EspecialidadeDTO` | Entidade JPA | Especialidade odontológica |
-| `ColaboradorDTO` | Entidade JPA | Voluntário / funcionário da ONG |
-| `EnderecoDTO` | Entidade JPA | Endereço com integração ViaCEP |
-| `Sexo` | Enum | `MASCULINO` / `FEMININO` |
-| `StatusPedido` | Enum | `PENDENTE` / `APROVADO` / `REJEITADO` |
-| `TipoEndereco` | Enum | `RESIDENCIAL` / `PROFISSIONAL` |
+### Enums do projeto
 
----
+- `Sexo` → `MASCULINO`, `FEMININO`
+- `StatusPedido` → `PENDENTE`, `APROVADO`, `REJEITADO`
+- `TipoEndereco` → `RESIDENCIAL`, `COMERCIAL`
 
-## 🌐 Endpoints REST
+## Tecnologias utilizadas
 
-Base URL: `http://localhost:8080`  
+| Tecnologia | Uso |
+|---|---|
+| Java 21 | Linguagem principal |
+| Quarkus 3.34.5 | Framework da API |
+| Hibernate ORM + Panache | Persistência e repositórios |
+| Oracle JDBC | Conexão com banco Oracle |
+| SmallRye OpenAPI | Documentação Swagger |
+| Jackson | Serialização JSON |
+| Gson | Consumo da API ViaCEP |
+| Jakarta REST | Exposição dos endpoints |
+
+## API REST
+
+Base URL local: `http://localhost:8080`  
 Swagger UI: `http://localhost:8080/q/swagger-ui`
 
-> Observação: os endpoints de **GET (listagem)** e alguns **DELETE** já estão funcionais e com evidências em `docs/prints_swagger/`.
-> Já existem **POST funcionais** (ex.: Endereço, Dentista e Colaborador). Os endpoints restantes (POST/PUT/DELETE em todos os recursos) e as **regras de negócio obrigatórias** seguem em fase final de implementação (ver `STATUS_SPRINT4.md`).
+### Resumo dos recursos expostos
 
-### Beneficiário — `/beneficiario`
+| Recurso | Rotas principais |
+|---|---|
+| `Beneficiario` | `GET /beneficiario`, `POST /beneficiario`, `GET /beneficiario/{cpf}`, `PUT /beneficiario/{cpf}`, `DELETE /beneficiario/{cpf}` |
+| `Dentista` | `GET /dentista`, `POST /dentista`, `GET /dentista/disponiveis`, `GET /dentista/cidade/{cidade}`, `PUT /dentista/{cpf}`, `DELETE /dentista/{cpf}` |
+| `Atendimento` | `GET /atendimento`, `POST /atendimento`, `GET /atendimento/{cpf}`, `PUT /atendimento/{id}`, `DELETE /atendimento/{id}` |
+| `PedidoAjuda` | `GET /pedido-ajuda`, `POST /pedido-ajuda`, `GET /pedido-ajuda/data/{data}`, `PUT /pedido-ajuda/{id}`, `DELETE /pedido-ajuda/{id}` |
+| `Colaborador` | `GET /colaborador`, `POST /colaborador`, `PUT /colaborador/{cpf}`, `DELETE /colaborador/{cpf}` |
+| `Endereco` | `GET /endereco`, `GET /endereco/id/{id}`, `GET /endereco/{cidade}`, `GET /endereco/viacep/{cep}`, `POST /endereco`, `PUT /endereco/{id}`, `DELETE /endereco/{id}` |
+| `Especialidades` | `GET /especialidades`, `GET /especialidades/{id}` |
+| `Programas Sociais` | `GET /programas-sociais`, `GET /programas-sociais/{id}` |
 
-| Método | Rota | Descrição |
+### Códigos de resposta esperados
+
+- `200 OK` — leitura ou atualização concluída com sucesso
+- `201 Created` — criação de recurso
+- `204 No Content` — exclusão bem-sucedida
+- `404 Not Found` — recurso inexistente
+- `409 Conflict` — violação de regra de negócio
+- `422 Unprocessable Entity` — validação inválida
+- `500 Internal Server Error` — falha inesperada
+
+## Regras de negócio concentradas em `service/`
+
+Os serviços da aplicação centralizam as regras mais importantes da solução:
+
+- `BeneficiarioService.adicionar(idPedido, idProgramaSocial)`
+- `BeneficiarioService.listarPorCidade(cidade)`
+- `BeneficiarioService.listarPorPrograma(idPrograma)`
+- `DentistaService.validarCro(cro)`
+- `DentistaService.listarDisponiveis()`
+- `DentistaService.listarPorCidade(cidade)`
+- `PedidoAjudaService.processarPedido(id, novoStatus, idDentista)`
+- `PedidoAjudaService.listarPorData(data)`
+- `PedidoAjudaService.validarIdadePedido(dataNasc)`
+- `AtendimentoService.criar(prontuario, idBeneficiario, idDentista)`
+- `AtendimentoService.encerrar(id, prontuario, dataFinal, idColaborador)`
+
+Esses métodos dão valor à API porque automatizam validações e reduzem a lógica espalhada pelos recursos REST.
+
+## Banco de dados
+
+A aplicação usa Oracle e mantém o mapeamento compatível com o schema já existente.
+
+### Configuração atual de desenvolvimento
+
+O arquivo `src/main/resources/application.properties` define a fonte de dados Oracle para o ambiente local de desenvolvimento.
+
+> Para ambientes compartilhados ou de entrega, a recomendação é manter usuário, senha e URL fora do código e sobrescrever a configuração conforme o ambiente.
+
+### Tabelas principais mapeadas
+
+| Tabela Oracle | Entidade Java | Chave primária |
 |---|---|---|
-| `GET` | `/beneficiario` | Lista todos os beneficiários |
-| `POST` | `/beneficiario` | Cria um novo beneficiário |
-| `GET` | `/beneficiario/{cpf}` | Busca beneficiário por CPF |
-| `PUT` | `/beneficiario/{cpf}` | Atualiza dados do beneficiário |
-| `DELETE` | `/beneficiario/{cpf}` | Remove um beneficiário |
+| `Beneficiario` | `Beneficiario` | `id_beneficiario` |
+| `Dentista` | `Dentista` | `id_dentista` |
+| `Atendimento` | `Atendimento` | `id_atendimento` |
+| `Pedido_Ajuda` | `PedidoAjuda` | `id_pedido` |
+| `Endereco` | `Endereco` | `id_endereco` |
+| `Colaborador` | `Colaborador` | `id_colaborador` |
+| `Especialidade` | `Especialidade` | `id_especialidade` |
+| `Programa_Social` | `ProgramaSocial` | `id_programa_social` |
 
-### Dentista — `/dentista`
+## Como executar no Windows
 
-| Método | Rota | Descrição |
-|---|---|---|
-| `GET` | `/dentista` | Lista todos os dentistas |
-| `POST` | `/dentista` | Cadastra um novo dentista |
-| `PUT` | `/dentista/{cpf}` | Atualiza dados do dentista |
-| `DELETE` | `/dentista/{cpf}` | Remove um dentista |
+### Pré-requisitos
 
-### Atendimento — `/atendimento`
+- Java 21
+- Maven Wrapper do projeto (`mvnw.cmd`)
+- Banco Oracle acessível para leitura e escrita
 
-| Método | Rota | Descrição |
-|---|---|---|
-| `GET` | `/atendimento` | Lista todos os atendimentos |
-| `POST` | `/atendimento` | Cria um novo atendimento |
-| `GET` | `/atendimento/{cpf}` | Busca atendimento pelo CPF do beneficiário |
-| `PUT` | `/atendimento/{id}` | Encerra / atualiza atendimento |
-| `DELETE` | `/atendimento/{id}` | Remove um atendimento |
-
-### Pedido de Ajuda — `/pedido-ajuda`
-
-| Método | Rota | Descrição |
-|---|---|---|
-| `GET` | `/pedido-ajuda` | Lista todos os pedidos |
-| `POST` | `/pedido-ajuda` | Registra um novo pedido |
-| `PUT` | `/pedido-ajuda/{id}` | Processa pedido (aprova / rejeita) |
-| `DELETE` | `/pedido-ajuda/{id}` | Remove um pedido |
-
-### Colaborador — `/colaborador`
-
-| Método | Rota | Descrição |
-|---|---|---|
-| `GET` | `/colaborador` | Lista todos os colaboradores |
-| `POST` | `/colaborador` | Cadastra um novo colaborador |
-| `PUT` | `/colaborador/{cpf}` | Atualiza dados do colaborador |
-| `DELETE` | `/colaborador/{cpf}` | Remove um colaborador |
-
-### Endereço — `/endereco`
-
-| Método | Rota | Descrição |
-|---|---|---|
-| `GET` | `/endereco` | Lista todos os endereços |
-| `GET` | `/endereco/id/{id}` | Busca endereço por ID |
-| `GET` | `/endereco/{cidade}` | Filtra endereços por cidade |
-| `POST` | `/endereco` | Cria um novo endereço (ViaCEP + persistência) |
-| `GET` | `/endereco/viacep/{cep}` | Consulta endereço na API ViaCEP 🔗 |
-| `PUT` | `/endereco/{id}` | Atualiza um endereço |
-| `DELETE` | `/endereco/{id}` | Remove um endereço |
-
-### Especialidades — `/especialidades`
-
-| Método | Rota | Descrição |
-|---|---|---|
-| `GET` | `/especialidades` | Lista todas as especialidades |
-
-### Programas Sociais — `/programas-sociais`
-
-| Método | Rota | Descrição |
-|---|---|---|
-| `GET` | `/programas-sociais` | Lista todos os programas sociais |
-
----
-
-## 🛠️ Stack tecnológica
-
-| Tecnologia | Versão | Uso |
-|---|---|---|
-| Java | 21 | Linguagem principal |
-| Quarkus | 3.34.5 | Framework Java nativo em nuvem |
-| Hibernate ORM + Panache | via Quarkus BOM | Persistência e repositories |
-| Oracle JDBC | via Quarkus BOM | Driver de banco de dados |
-| SmallRye OpenAPI | via Quarkus BOM | Documentação Swagger UI |
-| Jackson | via Quarkus BOM | Serialização JSON |
-| Gson | 2.13.2 | Parsing JSON na integração ViaCEP |
-| ViaCEP | API pública | Consulta de endereços por CEP |
-
----
-
-## ⚙️ Pré-requisitos
-
-- **Java 21** ([Temurin](https://adoptium.net/) recomendado)
-- **Maven 3.9+** (ou use o wrapper `./mvnw` incluso no projeto)
-- Acesso à rede do **servidor Oracle FIAP** para conectar ao banco em produção
-
----
-
-## 🚀 Como executar
-
-### 1. Clonar o repositório
-
-```bash
-git clone https://github.com/TdB-PlataformaRaizDoBem/raiz-do-bem-api.git
-cd raiz-do-bem-api
-```
-
-### 2. Configurar variáveis de ambiente
-
-**PowerShell (Windows):**
+### 1) Configurar variáveis de ambiente
 
 ```powershell
 $env:DB_USER="seu_usuario"
 $env:DB_PASSWORD="sua_senha"
-# opcional (padrão já aponta para o Oracle FIAP)
 $env:DB_URL="jdbc:oracle:thin:@//oracle.fiap.com.br:1521/orcl"
 ```
 
-**Bash (Linux/macOS/Git Bash):**
+### 2) Executar em modo desenvolvimento
 
-```bash
-export DB_USER="seu_usuario"
-export DB_PASSWORD="sua_senha"
-export DB_URL="jdbc:oracle:thin:@//oracle.fiap.com.br:1521/orcl"
+```powershell
+.\mvnw.cmd quarkus:dev
 ```
 
-### 3. Modo desenvolvimento (hot reload)
+### 3) Compilar o projeto
 
-```bash
-./mvnw quarkus:dev
+```powershell
+.\mvnw.cmd compile
 ```
 
-- Aplicação: `http://localhost:8080`
-- Dev UI (Quarkus): `http://localhost:8080/q/dev/`
+### 4) Executar testes
+
+```powershell
+.\mvnw.cmd test
+```
+
+### 5) Gerar build de produção
+
+```powershell
+.\mvnw.cmd package -DskipTests
+```
+
+### 6) Acessar a aplicação
+
+- API: `http://localhost:8080`
 - Swagger UI: `http://localhost:8080/q/swagger-ui`
 
-### 4. Compilar
-
-```bash
-./mvnw compile
-```
-
-### 5. Executar testes
-
-```bash
-./mvnw test
-```
-
-### 6. Build para produção
-
-```bash
-# JAR padrão
-./mvnw package -DskipTests
-java -jar target/quarkus-app/quarkus-run.jar
-
-# Über-JAR (JAR único auto-contido)
-./mvnw package -Dquarkus.package.jar.type=uber-jar -DskipTests
-java -jar target/*-runner.jar
-```
-
-### 7. Executável nativo (GraalVM)
-
-```bash
-# Com GraalVM instalado localmente
-./mvnw package -Dnative -DskipTests
-
-# Sem GraalVM — build via container Docker
-./mvnw package -Dnative -Dquarkus.native.container-build=true -DskipTests
-
-# Executar
-./target/raiz-do-bem-api-1.0.0-SNAPSHOT-runner
-```
-
 ---
 
-## 🐳 Docker
+## Integração com ViaCEP
 
-Imagens disponíveis em `src/main/docker/`:
+O endpoint `GET /endereco/viacep/{cep}` consulta a API pública [ViaCEP](https://viacep.com.br) e retorna os dados do CEP informado.
 
-| Arquivo | Descrição |
-|---|---|
-| `Dockerfile.jvm` | Imagem JVM padrão (recomendada) |
-| `Dockerfile.legacy-jar` | Imagem com über-JAR |
-| `Dockerfile.native` | Imagem com executável nativo |
-| `Dockerfile.native-micro` | Imagem nativa minimalista |
+Exemplo:
 
-```bash
-# Build da imagem JVM
-docker build -f src/main/docker/Dockerfile.jvm -t raiz-do-bem-api:latest .
-
-# Executar o container
-docker run -p 8080:8080 \
-  -e DB_USER=seu_usuario \
-  -e DB_PASSWORD=sua_senha \
-  raiz-do-bem-api:latest
-```
-
----
-
-## 🗄️ Banco de dados
-
-A aplicação conecta ao banco Oracle do servidor FIAP:
-
-```
-URL: jdbc:oracle:thin:@//oracle.fiap.com.br:1521/orcl
-```
-
-As credenciais são fornecidas **exclusivamente via variáveis de ambiente** — nunca hardcoded no código-fonte.
-
-### Tabelas principais
-
-| Tabela Oracle | Entidade Java | Chave primária |
-|---|---|---|
-| `Beneficiario` | `BeneficiarioDTO` | `id_beneficiario` |
-| `Dentista` | `DentistaDTO` | `id_dentista` |
-| `Atendimento` | `AtendimentoDTO` | `id_atendimento` |
-| `Pedido_Ajuda` | `PedidoAjudaDTO` | `id_pedido` |
-| `Endereco` | `EnderecoDTO` | `id_endereco` |
-| `Colaborador` | `ColaboradorDTO` | `id_colaborador` |
-| `Especialidade` | `EspecialidadeDTO` | `id_especialidade` |
-| `Programa_Social` | `ProgramaSocialDTO` | `id_programa_social` |
-
----
-
-## 🔗 Integração ViaCEP
-
-O endpoint `GET /endereco/viacep/{cep}` consulta a API pública [ViaCEP](https://viacep.com.br) e retorna os dados de endereço correspondentes ao CEP informado (8 dígitos, somente números).
-
-```bash
+```powershell
 curl http://localhost:8080/endereco/viacep/01310100
 ```
 
----
+## Documentação e evidências
 
-## 📚 Documentação da Sprint 4
+A pasta `docs/` concentra os materiais de apoio do projeto:
 
-A documentação oficial está disponível em PDF:
+- `docs/diagrams/` — diagramas do sistema
+- `docs/prints_swagger/` — evidências dos endpoints no Swagger
+- `docs/banco/` — materiais do banco e base SQL da Sprint 3
+- `docs/documentacao-java/` — material de apoio documental
 
-📄 **Documentação (em atualização para Sprint 4)**
+### Itens que valorizam a entrega final
 
-- Base atual (Sprint 3): `docs/documentacao-java/Sprint03Java.pdf`
-- Planejado (Sprint 4): `docs/Raiz_do_Bem_Documentacao_Sprint4.pdf`
+- documentação técnica organizada
+- prints de execução real no Swagger
+- diagrama de classes atualizado
+- MER do banco e mapeamento das entidades
+- instruções claras de execução e build
 
-### Conteúdo da documentação:
+## Estrutura resumida do projeto
 
-> Status: vocês já têm **base forte** (PDF Sprint 3 + diagramas + prints Swagger), mas a documentação final da Sprint 4 ainda está **em montagem**.
-
-- ✅ Base PDF Sprint 3 (para adaptar)
-- ✅ Diagramas (classes/fluxo)
-- ✅ Evidências (prints Swagger) de GETs e tratamentos de erro
-- 🟡 Métodos com lógica de negócio (precisa implementar e tirar prints)
-- 🟡 Tabela completa de endpoints (revisar/atualizar conforme controllers)
-- ✅ MER / documentação do banco (base Sprint 3)
-- 🟡 Instruções de execução (já no README; replicar no PDF)
-
-### Diagramas e prints de teste
-- 📊 [Diagrama de Classes](./docs/diagrams/Diagrama%20de%20Classes%20Simples%20Verificacao.png)
-- 📊 [Fluxo Central do Sistema](./docs/diagrams/FluxoCentral.png)
-- 🗄️ Banco/MER (base Sprint 3 com nota 10): `docs/documentacao-database/Sprint03-Banco-de-dados.pdf`
-- 🗄️ Banco/MER (Sprint 4 — em evolução): `docs/documentacao-database/Sprint4-Banco-desenvolvendo.pdf`
-- 🧾 SQL (Sprint 3): `docs/documentacao-database/sqlSprint3.sql`
-- 🖼️ Prints de requisições (Swagger) em `./docs/prints_swagger/`
-- 📌 Progresso e checklist: `STATUS_SPRINT4.md`
-- 🧾 Log de evidências (prints ↔ endpoints): `docs/PROGRESSO_SPRINT4.md`
-- 🗂️ Índice da documentação: `docs/INDEX.md`
-
-### 🧭 Status consolidado (relatório IA)
-
-Para auditoria rápida do estado real do código vs. requisitos, existe um relatório HTML gerado com IA (snapshot):
-
-- 📄 `docs/status_projeto_claude/guia-sprint4-raiz-do-bem.html`
-- 🕒 Última atualização do relatório: **02/05 — 17:37**
-
-**Destaques apontados no relatório (podem ter mudado após commits recentes):**
-- Progresso geral: **62%**
-- CRUD completo (na data do relatório): **1/8 controllers**
-
-**Evoluções após o relatório (visíveis no código e em evidências mais recentes):**
-- ✅ Camada `exception/` adicionada em `src/main/java/br/com/raizdobem/api/exception/`
-- ✅ `DentistaService.validarCro()` implementado e usado na criação de dentistas
-- ✅ Evidências adicionais de POST no Swagger (ex.: `POST_endereco_sucesso.png`, `POST_colaborador_sucesso.png`)
-
----
-
-## 📁 Estrutura do projeto
-
-```
+```text
 raiz-do-bem-api/
-├── src/
-│   ├── main/
-│   │   ├── docker/                       Dockerfiles (jvm, native, legacy-jar)
-│   │   ├── java/br/com/raizdobem/api/
-│   │   │   ├── controller/               8 controllers REST
-│   │   │   ├── exception/                Exceções customizadas & ExceptionMapper global
-│   │   │   ├── model/                    Entidades JPA + enums (atualmente em model/dto)
-│   │   │   ├── repository/               7 repositories (Panache)
-│   │   │   └── service/                  Services (lógica de negócio em implementação)
-│   │   └── resources/
-│   │       ├── application.properties    Configuração do Quarkus
-│   │       └── import.sql                Dados de demonstração
-│   └── test/
-├── .github/
-│   ├── copilot-instructions.md           Instruções para GitHub Copilot
-│   └── prompts/                          Prompts de desenvolvimento assistido
+├── src/main/java/br/com/raizdobem/api/
+│   ├── dto/
+│   ├── entity/
+│   ├── exception/
+│   ├── repository/
+│   ├── resource/
+│   └── service/
+├── src/main/resources/
+│   ├── application.properties
+│   └── import.sql
 ├── docs/
-│   ├── Raiz_do_Bem_Documentacao_Sprint4.pdf   📄 Documentação final (a ser gerada)
+│   ├── banco/
 │   ├── diagrams/
-│   │   ├── Diagrama de Classes Simples Verificacao.png
-│   │   └── FluxoCentral.png
-│   ├── prints_swagger/
-│   │   ├── GET_enderecos.png
-│   │   ├── GET_endereco_cidade.png
-│   │   ├── GET endereco_id.png
-│   │   └── ...
-│   ├── documentacao-java/                PDF(s) base
-│   │   └── Sprint03Java.pdf              (base para atualização)
-│   └── documentacao-database/            MER/SQL
+│   ├── documentacao-java/
+│   └── prints_swagger/
 ├── pom.xml
-├── mvnw / mvnw.cmd
-└── README.md
+├── mvnw
+└── mvnw.cmd
 ```
 
----
-
-## 🎓 Contexto acadêmico
+## Contexto acadêmico
 
 | Campo | Valor |
 |---|---|
 | Instituição | FIAP |
 | Programa | Challenge 2025-26 |
 | Disciplina | Domain Driven Design Using Java |
-| Sprint | 4 — Entrega final |
-| Base Sprint 3 | [`raiz-do-bem-backend-java`](https://github.com/TdB-PlataformaRaizDoBem/raiz-do-bem-backend-java) |
+| Sprint | 4 — entrega final |
+| Solução | Raiz do Bem |
 
----
+## Referências úteis
 
-## 📚 Referências
-
-- [Quarkus — Guia oficial](https://quarkus.io/guides/)
-- [Hibernate ORM com Panache](https://quarkus.io/guides/hibernate-orm-panache)
-- [Quarkus REST (Jakarta REST)](https://quarkus.io/guides/rest)
-- [JDBC Driver — Oracle](https://quarkus.io/guides/datasource)
-- [SmallRye OpenAPI / Swagger UI](https://quarkus.io/guides/openapi-swaggerui)
-- [API ViaCEP](https://viacep.com.br/)
+- [Quarkus — documentação oficial](https://quarkus.io/guides/)
+- [Hibernate ORM with Panache](https://quarkus.io/guides/hibernate-orm-panache)
+- [Quarkus REST](https://quarkus.io/guides/rest)
+- [Oracle Database](https://www.oracle.com/database/)
+- [Swagger / OpenAPI](https://quarkus.io/guides/openapi-swaggerui)
+- [ViaCEP](https://viacep.com.br/)
