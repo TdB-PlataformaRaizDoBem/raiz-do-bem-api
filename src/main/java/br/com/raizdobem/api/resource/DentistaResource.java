@@ -2,10 +2,12 @@ package br.com.raizdobem.api.resource;
 
 import br.com.raizdobem.api.dto.request.AtualizarDentistaDTO;
 import br.com.raizdobem.api.dto.request.CriarDentistaDTO;
+import br.com.raizdobem.api.dto.response.DentistaResponseDTO;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.exception.RequisicaoInvalidaException;
 import br.com.raizdobem.api.entity.Dentista;
 import br.com.raizdobem.api.service.DentistaService;
+import br.com.raizdobem.api.util.CsvUtil;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
@@ -16,6 +18,7 @@ import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
+import java.io.StringWriter;
 import java.util.List;
 
 @RequestScoped
@@ -64,6 +67,19 @@ public class DentistaResource {
         return service.listarPorCidades(cidade);
     }
 
+    @GET
+    @Path("/exportarCsv")
+    @Produces("text/csv")
+    @Operation(summary = "Endpoint para a exportar todos os dentistas em arquivo csv.")
+    public Response exportarCsv(){
+        List<DentistaResponseDTO> lista = service.listarParaExportacao();
+
+        String csv = CsvUtil.gerarCsvDentistas(lista);
+
+        return Response.ok(csv).header("Content-Disposition",
+                "attachment; filename=dentistas.csv")
+                .build();
+    }
 
     @PUT
     @Path("/{cpf}")

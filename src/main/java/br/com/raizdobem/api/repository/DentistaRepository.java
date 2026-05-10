@@ -41,21 +41,17 @@ public class DentistaRepository implements PanacheRepository<Dentista> {
         if(dentista == null)
             return null;
 
-        if(dto.getTelefone() == null)
-            throw new NaoEncontradoException("Telefone não encontrado. Valor inserido inválido.");
-        dentista.setTelefone(dto.getTelefone());
+        if(dto.getTelefone() != null)
+            dentista.setTelefone(dto.getTelefone());
 
-        if(dto.getEmail() == null)
-            throw new NaoEncontradoException("Email não encontrado. Valor inserido inválido.");
-        dentista.setEmail(dto.getEmail());
+        if(dto.getEmail() != null)
+            dentista.setEmail(dto.getEmail());
 
-        if(dto.getCategoriaDentista() == null)
-            throw new NaoEncontradoException("Categoria não encontrada. Valor inserido inválido");
-        dentista.setCategoria(dto.getCategoriaDentista());
+        if(dto.getCategoriaDentista() != null)
+            dentista.setCategoria(dto.getCategoriaDentista());
 
-        if(dto.getDisponivel() == null)
-            throw new NaoEncontradoException("Status de disponibilidade indisponível. Valor inserido inválido");
-        dentista.setDisponivel(dto.getDisponivel());
+        if(dto.getDisponivel() != null)
+            dentista.setDisponivel(dto.getDisponivel());
 
         return dentista;
     }

@@ -2,6 +2,7 @@ package br.com.raizdobem.api.service;
 
 import br.com.raizdobem.api.dto.request.AtualizarDentistaDTO;
 import br.com.raizdobem.api.dto.request.CriarDentistaDTO;
+import br.com.raizdobem.api.dto.response.DentistaResponseDTO;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.exception.ValidacaoException;
 import br.com.raizdobem.api.entity.Dentista;
@@ -12,11 +13,13 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
-
+import org.modelmapper.ModelMapper;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class DentistaService {
+    private ModelMapper mp = new ModelMapper();
     @Inject
     DentistaRepository repository;
 
@@ -81,5 +84,19 @@ public class DentistaService {
     @Transactional
     public long excluir(String cpf) {
         return repository.excluir(cpf);
+    }
+
+    public List<DentistaResponseDTO> listarParaExportacao() {
+        List <Dentista> dentistas = listarTodos();
+        return dentistas.stream()
+                .map(dentista -> {
+
+                    DentistaResponseDTO dto = mp.map(dentista, DentistaResponseDTO.class);
+
+                    dto.setLogradouro(dentista.getEndereco().getLogradouro());
+                    dto.setNumero(dentista.getEndereco().getNumero());
+                    return dto;
+                })
+            .collect(Collectors.toList());
     }
 }

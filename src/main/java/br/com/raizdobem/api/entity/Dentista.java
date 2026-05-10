@@ -6,6 +6,8 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -43,8 +45,27 @@ public class Dentista {
 
     @Column(name = "disponivel")
     private String disponivel;
-    @ManyToOne(fetch = FetchType.EAGER)
+
+//    (fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name = "id_endereco")
     private Endereco endereco;
 
+    //Havia me esquecido da relação Dentista N:N com especialidades
+    @ManyToMany
+    @JoinTable(
+            name = "Dentista_Especialidade",
+            joinColumns = @JoinColumn(name = "id_dentista"),
+            inverseJoinColumns = @JoinColumn(name = "id_especialidade")
+    )
+    private List<Especialidade> especialidades;
+
+    //Havia me esquecido da relação Dentista N:N com o programaSocial
+    @ManyToMany
+    @JoinTable(
+            name = "Dentista_Programa_Social",
+            joinColumns = @JoinColumn(name = "id_dentista"),
+            inverseJoinColumns = @JoinColumn(name = "id_programa")
+    )
+    private List<ProgramaSocial> programasSociais;
 }
