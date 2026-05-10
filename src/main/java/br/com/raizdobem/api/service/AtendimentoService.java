@@ -61,22 +61,22 @@ public class AtendimentoService {
     @Transactional
     public void encerrarAtendimento(String cpf, AtualizarAtendimentoDTO dto){
         Atendimento atendimento = repository.buscarPeloCpf(cpf);
-        if(atendimento == null){
+        if(atendimento == null)
             throw new NaoEncontradoException("Atendimento não encontrado");
-        }
+
 
         if(dto.getProntuario() == null)
             throw new NaoEncontradoException("Prontuário inválido, não foi possível atualizar atendimento.");
         atendimento.setProntuario(dto.getProntuario());
 
-        if(dto.getIdColaborador() != null) {
-            Colaborador colaborador = colaboradorService.buscarPorId(dto.getIdColaborador());
-            if (colaborador == null) {
-                throw new NaoEncontradoException("Colaborador inválido, não foi possível atualizar atendimento.");
-            }
-        } else {
+        if(dto.getIdColaborador() == null)
             throw new NaoEncontradoException("Id de colaborador inválido.");
-        }
+
+        Colaborador colaborador = colaboradorService.buscarPorId(dto.getIdColaborador());
+        if (colaborador == null)
+            throw new NaoEncontradoException("Colaborador inválido, não foi possível atualizar atendimento.");
+
+        atendimento.setColaborador(colaborador);
 
         atendimento.setDataFinal(LocalDate.now());
     }

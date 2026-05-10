@@ -45,6 +45,7 @@ public class BeneficiarioService {
             beneficiario.setTelefone(pedido.getTelefone());
             beneficiario.setEmail(pedido.getEmail());
             beneficiario.setEndereco(pedido.getEndereco());
+            beneficiario.setPedido(pedido);
         }
 
         ProgramaSocial programaSocial = programaService.buscarPorId(dto.getIdProgramaSocial());
@@ -80,7 +81,11 @@ public class BeneficiarioService {
 
     @Transactional
     public Beneficiario atualizar(String cpf, AtualizarBeneficiarioDTO request) {
-        return repository.atualizar(cpf);
+        Beneficiario beneficiario = repository.atualizar(cpf, request);
+        if(beneficiario == null)
+            throw new NaoEncontradoException("Beneficiário não encontrado, CPF inválido.");
+
+        return beneficiario;
     }
 
     @Transactional

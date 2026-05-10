@@ -70,7 +70,7 @@ public class PedidoAjudaService {
 
     @Transactional
     public PedidoAjuda processarPedido(long id, AtualizarPedidoAjudaDTO dto){
-        PedidoAjuda pedido = repository.findById(id);
+        PedidoAjuda pedido = repository.findById(dto.getIdDentista());
         if(pedido == null)
             throw new NaoEncontradoException("Pedido de ajuda não encontrado.");
 
@@ -88,7 +88,7 @@ public class PedidoAjudaService {
         }
 
         if(novoStatus == StatusPedido.APROVADO && dto.getIdDentista() > 0){
-            Dentista dentista = dentistaService.buscarPorId(id);
+            Dentista dentista = dentistaService.buscarPorId(dto.getIdDentista());
             if(dentista == null)
                 throw new NaoEncontradoException("Dentista aprovador não encontrado.");
 

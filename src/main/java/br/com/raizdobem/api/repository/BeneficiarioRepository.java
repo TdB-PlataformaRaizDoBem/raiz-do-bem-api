@@ -39,7 +39,6 @@ public class BeneficiarioRepository implements PanacheRepository<Beneficiario> {
         if(beneficiario == null)
             return null;
 
-
         beneficiario.setTelefone(dto.getTelefone());
         beneficiario.setEmail(dto.getEmail());
         beneficiario.setEndereco(dto.getEndereco());
