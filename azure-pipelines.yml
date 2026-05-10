@@ -5,32 +5,24 @@ trigger:
       - develop
 
 pool:
-  vmImage: 'ubuntu-latest'
-  # name: Default
+  # vmImage: 'ubuntu-latest'
+  name: Default
 
 variables:
   javaVersion: '21'
-  # appName: 'nome-do-app-service'
-  # resourceGroup: 'rg-seu-projeto'
-steps:
-  # Tarefa CORRETA para instalar Java 21
- # - task: JavaToolInstaller@0
- #   inputs:
- #     versionSpec: '21'
- #     jdkArchitectureOption: 'x64'
- #     jdkSourceOption: 'PreInstalled'
 
+steps:
   - script: mvn -B clean package -DskipTests
     displayName: 'Build Maven'
 
   - task: PublishBuildArtifacts@1
     inputs:
       PathtoPublish: 'target'
-      ArtifactName: 'drop'            
+      ArtifactName: 'drop'
 
-  # - task: AzureWebApp@1          
-  #   displayName: 'Deploy to Azure Web App'
-  #   inputs:
-  #     azureSubscription: 'NomeDaServiceConnection'
-  #     appName: '$(appName)'
-  #     package: '$(System.DefaultWorkingDirectory)/target/*-runner.jar'
+  - task: AzureWebApp@1
+    displayName: 'Deploy to Azure Web App'
+    inputs:
+      azureSubscription: 'sc-raizdobem-backend'
+      appName: 'raizdobem-backend'
+      package: '$(System.DefaultWorkingDirectory)/drop/quarkus-app'
