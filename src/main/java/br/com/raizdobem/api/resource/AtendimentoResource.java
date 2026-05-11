@@ -10,6 +10,7 @@ import br.com.raizdobem.api.service.AtendimentoService;
 import br.com.raizdobem.api.util.CsvUtil;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
+import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -34,7 +35,7 @@ public class AtendimentoResource {
     }
 
     @POST
-    public Response criar(CriarAtendimentoDTO request) {
+    public Response criar(@Valid CriarAtendimentoDTO request) {
         Atendimento atendimento = service.criarAtendimento(request);
         if (atendimento == null) {
             throw new RequisicaoInvalidaException("Não foi possível criar atendimento.");
@@ -68,7 +69,7 @@ public class AtendimentoResource {
 
     @PUT
     @Path("/{cpf}")
-    public Response atualizar(@PathParam("cpf") String cpf, @RequestBody AtualizarAtendimentoDTO dto){
+    public Response atualizar(@PathParam("cpf") String cpf,@Valid @RequestBody AtualizarAtendimentoDTO dto){
         service.encerrarAtendimento(cpf, dto);
         return Response.ok().build();
     }

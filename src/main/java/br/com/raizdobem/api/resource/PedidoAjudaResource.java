@@ -8,6 +8,7 @@ import br.com.raizdobem.api.entity.PedidoAjuda;
 import br.com.raizdobem.api.service.PedidoAjudaService;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
+import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -38,7 +39,7 @@ public class PedidoAjudaResource {
     }
 
     @POST
-    public Response criar(CriarPedidoAjudaDTO request){
+    public Response criar(@Valid CriarPedidoAjudaDTO request){
         PedidoAjuda pedidoAjuda = service.criar(request);
         if(pedidoAjuda == null){
             throw new RequisicaoInvalidaException("Não foi possível criar o pedido de ajuda. Dados inválidos.");

@@ -1,21 +1,40 @@
 package br.com.raizdobem.api.dto.request;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+
 
 import java.time.LocalDate;
 
-@Data
-@NoArgsConstructor
-public class CriarPedidoAjudaDTO {
-    @Pattern(regexp = "^\\d{11}$")
-    private String cpf;
-    private String nome;
-    private LocalDate dataNascimento;
-    private String sexo;
-    private String telefone;
-    private String email;
-    private String descricaoProblema;
-    private CriarEnderecoDTO endereco;
+
+public record CriarPedidoAjudaDTO(@NotBlank @Pattern(regexp = "^\\d{11}$",
+                                            message = "CPF deve conter 11 números.")
+                                  String cpf,
+
+                                  @NotBlank
+                                  String nome,
+
+                                  @NotNull
+                                  LocalDate dataNascimento,
+
+                                  @NotBlank
+                                  String sexo,
+
+                                  @NotBlank
+                                  String telefone,
+
+                                  @NotBlank
+                                  @Email
+                                  String email,
+
+                                  @NotBlank
+                                  String descricaoProblema,
+
+                                  @NotNull
+                                  @Valid
+                                  EntradaEnderecoDTO endereco) {
+
 }

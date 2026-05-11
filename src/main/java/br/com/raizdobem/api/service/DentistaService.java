@@ -2,6 +2,7 @@ package br.com.raizdobem.api.service;
 
 import br.com.raizdobem.api.dto.request.AtualizarDentistaDTO;
 import br.com.raizdobem.api.dto.request.CriarDentistaDTO;
+import br.com.raizdobem.api.dto.response.BeneficiarioDTO;
 import br.com.raizdobem.api.dto.response.DentistaDTO;
 import br.com.raizdobem.api.entity.TipoEndereco;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
@@ -9,6 +10,7 @@ import br.com.raizdobem.api.exception.ValidacaoException;
 import br.com.raizdobem.api.entity.Dentista;
 import br.com.raizdobem.api.entity.Endereco;
 import br.com.raizdobem.api.entity.Sexo;
+import br.com.raizdobem.api.mapper.DentistaMapper;
 import br.com.raizdobem.api.repository.DentistaRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -16,6 +18,9 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static br.com.raizdobem.api.mapper.DentistaMapper.mapeamentoDTO;
+import static br.com.raizdobem.api.mapper.DentistaMapper.mapeamentoListaDTO;
 
 @ApplicationScoped
 public class DentistaService {
@@ -26,7 +31,7 @@ public class DentistaService {
     EnderecoService enderecoService;
 
     @Transactional
-    public Dentista criarDentista(@Valid CriarDentistaDTO dto){
+    public DentistaDTO criarDentista(@Valid CriarDentistaDTO dto){
         Dentista dentista = new Dentista();
 
         String cpfEntrada = dto.cpf();
@@ -51,36 +56,51 @@ public class DentistaService {
             dentista.setEndereco(endereco);
         }
 
-
         dentista.setDisponivel(dto.disponivel());
 
         repository.criar(dentista);
-        return dentista;
+        return mapeamentoDTO(dentista);
     }
 
-    public List<Dentista> listarTodos() {
-        return repository.listarTodos();
+    public List<DentistaDTO> listarTodos() {
+        List<Dentista> dentistas = repository.listarTodos();
+        return mapeamentoListaDTO(dentistas);
     }
 
-    public List<Dentista> listarDisponiveis() {
-        return repository.listarDisponiveis();
+    public List<DentistaDTO> listarDisponiveis() {
+        List<Dentista> dentistas = repository.listarDisponiveis();
+        return mapeamentoListaDTO(dentistas);
     }
 
-    public Dentista buscarPorId(Long id) {
+    public DentistaDTO buscarPorId(Long id) {
+        Dentista dentista = repository.findById(id);
+        if(dentista == null)
+            throw new NaoEncontradoException("Dentista não encontrado.");
+        return mapeamentoDTO(dentista);
+    }
+
+    public Dentista buscarEntidadePorId(Long id) {
         return repository.findById(id);
     }
 
-    public Dentista exibirDentista(String cpf) {
-        return repository.buscarPorCpf(cpf);
+    public DentistaDTO exibirDentista(String cpf) {
+        Dentista dentista = repository.buscarPorCpf(cpf);
+        if(dentista == null)
+            throw new NaoEncontradoException("Dentista não encontrado.");
+        return mapeamentoDTO(dentista);
     }
 
-    public List<Dentista> listarPorCidades(String cidade) {
-        return repository.listarPorCidade(cidade);
+    public List<DentistaDTO> listarPorCidades(String cidade) {
+        List<Dentista> dentistas = repository.listarPorCidade(cidade);
+        return mapeamentoListaDTO(dentistas);
     }
 
     @Transactional
-    public Dentista atualizar(String cpf, @Valid AtualizarDentistaDTO request) {
-        return repository.atualizar(cpf, request);
+    public DentistaDTO atualizar(String cpf, @Valid AtualizarDentistaDTO request) {
+        Dentista dentista = repository.atualizar(cpf, request);
+        if(dentista == null)
+            throw new NaoEncontradoException("Dentista não encontrado.");
+        return mapeamentoDTO(dentista);
     }
 
     @Transactional
@@ -89,22 +109,9 @@ public class DentistaService {
     }
 
     public List<DentistaDTO> listarParaExportacao() {
-        return listarTodos().stream()
-                .map(d -> new DentistaDTO(
-                        d.getId(),
-                        d.getCroDentista(),
-                        d.getCpf(),
-                        d.getNomeCompleto(),
-                        d.getSexo() != null ? d.getSexo().name() : "",
-                        d.getEmail(),
-                        d.getTelefone(),
-                        d.getTelefone(),
-                        d.getDisponivel(),
-                        d.getEndereco() != null ? d.getEndereco().getLogradouro() : "N/A",
-                        d.getEndereco() != null ? d.getEndereco().getNumero() : "N/A",
-                        d.getEndereco() != null ? d.getEndereco().getCidade() : "N/A",
-                        d.getEndereco() != null ? d.getEndereco().getEstado() : "N/A"
-                    ))
-                .collect(Collectors.toList());
+        List<Dentista> dentistas = repository.listarTodos();
+        return dentistas.stream()
+                .map(DentistaMapper::mapeamentoDTO)
+                .toList();
     }
 }

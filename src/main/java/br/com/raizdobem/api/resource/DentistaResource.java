@@ -5,7 +5,6 @@ import br.com.raizdobem.api.dto.request.CriarDentistaDTO;
 import br.com.raizdobem.api.dto.response.DentistaDTO;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.exception.RequisicaoInvalidaException;
-import br.com.raizdobem.api.entity.Dentista;
 import br.com.raizdobem.api.service.DentistaService;
 import br.com.raizdobem.api.util.CsvUtil;
 import jakarta.enterprise.context.RequestScoped;
@@ -32,7 +31,7 @@ public class DentistaResource {
     @POST
     @Operation(summary = "Endpoint para a criação de dentista.")
     public Response criar(@Valid CriarDentistaDTO request){
-        Dentista dentista = service.criarDentista(request);
+        DentistaDTO dentista = service.criarDentista(request);
         if(dentista == null){
             throw new RequisicaoInvalidaException("Dados de dentista inválidos.");
         }
@@ -41,29 +40,38 @@ public class DentistaResource {
 
     @GET
     @Operation(summary = "Endpoint para a listagem de todos os dentistas.")
-    public List<Dentista> listarTodos(){
-        return service.listarTodos();
+    public Response listarTodos(){
+        List<DentistaDTO> dentistas = service.listarTodos();
+        if(dentistas == null)
+            throw new NaoEncontradoException("Lista de dentistas vazia.");
+        return Response.status(200).entity(dentistas).build();
     }
 
     @GET
     @Path("/disponiveis")
     @Operation(summary = "Endpoint para a listagem de dentistas disponíveis.")
-    public List<Dentista> listarDisponiveis() {
-        return service.listarDisponiveis();
+    public Response listarDisponiveis() {
+        List<DentistaDTO> dentistas = service.listarDisponiveis();
+        if(dentistas == null)
+            throw new NaoEncontradoException("Lista de dentistas disponíveis vazia.");
+        return Response.status(200).entity(dentistas).build();
     }
 
     @GET
     @Path("/{cpf}")
     @Operation(summary = "Endpoint para a listagem de um único dentista.")
-    public Dentista exibirDentista(@PathParam("cpf") String cpf){
+    public DentistaDTO exibirDentista(@PathParam("cpf") String cpf){
         return service.exibirDentista(cpf);
     }
 
     @GET
     @Path("/cidade/{cidade}")
     @Operation(summary = "Endpoint para a listagem de todos os dentistas de uma cidade específica.")
-    public List<Dentista> listarTodos(@PathParam("cidade") String cidade){
-        return service.listarPorCidades(cidade);
+    public Response listarTodos(@PathParam("cidade") String cidade){
+        List<DentistaDTO> dentistas = service.listarPorCidades(cidade);
+        if(dentistas == null || dentistas.isEmpty())
+            throw new NaoEncontradoException("Lista de dentistas não foi encontrada.");
+        return Response.status(200).entity(dentistas).build();
     }
 
     @GET
@@ -83,8 +91,8 @@ public class DentistaResource {
     @PUT
     @Path("/{cpf}")
     @Operation(summary = "Endpoint para a atualização de dentista.")
-    public Response atualizar(@PathParam("cpf") String cpf, @RequestBody AtualizarDentistaDTO request){
-        Dentista dentista = service.atualizar(cpf, request);
+    public Response atualizar(@PathParam("cpf") String cpf, @Valid @RequestBody AtualizarDentistaDTO request){
+        DentistaDTO dentista = service.atualizar(cpf, request);
         return Response.status(Response.Status.OK).entity(dentista).build();
     }
 

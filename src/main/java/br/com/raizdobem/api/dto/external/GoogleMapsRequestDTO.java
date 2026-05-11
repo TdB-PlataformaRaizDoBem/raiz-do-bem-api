@@ -10,10 +10,10 @@ import java.util.List;
 @NoArgsConstructor
 public class GoogleMapsRequestDTO {
     @JsonProperty("origins")
-    private List<EnderecoMapsDTO> origins;
+    private List<GoogleMapsEnderecoDTO> origins;
 
     @JsonProperty("destinations")
-    private List<EnderecoMapsDTO> destinations;
+    private List<GoogleMapsEnderecoDTO> destinations;
 
     @JsonProperty("travelMode")
     private String tipoViagem = "DRIVE";

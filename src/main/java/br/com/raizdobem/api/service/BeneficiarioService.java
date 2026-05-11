@@ -2,12 +2,11 @@ package br.com.raizdobem.api.service;
 
 import br.com.raizdobem.api.dto.request.AtualizarBeneficiarioDTO;
 import br.com.raizdobem.api.dto.request.CriarBeneficiarioDTO;
-import br.com.raizdobem.api.dto.request.CriarEnderecoDTO;
 import br.com.raizdobem.api.dto.response.BeneficiarioDTO;
-import br.com.raizdobem.api.dto.response.EnderecoDTO;
-import br.com.raizdobem.api.dto.response.PedidoAjudaResumidoDTO;
 import br.com.raizdobem.api.entity.ProgramaSocial;
+import br.com.raizdobem.api.entity.StatusPedido;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
+import br.com.raizdobem.api.exception.RequisicaoInvalidaException;
 import br.com.raizdobem.api.exception.ValidacaoException;
 import br.com.raizdobem.api.entity.Beneficiario;
 import br.com.raizdobem.api.entity.PedidoAjuda;
@@ -18,6 +17,9 @@ import jakarta.transaction.Transactional;
 
 import java.util.List;
 
+import static br.com.raizdobem.api.mapper.BeneficiarioMapper.mapeamentoDTO;
+import static br.com.raizdobem.api.mapper.BeneficiarioMapper.mapeamentoListaDTO;
+
 @ApplicationScoped
 public class BeneficiarioService {
     @Inject
@@ -27,22 +29,27 @@ public class BeneficiarioService {
     PedidoAjudaService pedidoAjudaService;
 
     @Inject
-    EnderecoService enderecoService;
-
-    @Inject
     ProgramaService programaService;
 
 
     @Transactional
-    public Beneficiario criarBeneficiario(CriarBeneficiarioDTO dto) {
+    public BeneficiarioDTO criarBeneficiario(CriarBeneficiarioDTO dto) {
         Beneficiario beneficiario = new Beneficiario();
+        if(dto == null)
+            throw new RequisicaoInvalidaException("Inserção de beneficiário inválida.");
 
-        if(ValidacaoService.validarCpf(dto.getCpf()))
-            beneficiario.setCpf(dto.getCpf());
+        if(ValidacaoService.validarCpf(dto.cpf()))
+            beneficiario.setCpf(dto.cpf());
         else
             throw new ValidacaoException("CPF inserido é inválido");
 
-        PedidoAjuda pedido = pedidoAjudaService.buscarPorCpf(dto.getCpf());
+        PedidoAjuda pedido = pedidoAjudaService.buscarPorCpf(dto.cpf());
+        if(pedido == null)
+            throw new NaoEncontradoException("Não foi possível encontrar pedido informado.");
+
+        if(pedido.getStatus() != StatusPedido.APROVADO)
+            throw new RequisicaoInvalidaException("Pedido de ajuda não foi APROVADO. Impossível seguir o processo de criação de beneficiário.");
+
         if(beneficiario.getCpf().equals(pedido.getCpf())){
             beneficiario.setNomeCompleto(pedido.getNomeCompleto());
             beneficiario.setDataNascimento(pedido.getDataNascimento());
@@ -52,7 +59,7 @@ public class BeneficiarioService {
             beneficiario.setPedido(pedido);
         }
 
-        ProgramaSocial programaSocial = programaService.buscarPorId(dto.getIdProgramaSocial());
+        ProgramaSocial programaSocial = programaService.buscarPorId(dto.idProgramaSocial());
         if(programaSocial == null)
             throw new NaoEncontradoException("Programa social não encontrado.");
         else{
@@ -60,67 +67,56 @@ public class BeneficiarioService {
         }
 
         repository.criar(beneficiario);
-        return beneficiario;
+        return mapeamentoDTO(beneficiario);
     }
 
-    public Beneficiario buscarPorCpf(String cpf) {
+    public BeneficiarioDTO buscarPorCpf(String cpf) {
         if(!ValidacaoService.validarCpf(cpf))
             throw new ValidacaoException("CPF inválido.");
-        return repository.buscarPorCpf(cpf);
+
+        Beneficiario beneficiario = repository.buscarPorCpf(cpf);
+        if(beneficiario == null)
+            throw new NaoEncontradoException("Beneficiário não encontrado.");
+        return mapeamentoDTO(beneficiario);
     }
 
-    public Beneficiario buscarPorId(Long id) {
-        return repository.buscarPorId(id);
+    public BeneficiarioDTO buscarPorId(Long id) {
+        Beneficiario beneficiario = repository.buscarPorId(id);
+        if(beneficiario == null)
+            throw new NaoEncontradoException("Beneficiário não encontrado.");
+        return mapeamentoDTO(beneficiario);
     }
 
     public List<BeneficiarioDTO> listarTodos() {
         List <Beneficiario> beneficiarios = repository.listarTodos();
-
-        return beneficiarios.stream()
-                .map(b -> new BeneficiarioDTO(
-                  b.getId(),
-                  b.getCpf(),
-                  b.getNomeCompleto(),
-                  b.getDataNascimento(),
-                  b.getTelefone(),
-                  b.getEmail(), b.getPedido() != null ? new PedidoAjudaResumidoDTO(
-                          b.getPedido().getId(),
-                          b.getPedido().getDentista() != null ? b.getPedido().getDentista().getNomeCompleto() : null
-                        ) : null,
-                  b.getProgramaSocial() != null ? b.getProgramaSocial().getPrograma() : "N/A",
-                  b.getEndereco() != null ? new EnderecoDTO(
-                          b.getEndereco().getId(),
-                          b.getEndereco().getLogradouro(),
-                          b.getEndereco().getCep(),
-                          b.getEndereco().getNumero(),
-                          b.getEndereco().getBairro(),
-                          b.getEndereco().getCidade(),
-                          b.getEndereco().getEstado(),
-                          b.getEndereco().getTipoEndereco() !=null ? b.getEndereco().getTipoEndereco().name() : null
-                ) : null
-            ))
-                .toList();
+        return mapeamentoListaDTO(beneficiarios);
     }
 
-    public List<Beneficiario> listarPorCidade(String cidade) {
-        return repository.listarPorCidade(cidade);
+    public List<BeneficiarioDTO> listarPorCidade(String cidade) {
+        List <Beneficiario> beneficiarios = repository.listarPorCidade(cidade);
+        return mapeamentoListaDTO(beneficiarios);
     }
 
-    public List<Beneficiario> listarPorPrograma(long idProgramaSocial) {
-        return repository.listarPorPrograma(idProgramaSocial);
+    public List<BeneficiarioDTO> listarPorPrograma(long idProgramaSocial) {
+        List <Beneficiario> beneficiarios = repository.listarPorPrograma(idProgramaSocial);
+        return mapeamentoListaDTO(beneficiarios);
     }
 
     @Transactional
-    public Beneficiario atualizar(String cpf, AtualizarBeneficiarioDTO request) {
+    public BeneficiarioDTO atualizar(String cpf, AtualizarBeneficiarioDTO request) {
         Beneficiario beneficiario = repository.atualizar(cpf, request);
         if(beneficiario == null)
             throw new NaoEncontradoException("Beneficiário não encontrado, CPF inválido.");
 
-        return beneficiario;
+        return mapeamentoDTO(beneficiario);
     }
 
     @Transactional
-    public long excluir(String cpf) {
-        return repository.excluir(cpf);
+    public boolean excluir(String cpf) {
+        if(!ValidacaoService.validarCpf(cpf)){
+            throw new NaoEncontradoException("CPF inválido.");
+        }
+        long exclusao = repository.excluir(cpf);
+        return exclusao > 0;
     }
 }

@@ -1,6 +1,5 @@
 package br.com.raizdobem.api.dto.response;
 
-import br.com.raizdobem.api.dto.request.CriarEnderecoDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

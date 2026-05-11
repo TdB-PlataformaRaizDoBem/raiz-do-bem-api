@@ -3,12 +3,11 @@ package br.com.raizdobem.api.resource;
 import br.com.raizdobem.api.dto.request.AtualizarBeneficiarioDTO;
 import br.com.raizdobem.api.dto.request.CriarBeneficiarioDTO;
 import br.com.raizdobem.api.dto.response.BeneficiarioDTO;
-import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.exception.RequisicaoInvalidaException;
-import br.com.raizdobem.api.entity.Beneficiario;
 import br.com.raizdobem.api.service.BeneficiarioService;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
+import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -30,19 +29,14 @@ public class BeneficiarioResource {
     @GET
     @Operation(summary = "Endpoint de listagem dos beneficiários cadastrados.")
     public Response listarTodos(){
-        List<Beneficiario> beneficiarios = service.listarTodos();
-        if(beneficiarios == null || beneficiarios.isEmpty())
-            throw new NaoEncontradoException("Nenhum beneficiário encontrado.");
+        List<BeneficiarioDTO> beneficiarios = service.listarTodos();
         return Response.ok(beneficiarios).build();
     }
 
     @POST
     @Operation(summary = "Endpoint para a criação de beneficiários.")
-    public Response criar(CriarBeneficiarioDTO request){
-        Beneficiario beneficiario = service.criarBeneficiario(request);
-        if(beneficiario == null){
-            throw new RequisicaoInvalidaException("Dados de beneficiário inválidos.");
-        }
+    public Response criar(@Valid CriarBeneficiarioDTO request){
+        BeneficiarioDTO beneficiario = service.criarBeneficiario(request);
         return Response.status(Response.Status.CREATED).entity(beneficiario).build();
     }
 
@@ -50,9 +44,7 @@ public class BeneficiarioResource {
     @Path("/{cpf}")
     @Operation(summary = "Endpoint para encontrar um beneficiário específico.")
     public Response buscarPorCpf(@PathParam("cpf") String cpf){
-        Beneficiario beneficiario = service.buscarPorCpf(cpf);
-        if(beneficiario == null)
-            throw new RequisicaoInvalidaException("Beneficiário inválido.");
+        BeneficiarioDTO beneficiario = service.buscarPorCpf(cpf);
         return Response.ok(beneficiario).build();
     }
 
@@ -60,9 +52,7 @@ public class BeneficiarioResource {
     @Path("/cidade/{cidade}")
     @Operation(summary = "Endpoint para listar beneficiários por cidade.")
     public Response listarPorCidade(@PathParam("cidade") String cidade) {
-        List<Beneficiario> beneficiarios = service.listarPorCidade(cidade);
-        if(beneficiarios.isEmpty())
-            throw new NaoEncontradoException("Nenhum beneficiário encontrado na cidade inserida.");
+        List<BeneficiarioDTO> beneficiarios = service.listarPorCidade(cidade);
         return Response.ok(beneficiarios).build();
     }
 
@@ -70,17 +60,15 @@ public class BeneficiarioResource {
     @Path("/programa/{idProgramaSocial}")
     @Operation(summary = "Endpoint para listar beneficiários por programa social.")
     public Response listarPorPrograma(@PathParam("idProgramaSocial") long idProgramaSocial) {
-        List<Beneficiario> beneficiarios = service.listarPorPrograma(idProgramaSocial);
-        if(beneficiarios.isEmpty())
-            throw new NaoEncontradoException("Nenhum beneficiário encontrado para o programa social inserido.");
+        List<BeneficiarioDTO> beneficiarios = service.listarPorPrograma(idProgramaSocial);
         return Response.ok(beneficiarios).build();
     }
 
     @PUT
     @Path("/{cpf}")
     @Operation(summary = "Endpoint de atualização de informações de beneficiário.")
-    public Response atualizar(@PathParam("cpf") String cpf, @RequestBody AtualizarBeneficiarioDTO dto){
-        Beneficiario beneficiario = service.atualizar(cpf, dto);
+    public Response atualizar(@PathParam("cpf") String cpf, @Valid @RequestBody AtualizarBeneficiarioDTO dto){
+        BeneficiarioDTO beneficiario = service.atualizar(cpf, dto);
         return Response.ok().entity(beneficiario).build();
     }
 
@@ -88,7 +76,9 @@ public class BeneficiarioResource {
     @Path("/{cpf}")
     @Operation(summary = "Endpoint para apagar beneficiário existente.")
     public Response excluir(@PathParam("cpf") String cpf){
-       service.excluir(cpf);
+       boolean exclusao = service.excluir(cpf);
+       if(!exclusao)
+           throw new RequisicaoInvalidaException("Não foi possível excluir beneficiário.");
        return Response.noContent().build();
     }
 }

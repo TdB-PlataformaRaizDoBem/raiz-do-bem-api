@@ -3,6 +3,7 @@ package br.com.raizdobem.api.service;
 import br.com.raizdobem.api.dto.request.AtualizarAtendimentoDTO;
 import br.com.raizdobem.api.dto.request.CriarAtendimentoDTO;
 import br.com.raizdobem.api.dto.response.AtendimentoDTO;
+import br.com.raizdobem.api.dto.response.BeneficiarioDTO;
 import br.com.raizdobem.api.dto.response.DentistaDTO;
 import br.com.raizdobem.api.entity.Colaborador;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
@@ -32,22 +33,31 @@ public class AtendimentoService {
     @Inject
     ColaboradorService colaboradorService;
 
+    @Inject
+    AtendimentoMatchService atendimentoMatchService;
+
     @Transactional
     public Atendimento criarAtendimento(CriarAtendimentoDTO dto){
         Atendimento atendimento = new Atendimento();
 
-        Beneficiario beneficiario = beneficiarioService.buscarPorId(dto.getBeneficiario().getId());
-        if(beneficiario == null)
-            throw new NaoEncontradoException("Beneficiário não foi encontrado.");
+//        BeneficiarioDTO beneficiario = beneficiarioService.buscarPorId(dto.getBeneficiario().getId());
+//        if(beneficiario == null)
+//            throw new NaoEncontradoException("Beneficiário não foi encontrado.");
 
+        //Dentista dentista = atendimentoMatchService.melhorMatchDentista(beneficiario);
+        /*
+        Aqui vai entrar a lógica de atribuição de dentista
         Dentista dentista = dentistaService.buscarPorId(dto.getDentista().getId());
+
         if(dentista == null)
             throw new NaoEncontradoException("Dentista não foi encontrado.");
 
+        */
+
         atendimento.setProntuario(dto.getProntuario());
         atendimento.setDataInicial(LocalDate.now());
-        atendimento.setBeneficiario(beneficiario);
-        atendimento.setDentista(dentista);
+//        atendimento.setBeneficiario(beneficiario);
+//        atendimento.setDentista(dentista);
 
         repository.criar(atendimento);
         return atendimento;
@@ -66,7 +76,6 @@ public class AtendimentoService {
         Atendimento atendimento = repository.buscarPeloCpf(cpf);
         if(atendimento == null)
             throw new NaoEncontradoException("Atendimento não encontrado");
-
 
         if(dto.prontuario() == null)
             throw new NaoEncontradoException("Prontuário inválido, não foi possível atualizar atendimento.");

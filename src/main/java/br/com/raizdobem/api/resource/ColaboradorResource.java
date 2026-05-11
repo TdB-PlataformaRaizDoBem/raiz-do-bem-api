@@ -7,6 +7,7 @@ import br.com.raizdobem.api.entity.Colaborador;
 import br.com.raizdobem.api.service.ColaboradorService;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
+import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -26,7 +27,7 @@ public class ColaboradorResource {
 
     @POST
     @Operation(summary = "Endpoint para a criação de colaborador.")
-    public Response criar(CriarColaboradorDTO request){
+    public Response criar(@Valid CriarColaboradorDTO request){
         Colaborador colaborador = service.criarColaborador(request);
         if(colaborador == null){
             throw new NaoEncontradoException("Dados de colaborador inválidos.");
@@ -53,7 +54,7 @@ public class ColaboradorResource {
     @PUT
     @Path("/{cpf}")
     @Operation(summary = "Endpoint para a atualização de colaborador.")
-    public Response atualizar(@PathParam("cpf") String cpf, @RequestBody AtualizarColaboradorDTO dto){
+    public Response atualizar(@PathParam("cpf") String cpf, @Valid @RequestBody AtualizarColaboradorDTO dto){
         service.atualizarColaborador(cpf, dto);
         return Response.ok().build();
     }

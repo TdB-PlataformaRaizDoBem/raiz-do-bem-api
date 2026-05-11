@@ -1,16 +1,15 @@
 package br.com.raizdobem.api.dto.external;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
+public record ViaCepDTO(String cep,
+                        String logradouro,
+                        String bairro,
+                        @JsonProperty("localidade")
+                        String cidade,
+                        String uf,
+                        String estado,
+                        @JsonProperty("erro")
+                        String erro) {
 
-@Data
-@NoArgsConstructor
-public class ViaCepDTO {
-    private String cep;
-    private String logradouro;
-    private String bairro;
-    private String localidade;
-    private String uf;
-    private String estado;
 }

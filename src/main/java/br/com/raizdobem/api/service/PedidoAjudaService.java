@@ -30,23 +30,25 @@ public class PedidoAjudaService {
     public PedidoAjuda criar(CriarPedidoAjudaDTO dto) {
         PedidoAjuda pedidoAjuda = new PedidoAjuda();
 
-        pedidoAjuda.setCpf(dto.getCpf());
-        pedidoAjuda.setNomeCompleto(dto.getNome());
-        pedidoAjuda.setDataNascimento(dto.getDataNascimento());
+        pedidoAjuda.setCpf(dto.cpf());
+        pedidoAjuda.setNomeCompleto(dto.nome());
+        pedidoAjuda.setDataNascimento(dto.dataNascimento());
         pedidoAjuda.setStatus(StatusPedido.PENDENTE);
 
-        if (dto.getSexo().equals("M")) {
-            if(invalidarHomens(dto.getDataNascimento()))
+        if(dto.sexo() == null)
+            throw new ValidacaoException("Sexo é obrigatório.");
+        if (("M").equals(dto.sexo())) {
+            if(maiorIdade(dto.dataNascimento()))
                 pedidoAjuda.setStatus(StatusPedido.REJEITADO);
         }
 
-        pedidoAjuda.setSexo(Sexo.valueOf(dto.getSexo().toUpperCase()));
-        pedidoAjuda.setTelefone(dto.getTelefone());
-        pedidoAjuda.setEmail(dto.getEmail());
-        pedidoAjuda.setDescricaoProblema(dto.getDescricaoProblema());
+        pedidoAjuda.setSexo(Sexo.valueOf(dto.sexo().toUpperCase()));
+        pedidoAjuda.setTelefone(dto.telefone());
+        pedidoAjuda.setEmail(dto.email());
+        pedidoAjuda.setDescricaoProblema(dto.descricaoProblema());
         pedidoAjuda.setDataPedido(LocalDate.now());
 
-        Endereco endereco = enderecoService.criar(dto.getEndereco());
+        Endereco endereco = enderecoService.criar(dto.endereco());
         if(endereco == null){
             throw new NaoEncontradoException("Endereço não encontrado.");
         }
@@ -78,7 +80,7 @@ public class PedidoAjudaService {
         if(pedido.getStatus() == StatusPedido.REJEITADO)
             throw new RegraNegocioException("Pedido REJEITADO não pode ser processado.");
 
-        if(dto.statusPedido().equals(StatusPedido.PENDENTE))
+        if(dto.statusPedido() == null || dto.statusPedido().equals(StatusPedido.PENDENTE))
             throw new ValidacaoException("Pedido só pode ser atualizado para APROVADO/REJEITADO.");
 
         StatusPedido novoStatus;
@@ -89,7 +91,8 @@ public class PedidoAjudaService {
         }
 
         if(novoStatus == StatusPedido.APROVADO && dto.idDentista() > 0){
-            Dentista dentista = dentistaService.buscarPorId(dto.idDentista());
+            Dentista dentista = dentistaService.buscarEntidadePorId(dto.idDentista());
+
             if(dentista == null)
                 throw new NaoEncontradoException("Dentista aprovador não encontrado.");
 
@@ -107,7 +110,7 @@ public class PedidoAjudaService {
         return repository.excluir(id);
     }
 
-    public static boolean invalidarHomens(LocalDate dataNasc){
+    public static boolean maiorIdade(LocalDate dataNasc){
         if (dataNasc == null) {
             return false;
         }

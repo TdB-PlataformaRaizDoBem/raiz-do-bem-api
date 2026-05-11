@@ -2,6 +2,7 @@ package br.com.raizdobem.api.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -16,6 +17,9 @@ public class Beneficiario {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_beneficiario")
     private Long id;
+
+    @Pattern(regexp = "\\d{11}",
+            message = "CPF deve conter 11 números")
     private String cpf;
 
     @Column(name = "nome_completo")
