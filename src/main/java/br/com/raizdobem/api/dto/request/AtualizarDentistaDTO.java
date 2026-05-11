@@ -1,14 +1,6 @@
 package br.com.raizdobem.api.dto.request;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-@Data
-@NoArgsConstructor
-public class AtualizarDentistaDTO {
-    private String telefone;
-    private String email;
-    private String categoriaDentista;
-    private EnderecoRequestDTO endereco;
-    private String disponivel;
+public record AtualizarDentistaDTO(String telefone, String email,
+                                   String categoriaDentista, CriarEnderecoDTO endereco,
+                                   String disponivel) {
 }

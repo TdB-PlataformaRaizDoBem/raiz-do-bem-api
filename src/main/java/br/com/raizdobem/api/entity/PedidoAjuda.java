@@ -49,11 +49,11 @@ public class PedidoAjuda {
     @Column(name = "status_pedido")
     private StatusPedido status;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name = "id_endereco")
     private Endereco endereco;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name = "id_dentista")
     private Dentista dentista;
 }

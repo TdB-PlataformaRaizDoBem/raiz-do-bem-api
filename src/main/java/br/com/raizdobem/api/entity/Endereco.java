@@ -15,6 +15,7 @@ public class Endereco {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_endereco")
     private Long id;
+
     @JsonProperty("logradouro")
     private String logradouro;
 
@@ -35,5 +36,4 @@ public class Endereco {
     @Enumerated(EnumType.STRING)
     @Column(name = "tipo_endereco")
     private TipoEndereco tipoEndereco;
-
 }

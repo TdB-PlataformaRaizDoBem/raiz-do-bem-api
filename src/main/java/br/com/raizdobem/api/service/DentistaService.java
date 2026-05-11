@@ -2,7 +2,8 @@ package br.com.raizdobem.api.service;
 
 import br.com.raizdobem.api.dto.request.AtualizarDentistaDTO;
 import br.com.raizdobem.api.dto.request.CriarDentistaDTO;
-import br.com.raizdobem.api.dto.response.DentistaResponseDTO;
+import br.com.raizdobem.api.dto.response.DentistaDTO;
+import br.com.raizdobem.api.entity.TipoEndereco;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.exception.ValidacaoException;
 import br.com.raizdobem.api.entity.Dentista;
@@ -13,13 +14,11 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
-import org.modelmapper.ModelMapper;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class DentistaService {
-    private ModelMapper mp = new ModelMapper();
     @Inject
     DentistaRepository repository;
 
@@ -30,27 +29,30 @@ public class DentistaService {
     public Dentista criarDentista(@Valid CriarDentistaDTO dto){
         Dentista dentista = new Dentista();
 
-        String cpfEntrada = dto.getCpf();
-        String sexoEntrada = dto.getSexo().toUpperCase();
+        String cpfEntrada = dto.cpf();
+        String sexoEntrada = dto.sexo().toUpperCase();
 
         if(ValidacaoService.validarCpf(cpfEntrada))
             dentista.setCpf(cpfEntrada);
         else
             throw new ValidacaoException("CPF inserido é inválido");
 
-        dentista.setCroDentista(dto.getCroDentista());
-        dentista.setNomeCompleto(dto.getNomeCompleto());
+        dentista.setCroDentista(dto.croDentista());
+        dentista.setNomeCompleto(dto.nomeCompleto());
         dentista.setSexo(Sexo.valueOf(sexoEntrada));
-        dentista.setTelefone(dto.getTelefone());
-        dentista.setEmail(dto.getEmail());
-        dentista.setCategoria(dto.getCategoria());
-        Endereco endereco = enderecoService.buscaPorId(dto.getId_endereco());
+        dentista.setTelefone(dto.telefone());
+        dentista.setEmail(dto.email());
+        dentista.setCategoria(dto.categoria());
+        Endereco endereco = enderecoService.criar(dto.endereco());
         if(endereco == null)
             throw new NaoEncontradoException("Endereço não encontrado!");
-        else
+        else{
+            endereco.setTipoEndereco(TipoEndereco.PROFISSIONAL);
             dentista.setEndereco(endereco);
+        }
 
-        dentista.setDisponivel(dto.getDisponivel());
+
+        dentista.setDisponivel(dto.disponivel());
 
         repository.criar(dentista);
         return dentista;
@@ -86,17 +88,23 @@ public class DentistaService {
         return repository.excluir(cpf);
     }
 
-    public List<DentistaResponseDTO> listarParaExportacao() {
-        List <Dentista> dentistas = listarTodos();
-        return dentistas.stream()
-                .map(dentista -> {
-
-                    DentistaResponseDTO dto = mp.map(dentista, DentistaResponseDTO.class);
-
-                    dto.setLogradouro(dentista.getEndereco().getLogradouro());
-                    dto.setNumero(dentista.getEndereco().getNumero());
-                    return dto;
-                })
-            .collect(Collectors.toList());
+    public List<DentistaDTO> listarParaExportacao() {
+        return listarTodos().stream()
+                .map(d -> new DentistaDTO(
+                        d.getId(),
+                        d.getCroDentista(),
+                        d.getCpf(),
+                        d.getNomeCompleto(),
+                        d.getSexo() != null ? d.getSexo().name() : "",
+                        d.getEmail(),
+                        d.getTelefone(),
+                        d.getTelefone(),
+                        d.getDisponivel(),
+                        d.getEndereco() != null ? d.getEndereco().getLogradouro() : "N/A",
+                        d.getEndereco() != null ? d.getEndereco().getNumero() : "N/A",
+                        d.getEndereco() != null ? d.getEndereco().getCidade() : "N/A",
+                        d.getEndereco() != null ? d.getEndereco().getEstado() : "N/A"
+                    ))
+                .collect(Collectors.toList());
     }
 }

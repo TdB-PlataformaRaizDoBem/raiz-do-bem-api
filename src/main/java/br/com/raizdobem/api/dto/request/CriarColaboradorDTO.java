@@ -1,16 +1,10 @@
 package br.com.raizdobem.api.dto.request;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
 import java.time.LocalDate;
 
-@Data
-@NoArgsConstructor
-public class CriarColaboradorDTO {
-    private String cpf;
-    private String nomeCompleto;
-    private LocalDate dataNascimento;
-    private LocalDate dataContratacao;
-    private String email;
+public record CriarColaboradorDTO(String cpf,
+                                 String nomeCompleto,
+                                 LocalDate dataNascimento,
+                                 LocalDate dataContratacao,
+                                 String email) {
 }

@@ -26,15 +26,15 @@ public class Beneficiario {
     private String telefone;
     private String email;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name = "id_pedido_ajuda")
     private PedidoAjuda pedido;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name = "id_programa_social")
     private ProgramaSocial programaSocial;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name = "id_endereco")
     private Endereco endereco;
 }

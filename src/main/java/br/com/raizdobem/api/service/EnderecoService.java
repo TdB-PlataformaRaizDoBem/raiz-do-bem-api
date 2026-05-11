@@ -1,7 +1,7 @@
 package br.com.raizdobem.api.service;
 
 import br.com.raizdobem.api.client.ViaCepClient;
-import br.com.raizdobem.api.dto.request.EnderecoRequestDTO;
+import br.com.raizdobem.api.dto.request.CriarEnderecoDTO;
 import br.com.raizdobem.api.dto.external.ViaCepDTO;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.exception.RegraNegocioException;
@@ -11,7 +11,6 @@ import br.com.raizdobem.api.entity.TipoEndereco;
 
 import java.util.List;
 
-import com.google.gson.Gson;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -27,8 +26,8 @@ public class EnderecoService {
     ViaCepClient client;
 
     @Transactional
-    public Endereco criar(EnderecoRequestDTO dto) {
-        String cep = dto.getCep();
+    public Endereco criar(CriarEnderecoDTO dto) {
+        String cep = dto.cep();
 
         if(validarCep(cep)){
             ViaCepDTO viaCep = buscarEndereco(cep);
@@ -39,13 +38,13 @@ public class EnderecoService {
             endereco.setBairro(viaCep.getBairro());
             endereco.setCidade(viaCep.getLocalidade());
             endereco.setEstado(viaCep.getUf());
-            endereco.setNumero(dto.getNumero());
+            endereco.setNumero(dto.numero());
 
             TipoEndereco tipoEndereco = null;
 
-            if (dto.getTipoEndereco().equalsIgnoreCase("RESIDENCIAL")) {
+            if (dto.tipoEndereco().equalsIgnoreCase("RESIDENCIAL")) {
                 tipoEndereco = TipoEndereco.RESIDENCIAL;
-            } else if(dto.getTipoEndereco().equalsIgnoreCase("PROFISSIONAL")){
+            } else if(dto.tipoEndereco().equalsIgnoreCase("PROFISSIONAL")){
                 tipoEndereco = TipoEndereco.PROFISSIONAL;
             }
 
@@ -89,12 +88,12 @@ public class EnderecoService {
     }
 
     @Transactional
-    public Endereco atualizarEndereco(Long id, EnderecoRequestDTO dto) {
+    public Endereco atualizarEndereco(Long id, CriarEnderecoDTO dto) {
         Endereco endereco = buscaPorId(id);
         if(endereco == null)
             throw new NaoEncontradoException("Endereço não encontrado.");
 
-        endereco.setCep(dto.getCep());
+        endereco.setCep(dto.cep());
 
         ViaCepDTO viaCep = buscarEndereco(endereco.getCep());
 
@@ -105,13 +104,13 @@ public class EnderecoService {
 
         TipoEndereco tipoEndereco = null;
 
-        if (dto.getTipoEndereco().equalsIgnoreCase("RESIDENCIAL")) {
+        if (dto.tipoEndereco().equalsIgnoreCase("RESIDENCIAL")) {
             tipoEndereco = TipoEndereco.RESIDENCIAL;
-        } else if(dto.getTipoEndereco().equalsIgnoreCase("PROFISSIONAL")){
+        } else if(dto.tipoEndereco().equalsIgnoreCase("PROFISSIONAL")){
             tipoEndereco = TipoEndereco.PROFISSIONAL;
         }
         endereco.setTipoEndereco(tipoEndereco);
-        endereco.setNumero(dto.getNumero());
+        endereco.setNumero(dto.numero());
 
         repository.persist(endereco);
         return endereco;

@@ -26,8 +26,8 @@ public class ColaboradorRepository implements PanacheRepository<Colaborador> {
         return findById(id);
     }
 
-    public void atualizar(String cpf, AtualizarColaboradorDTO request){
-        update("email = ?1 where cpf = ?2", request.getEmail(), cpf);
+    public void atualizar(String cpf, AtualizarColaboradorDTO dto){
+        update("email = ?1 where cpf = ?2", dto.email(), cpf);
     }
 
     public long excluir(String cpf) {

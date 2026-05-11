@@ -2,6 +2,10 @@ package br.com.raizdobem.api.service;
 
 import br.com.raizdobem.api.dto.request.AtualizarBeneficiarioDTO;
 import br.com.raizdobem.api.dto.request.CriarBeneficiarioDTO;
+import br.com.raizdobem.api.dto.request.CriarEnderecoDTO;
+import br.com.raizdobem.api.dto.response.BeneficiarioDTO;
+import br.com.raizdobem.api.dto.response.EnderecoDTO;
+import br.com.raizdobem.api.dto.response.PedidoAjudaResumidoDTO;
 import br.com.raizdobem.api.entity.ProgramaSocial;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.exception.ValidacaoException;
@@ -60,6 +64,8 @@ public class BeneficiarioService {
     }
 
     public Beneficiario buscarPorCpf(String cpf) {
+        if(!ValidacaoService.validarCpf(cpf))
+            throw new ValidacaoException("CPF inválido.");
         return repository.buscarPorCpf(cpf);
     }
 
@@ -67,8 +73,33 @@ public class BeneficiarioService {
         return repository.buscarPorId(id);
     }
 
-    public List<Beneficiario> listarTodos() {
-        return repository.listarTodos();
+    public List<BeneficiarioDTO> listarTodos() {
+        List <Beneficiario> beneficiarios = repository.listarTodos();
+
+        return beneficiarios.stream()
+                .map(b -> new BeneficiarioDTO(
+                  b.getId(),
+                  b.getCpf(),
+                  b.getNomeCompleto(),
+                  b.getDataNascimento(),
+                  b.getTelefone(),
+                  b.getEmail(), b.getPedido() != null ? new PedidoAjudaResumidoDTO(
+                          b.getPedido().getId(),
+                          b.getPedido().getDentista() != null ? b.getPedido().getDentista().getNomeCompleto() : null
+                        ) : null,
+                  b.getProgramaSocial() != null ? b.getProgramaSocial().getPrograma() : "N/A",
+                  b.getEndereco() != null ? new EnderecoDTO(
+                          b.getEndereco().getId(),
+                          b.getEndereco().getLogradouro(),
+                          b.getEndereco().getCep(),
+                          b.getEndereco().getNumero(),
+                          b.getEndereco().getBairro(),
+                          b.getEndereco().getCidade(),
+                          b.getEndereco().getEstado(),
+                          b.getEndereco().getTipoEndereco() !=null ? b.getEndereco().getTipoEndereco().name() : null
+                ) : null
+            ))
+                .toList();
     }
 
     public List<Beneficiario> listarPorCidade(String cidade) {

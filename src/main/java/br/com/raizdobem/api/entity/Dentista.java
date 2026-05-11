@@ -46,7 +46,6 @@ public class Dentista {
     @Column(name = "disponivel")
     private String disponivel;
 
-//    (fetch = FetchType.EAGER)
     @ManyToOne
     @JoinColumn(name = "id_endereco")
     private Endereco endereco;

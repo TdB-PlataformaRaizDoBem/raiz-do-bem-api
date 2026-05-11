@@ -2,6 +2,8 @@ package br.com.raizdobem.api.service;
 
 import br.com.raizdobem.api.dto.request.AtualizarAtendimentoDTO;
 import br.com.raizdobem.api.dto.request.CriarAtendimentoDTO;
+import br.com.raizdobem.api.dto.response.AtendimentoDTO;
+import br.com.raizdobem.api.dto.response.DentistaDTO;
 import br.com.raizdobem.api.entity.Colaborador;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.entity.Atendimento;
@@ -14,6 +16,7 @@ import jakarta.transaction.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class AtendimentoService {
@@ -65,14 +68,14 @@ public class AtendimentoService {
             throw new NaoEncontradoException("Atendimento não encontrado");
 
 
-        if(dto.getProntuario() == null)
+        if(dto.prontuario() == null)
             throw new NaoEncontradoException("Prontuário inválido, não foi possível atualizar atendimento.");
-        atendimento.setProntuario(dto.getProntuario());
+        atendimento.setProntuario(dto.prontuario());
 
-        if(dto.getIdColaborador() == null)
+        if(dto.idColaborador() == null)
             throw new NaoEncontradoException("Id de colaborador inválido.");
 
-        Colaborador colaborador = colaboradorService.buscarPorId(dto.getIdColaborador());
+        Colaborador colaborador = colaboradorService.buscarPorId(dto.idColaborador());
         if (colaborador == null)
             throw new NaoEncontradoException("Colaborador inválido, não foi possível atualizar atendimento.");
 
@@ -84,5 +87,18 @@ public class AtendimentoService {
     @Transactional
     public boolean excluir(Long id) {
         return repository.excluir(id);
+    }
+
+    public List<AtendimentoDTO> listarParaExportacao() {
+        return listarAtendimentos().stream()
+                .map(a -> new AtendimentoDTO(
+                        a.getId(),
+                        a.getProntuario(),
+                        a.getBeneficiario().getNomeCompleto(),
+                        a.getDentista().getNomeCompleto(),
+                        a.getDataInicial(),
+                        a.getDataFinal() != null ? String.valueOf(a.getDataFinal()) : "NAO FINALIZADO"
+                ))
+                .collect(Collectors.toList());
     }
 }

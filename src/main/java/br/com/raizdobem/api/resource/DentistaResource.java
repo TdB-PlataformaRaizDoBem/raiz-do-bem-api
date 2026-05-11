@@ -2,7 +2,7 @@ package br.com.raizdobem.api.resource;
 
 import br.com.raizdobem.api.dto.request.AtualizarDentistaDTO;
 import br.com.raizdobem.api.dto.request.CriarDentistaDTO;
-import br.com.raizdobem.api.dto.response.DentistaResponseDTO;
+import br.com.raizdobem.api.dto.response.DentistaDTO;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.exception.RequisicaoInvalidaException;
 import br.com.raizdobem.api.entity.Dentista;
@@ -18,7 +18,6 @@ import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
-import java.io.StringWriter;
 import java.util.List;
 
 @RequestScoped
@@ -72,7 +71,7 @@ public class DentistaResource {
     @Produces("text/csv")
     @Operation(summary = "Endpoint para a exportar todos os dentistas em arquivo csv.")
     public Response exportarCsv(){
-        List<DentistaResponseDTO> lista = service.listarParaExportacao();
+        List<DentistaDTO> lista = service.listarParaExportacao();
 
         String csv = CsvUtil.gerarCsvDentistas(lista);
 

@@ -21,15 +21,15 @@ public class ColaboradorService {
     public Colaborador criarColaborador(CriarColaboradorDTO dto) {
         Colaborador colaborador = new Colaborador();
 
-        if (!ValidacaoService.validarCpf(dto.getCpf())) {
+        if (!ValidacaoService.validarCpf(dto.cpf())) {
             throw new ValidacaoException("CPF inserido é inválido");
         }
-        colaborador.setCpf(dto.getCpf());
+        colaborador.setCpf(dto.cpf());
 
-        colaborador.setNomeCompleto(dto.getNomeCompleto());
-        colaborador.setDataNascimento(dto.getDataNascimento());
-        colaborador.setDataContratacao(dto.getDataContratacao());
-        colaborador.setEmail(dto.getEmail());
+        colaborador.setNomeCompleto(dto.nomeCompleto());
+        colaborador.setDataNascimento(dto.dataNascimento());
+        colaborador.setDataContratacao(dto.dataContratacao());
+        colaborador.setEmail(dto.email());
 
         repository.criar(colaborador);
         return colaborador;
@@ -47,12 +47,12 @@ public class ColaboradorService {
     }
 
     @Transactional
-    public void atualizarColaborador(String cpf, AtualizarColaboradorDTO request) {
+    public void atualizarColaborador(String cpf, AtualizarColaboradorDTO dto) {
         Colaborador colaboradorEncontrado = repository.buscarPorCpf(cpf);
         if(colaboradorEncontrado == null){
             throw new NaoEncontradoException("Colaborador não encontrado");
         }
-        repository.atualizar(cpf, request);
+        repository.atualizar(cpf, dto);
     }
 
     @Transactional

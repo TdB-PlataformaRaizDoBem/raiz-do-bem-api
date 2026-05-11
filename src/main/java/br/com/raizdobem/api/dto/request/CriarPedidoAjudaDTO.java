@@ -17,5 +17,5 @@ public class CriarPedidoAjudaDTO {
     private String telefone;
     private String email;
     private String descricaoProblema;
-    private EnderecoRequestDTO endereco;
+    private CriarEnderecoDTO endereco;
 }

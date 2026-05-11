@@ -2,6 +2,8 @@ package br.com.raizdobem.api.resource;
 
 import br.com.raizdobem.api.dto.request.AtualizarBeneficiarioDTO;
 import br.com.raizdobem.api.dto.request.CriarBeneficiarioDTO;
+import br.com.raizdobem.api.dto.response.BeneficiarioDTO;
+import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.exception.RequisicaoInvalidaException;
 import br.com.raizdobem.api.entity.Beneficiario;
 import br.com.raizdobem.api.service.BeneficiarioService;
@@ -27,8 +29,11 @@ public class BeneficiarioResource {
 
     @GET
     @Operation(summary = "Endpoint de listagem dos beneficiários cadastrados.")
-    public List<Beneficiario> listarTodos(){
-        return service.listarTodos();
+    public Response listarTodos(){
+        List<Beneficiario> beneficiarios = service.listarTodos();
+        if(beneficiarios == null || beneficiarios.isEmpty())
+            throw new NaoEncontradoException("Nenhum beneficiário encontrado.");
+        return Response.ok(beneficiarios).build();
     }
 
     @POST
@@ -44,22 +49,31 @@ public class BeneficiarioResource {
     @GET
     @Path("/{cpf}")
     @Operation(summary = "Endpoint para encontrar um beneficiário específico.")
-    public Beneficiario buscarPorCpf(@PathParam("cpf") String cpf){
-        return service.buscarPorCpf(cpf);
+    public Response buscarPorCpf(@PathParam("cpf") String cpf){
+        Beneficiario beneficiario = service.buscarPorCpf(cpf);
+        if(beneficiario == null)
+            throw new RequisicaoInvalidaException("Beneficiário inválido.");
+        return Response.ok(beneficiario).build();
     }
 
     @GET
     @Path("/cidade/{cidade}")
     @Operation(summary = "Endpoint para listar beneficiários por cidade.")
-    public List<Beneficiario> listarPorCidade(@PathParam("cidade") String cidade) {
-        return service.listarPorCidade(cidade);
+    public Response listarPorCidade(@PathParam("cidade") String cidade) {
+        List<Beneficiario> beneficiarios = service.listarPorCidade(cidade);
+        if(beneficiarios.isEmpty())
+            throw new NaoEncontradoException("Nenhum beneficiário encontrado na cidade inserida.");
+        return Response.ok(beneficiarios).build();
     }
 
     @GET
     @Path("/programa/{idProgramaSocial}")
     @Operation(summary = "Endpoint para listar beneficiários por programa social.")
-    public List<Beneficiario> listarPorPrograma(@PathParam("idProgramaSocial") long idProgramaSocial) {
-        return service.listarPorPrograma(idProgramaSocial);
+    public Response listarPorPrograma(@PathParam("idProgramaSocial") long idProgramaSocial) {
+        List<Beneficiario> beneficiarios = service.listarPorPrograma(idProgramaSocial);
+        if(beneficiarios.isEmpty())
+            throw new NaoEncontradoException("Nenhum beneficiário encontrado para o programa social inserido.");
+        return Response.ok(beneficiarios).build();
     }
 
     @PUT

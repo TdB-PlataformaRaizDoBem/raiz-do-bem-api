@@ -36,8 +36,11 @@ public class ColaboradorResource {
 
     @GET
     @Operation(summary = "Endpoint para a listagem de colaboradores.")
-    public List<Colaborador> listarTodos(){
-        return service.listarTodos();
+    public Response listarTodos(){
+        List<Colaborador> colaboradores = service.listarTodos();
+        if(colaboradores == null || colaboradores.isEmpty())
+            throw new NaoEncontradoException("Nenhum colaborador encontrado.");
+        return Response.ok(colaboradores).build();
     }
 
     @GET
@@ -50,8 +53,8 @@ public class ColaboradorResource {
     @PUT
     @Path("/{cpf}")
     @Operation(summary = "Endpoint para a atualização de colaborador.")
-    public Response atualizar(@PathParam("cpf") String cpf, @RequestBody AtualizarColaboradorDTO request){
-        service.atualizarColaborador(cpf, request);
+    public Response atualizar(@PathParam("cpf") String cpf, @RequestBody AtualizarColaboradorDTO dto){
+        service.atualizarColaborador(cpf, dto);
         return Response.ok().build();
     }
 

@@ -41,17 +41,17 @@ public class DentistaRepository implements PanacheRepository<Dentista> {
         if(dentista == null)
             return null;
 
-        if(dto.getTelefone() != null)
-            dentista.setTelefone(dto.getTelefone());
+        if(dto.telefone() != null)
+            dentista.setTelefone(dto.telefone());
 
-        if(dto.getEmail() != null)
-            dentista.setEmail(dto.getEmail());
+        if(dto.email() != null)
+            dentista.setEmail(dto.email());
 
-        if(dto.getCategoriaDentista() != null)
-            dentista.setCategoria(dto.getCategoriaDentista());
+        if(dto.categoriaDentista() != null)
+            dentista.setCategoria(dto.categoriaDentista());
 
-        if(dto.getDisponivel() != null)
-            dentista.setDisponivel(dto.getDisponivel());
+        if(dto.disponivel() != null)
+            dentista.setDisponivel(dto.disponivel());
 
         return dentista;
     }
