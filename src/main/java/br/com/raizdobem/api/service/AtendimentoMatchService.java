@@ -3,6 +3,8 @@ package br.com.raizdobem.api.service;
 import br.com.raizdobem.api.dto.response.BeneficiarioDTO;
 import br.com.raizdobem.api.dto.response.DentistaDTO;
 import br.com.raizdobem.api.dto.response.EnderecoDTO;
+import br.com.raizdobem.api.exception.NaoEncontradoException;
+import br.com.raizdobem.api.exception.ValidacaoException;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
@@ -13,29 +15,22 @@ public class AtendimentoMatchService {
     @Inject
     DentistaService dentistaService;
 
-//    @Inject
-//    GoogleMapsService googleMapsService;
+    @Inject
+    GoogleMapsService googleMapsService;
 
-//    public DentistaDTO melhorMatchDentista(BeneficiarioDTO beneficiarioDTO){
-//        List<DentistaDTO> dentistas = dentistaService.listarTodos();
-//
-//        String enderecoBeneficiario = montarEndereco(beneficiarioDTO.getEndereco());
-//
-////        List<String> enderecosDentistas = dentistas.stream()
-////                .map(d ->)
-////                .toList();
-//
-//        for(DentistaDTO dentista : dentistas){
-//            Integer distancia =
-//                    googleMapsService.calcularDistancia(
-//                            enderecoBeneficiario,
-//                            enderecoDentista
-//                    );
-//        }
-//        return melhorDentista;
-//    }
+    public DentistaDTO melhorMatchDentista(BeneficiarioDTO beneficiarioDTO){
+        List<DentistaDTO> dentistas = dentistaService.listarDisponiveis();
 
-    public String montarEndereco(EnderecoDTO dto){
+        if(dentistas.isEmpty())
+            throw new NaoEncontradoException("Nenhum dentista disponível para vincular ao atendiemnto.");
+
+        String enderecoBeneficiario = montarEndereco(beneficiarioDTO.getEndereco());
+
+        return googleMapsService.calcularDistancia(enderecoBeneficiario, dentistas);
+
+    }
+
+    public static String montarEndereco(EnderecoDTO dto){
         String endereco;
         if(dto.numero() == null){
             endereco = dto.logradouro() + ", " + dto.cidade() + ", " + dto.estado();
