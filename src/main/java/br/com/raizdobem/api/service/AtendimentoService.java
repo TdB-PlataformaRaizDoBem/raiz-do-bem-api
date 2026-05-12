@@ -8,7 +8,6 @@ import br.com.raizdobem.api.dto.response.DentistaDTO;
 import br.com.raizdobem.api.entity.Colaborador;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.entity.Atendimento;
-import br.com.raizdobem.api.entity.Beneficiario;
 import br.com.raizdobem.api.entity.Dentista;
 import br.com.raizdobem.api.repository.AtendimentoRepository;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -34,17 +33,17 @@ public class AtendimentoService {
     ColaboradorService colaboradorService;
 
     @Inject
-    AtendimentoMatchService atendimentoMatchService;
+    GoogleMapsService googleMapsService;
 
     @Transactional
     public Atendimento criarAtendimento(CriarAtendimentoDTO dto){
-        Atendimento atendimento = new Atendimento();
 
-//        BeneficiarioDTO beneficiario = beneficiarioService.buscarPorId(dto.getBeneficiario().getId());
-//        if(beneficiario == null)
-//            throw new NaoEncontradoException("Beneficiário não foi encontrado.");
+        BeneficiarioDTO beneficiario = beneficiarioService.buscarPorId(dto.getBeneficiario().getId());
 
-        //Dentista dentista = atendimentoMatchService.melhorMatchDentista(beneficiario);
+        if(beneficiario == null)
+            throw new NaoEncontradoException("Beneficiário não foi encontrado.");
+
+        DentistaDTO dentista = googleMapsService.buscarDentistaProximidade(beneficiario);
         /*
         Aqui vai entrar a lógica de atribuição de dentista
         Dentista dentista = dentistaService.buscarPorId(dto.getDentista().getId());
@@ -53,6 +52,7 @@ public class AtendimentoService {
             throw new NaoEncontradoException("Dentista não foi encontrado.");
 
         */
+        Atendimento atendimento = new Atendimento();
 
         atendimento.setProntuario(dto.getProntuario());
         atendimento.setDataInicial(LocalDate.now());
