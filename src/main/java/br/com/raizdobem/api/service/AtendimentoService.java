@@ -35,9 +35,6 @@ public class AtendimentoService {
     ColaboradorService colaboradorService;
 
     @Inject
-    GoogleMapsService googleMapsService;
-
-    @Inject
     BeneficiarioRepository beneficiarioRepository;
 
     @Inject
@@ -107,8 +104,8 @@ public class AtendimentoService {
                 .map(a -> new AtendimentoDTO(
                         a.getId(),
                         a.getProntuario(),
-                        a.getBeneficiario().getNomeCompleto(),
-                        a.getDentista().getNomeCompleto(),
+                        a.getBeneficiario() != null ? a.getBeneficiario().getNomeCompleto() : "BENEFICIÁRIO NÃO ENCONTRADO",
+                        a.getDentista() != null ? a.getDentista().getNomeCompleto() : "DENTISTA NÃO ENCONTRADO",
                         a.getDataInicial(),
                         a.getDataFinal() != null ? String.valueOf(a.getDataFinal()) : "NAO FINALIZADO"
                 ))

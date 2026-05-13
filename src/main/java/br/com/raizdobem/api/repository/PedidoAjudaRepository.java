@@ -28,7 +28,6 @@ public class PedidoAjudaRepository implements PanacheRepository<PedidoAjuda> {
     }
 
     public void atualizar(String cpf, AtualizarPedidoAjudaDTO request){
-        // Atualização efetiva é feita no service (transacional) para aplicar regra de negócio.
         find("cpf", cpf).firstResult();
     }
 

@@ -56,9 +56,9 @@ public class GoogleMapsService {
             List<GoogleMapsResponseDTO> rotas = googleMapsClient.buscarRotas(chaveApi, recursosApi, request);
 
             GoogleMapsResponseDTO menorRota = rotas.stream()
-                    .filter(r -> r.statusRetorno().equals("ROUTES_EXISTS"))
+                    .filter(r -> "ROUTE_EXISTS".equals(r.statusRetorno()))
                             .min((Comparator.comparingInt(GoogleMapsResponseDTO::metrosDistancia)))
-                            .orElseThrow();
+                            .orElse(rotas.getFirst());
 
             return dentistas.get(menorRota.elementoDestino());
         } catch(Exception e){
