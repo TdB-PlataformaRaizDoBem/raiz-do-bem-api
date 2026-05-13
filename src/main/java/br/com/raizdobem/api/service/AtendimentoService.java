@@ -40,23 +40,22 @@ public class AtendimentoService {
     @Inject
     BeneficiarioRepository beneficiarioRepository;
 
+    @Inject
+    AtendimentoMatchService atendimentoMatchService;
+
     @Transactional
     public Atendimento criarAtendimento(CriarAtendimentoDTO dto){
-
         BeneficiarioDTO beneficiarioDTO = beneficiarioService.buscarPorId(dto.getBeneficiario().getId());
         if(beneficiarioDTO == null)
             throw new NaoEncontradoException("Beneficiário não foi encontrado.");
 
         Beneficiario beneficiario = beneficiarioRepository.buscarPorId(dto.getBeneficiario().getId());
-        DentistaDTO dentistaDTO = googleMapsService.buscarDentistaPorProximidade(beneficiarioDTO);
+        DentistaDTO dentistaDTO = atendimentoMatchService.melhorMatchDentista(beneficiarioDTO);
 
-        //Aqui vai entrar a lógica de atribuição de dentista
-        Dentista dentista = dentistaService.buscarEntidadePorId(dentistaDTO.id()));
-
+        Dentista dentista = dentistaService.buscarEntidadePorId(dentistaDTO.id());
         if(dentista == null)
             throw new NaoEncontradoException("Dentista não foi encontrado.");
 
-        /**/
         Atendimento atendimento = new Atendimento();
 
         atendimento.setProntuario(dto.getProntuario());

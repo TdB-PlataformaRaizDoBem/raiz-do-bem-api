@@ -25,7 +25,6 @@ public class AtendimentoMatchService {
             throw new NaoEncontradoException("Nenhum dentista disponível para vincular ao atendimento.");
 
         String enderecoBeneficiario = montarEndereco(beneficiarioDTO.getEndereco());
-
         return googleMapsService.calcularDistanciaProximidade(enderecoBeneficiario, dentistas);
     }
 
