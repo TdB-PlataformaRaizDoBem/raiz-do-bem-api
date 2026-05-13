@@ -83,7 +83,7 @@ public class EnderecoService {
         endereco.setCidade(viaCep.cidade());
         endereco.setEstado(viaCep.uf());
 
-        TipoEndereco tipoEndereco = TipoEndereco.valueOf(dto.tipoEndereco().toUpperCase());
+        TipoEndereco tipoEndereco = (dto.tipoEndereco());
 
         endereco.setTipoEndereco(tipoEndereco);
     }

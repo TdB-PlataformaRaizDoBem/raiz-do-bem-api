@@ -1,7 +1,5 @@
 package br.com.raizdobem.api.dto.response;
 
-import br.com.raizdobem.api.entity.Especialidade;
-
 import java.util.List;
 
 public record DentistaDTO(Long id,
