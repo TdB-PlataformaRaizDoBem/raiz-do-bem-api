@@ -20,6 +20,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static br.com.raizdobem.api.mapper.AtendimentoMapper.mapeamentoAtendimento;
+
 @ApplicationScoped
 public class AtendimentoService {
     @Inject
@@ -41,12 +43,12 @@ public class AtendimentoService {
     AtendimentoMatchService atendimentoMatchService;
 
     @Transactional
-    public Atendimento criarAtendimento(CriarAtendimentoDTO dto){
-        BeneficiarioDTO beneficiarioDTO = beneficiarioService.buscarPorId(dto.getBeneficiario().getId());
+    public AtendimentoDTO criarAtendimento(CriarAtendimentoDTO dto){
+        BeneficiarioDTO beneficiarioDTO = beneficiarioService.buscarPorId(dto.beneficiarioDTO().getId());
         if(beneficiarioDTO == null)
             throw new NaoEncontradoException("Beneficiário não foi encontrado.");
 
-        Beneficiario beneficiario = beneficiarioRepository.buscarPorId(dto.getBeneficiario().getId());
+        Beneficiario beneficiario = beneficiarioRepository.buscarPorId(dto.beneficiarioDTO().getId());
         DentistaDTO dentistaDTO = atendimentoMatchService.melhorMatchDentista(beneficiarioDTO);
 
         Dentista dentista = dentistaService.buscarEntidadePorId(dentistaDTO.id());
@@ -55,13 +57,13 @@ public class AtendimentoService {
 
         Atendimento atendimento = new Atendimento();
 
-        atendimento.setProntuario(dto.getProntuario());
+        atendimento.setProntuario(dto.prontuario());
         atendimento.setDataInicial(LocalDate.now());
         atendimento.setBeneficiario(beneficiario);
         atendimento.setDentista(dentista);
 
         repository.criar(atendimento);
-        return atendimento;
+        return mapeamentoAtendimento(atendimento);
     }
 
     public Atendimento buscarPorCpf(String cpf) {

@@ -36,7 +36,7 @@ public class AtendimentoResource {
 
     @POST
     public Response criar(@Valid CriarAtendimentoDTO request) {
-        Atendimento atendimento = service.criarAtendimento(request);
+        AtendimentoDTO atendimento = service.criarAtendimento(request);
         if (atendimento == null) {
             throw new RequisicaoInvalidaException("Não foi possível criar atendimento.");
         }

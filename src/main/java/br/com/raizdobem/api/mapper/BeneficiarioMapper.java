@@ -1,7 +1,6 @@
 package br.com.raizdobem.api.mapper;
 
 import br.com.raizdobem.api.dto.response.BeneficiarioDTO;
-import br.com.raizdobem.api.dto.response.BeneficiarioResumidoDTO;
 import br.com.raizdobem.api.dto.response.EnderecoDTO;
 import br.com.raizdobem.api.dto.response.PedidoAjudaResumidoDTO;
 import br.com.raizdobem.api.entity.Beneficiario;
@@ -9,7 +8,7 @@ import br.com.raizdobem.api.entity.Beneficiario;
 import java.util.List;
 
 public class BeneficiarioMapper {
-    public static BeneficiarioDTO mapeamentoDTO(Beneficiario beneficiario) {
+    public static BeneficiarioDTO mapeamentoBeneficiario(Beneficiario beneficiario) {
         if (beneficiario == null) {
             return null;
         }
@@ -39,12 +38,12 @@ public class BeneficiarioMapper {
         );
     }
 
-    public static List<BeneficiarioDTO> mapeamentoListaDTO(List<Beneficiario> beneficiarios){
+    public static List<BeneficiarioDTO> mapeamentoBeneficiarios(List<Beneficiario> beneficiarios){
         if(beneficiarios == null)
             return null;
 
         return beneficiarios.stream()
-                .map(BeneficiarioMapper :: mapeamentoDTO)
+                .map(BeneficiarioMapper ::mapeamentoBeneficiario)
                 .toList();
     }
 }

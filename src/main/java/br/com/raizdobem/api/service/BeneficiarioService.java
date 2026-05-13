@@ -17,8 +17,8 @@ import jakarta.transaction.Transactional;
 
 import java.util.List;
 
-import static br.com.raizdobem.api.mapper.BeneficiarioMapper.mapeamentoDTO;
-import static br.com.raizdobem.api.mapper.BeneficiarioMapper.mapeamentoListaDTO;
+import static br.com.raizdobem.api.mapper.BeneficiarioMapper.mapeamentoBeneficiario;
+import static br.com.raizdobem.api.mapper.BeneficiarioMapper.mapeamentoBeneficiarios;
 
 @ApplicationScoped
 public class BeneficiarioService {
@@ -67,7 +67,7 @@ public class BeneficiarioService {
         }
 
         repository.criar(beneficiario);
-        return mapeamentoDTO(beneficiario);
+        return mapeamentoBeneficiario(beneficiario);
     }
 
     public BeneficiarioDTO buscarPorCpf(String cpf) {
@@ -77,29 +77,29 @@ public class BeneficiarioService {
         Beneficiario beneficiario = repository.buscarPorCpf(cpf);
         if(beneficiario == null)
             throw new NaoEncontradoException("Beneficiário não encontrado.");
-        return mapeamentoDTO(beneficiario);
+        return mapeamentoBeneficiario(beneficiario);
     }
 
     public BeneficiarioDTO buscarPorId(Long id) {
         Beneficiario beneficiario = repository.buscarPorId(id);
         if(beneficiario == null)
             throw new NaoEncontradoException("Beneficiário não encontrado.");
-        return mapeamentoDTO(beneficiario);
+        return mapeamentoBeneficiario(beneficiario);
     }
 
     public List<BeneficiarioDTO> listarTodos() {
         List <Beneficiario> beneficiarios = repository.listarTodos();
-        return mapeamentoListaDTO(beneficiarios);
+        return mapeamentoBeneficiarios(beneficiarios);
     }
 
     public List<BeneficiarioDTO> listarPorCidade(String cidade) {
         List <Beneficiario> beneficiarios = repository.listarPorCidade(cidade);
-        return mapeamentoListaDTO(beneficiarios);
+        return mapeamentoBeneficiarios(beneficiarios);
     }
 
     public List<BeneficiarioDTO> listarPorPrograma(long idProgramaSocial) {
         List <Beneficiario> beneficiarios = repository.listarPorPrograma(idProgramaSocial);
-        return mapeamentoListaDTO(beneficiarios);
+        return mapeamentoBeneficiarios(beneficiarios);
     }
 
     @Transactional
@@ -108,7 +108,7 @@ public class BeneficiarioService {
         if(beneficiario == null)
             throw new NaoEncontradoException("Beneficiário não encontrado, CPF inválido.");
 
-        return mapeamentoDTO(beneficiario);
+        return mapeamentoBeneficiario(beneficiario);
     }
 
     @Transactional

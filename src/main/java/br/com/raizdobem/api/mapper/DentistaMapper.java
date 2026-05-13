@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class DentistaMapper {
-    public static DentistaDTO mapeamentoDTO(Dentista dentista){
+    public static DentistaDTO mapeamentoDentista(Dentista dentista){
         if (dentista == null) {
             return null;
         }
@@ -42,7 +42,7 @@ public class DentistaMapper {
         }
 
         return dentistas.stream()
-                .map(DentistaMapper :: mapeamentoDTO)
+                .map(DentistaMapper ::mapeamentoDentista)
                 .collect(Collectors.toList());
     }
 }

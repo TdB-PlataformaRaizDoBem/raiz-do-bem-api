@@ -2,7 +2,6 @@ package br.com.raizdobem.api.service;
 
 import br.com.raizdobem.api.dto.request.AtualizarDentistaDTO;
 import br.com.raizdobem.api.dto.request.CriarDentistaDTO;
-import br.com.raizdobem.api.dto.response.BeneficiarioDTO;
 import br.com.raizdobem.api.dto.response.DentistaDTO;
 import br.com.raizdobem.api.entity.TipoEndereco;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
@@ -17,9 +16,8 @@ import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import java.util.List;
-import java.util.stream.Collectors;
 
-import static br.com.raizdobem.api.mapper.DentistaMapper.mapeamentoDTO;
+import static br.com.raizdobem.api.mapper.DentistaMapper.mapeamentoDentista;
 import static br.com.raizdobem.api.mapper.DentistaMapper.mapeamentoListaDTO;
 
 @ApplicationScoped
@@ -59,7 +57,7 @@ public class DentistaService {
         dentista.setDisponivel(dto.disponivel());
 
         repository.criar(dentista);
-        return mapeamentoDTO(dentista);
+        return mapeamentoDentista(dentista);
     }
 
     public List<DentistaDTO> listarTodos() {
@@ -76,7 +74,7 @@ public class DentistaService {
         Dentista dentista = repository.findById(id);
         if(dentista == null)
             throw new NaoEncontradoException("Dentista não encontrado.");
-        return mapeamentoDTO(dentista);
+        return mapeamentoDentista(dentista);
     }
 
     public Dentista buscarEntidadePorId(Long id) {
@@ -87,7 +85,7 @@ public class DentistaService {
         Dentista dentista = repository.buscarPorCpf(cpf);
         if(dentista == null)
             throw new NaoEncontradoException("Dentista não encontrado.");
-        return mapeamentoDTO(dentista);
+        return mapeamentoDentista(dentista);
     }
 
     public List<DentistaDTO> listarPorCidades(String cidade) {
@@ -100,7 +98,7 @@ public class DentistaService {
         Dentista dentista = repository.atualizar(cpf, request);
         if(dentista == null)
             throw new NaoEncontradoException("Dentista não encontrado.");
-        return mapeamentoDTO(dentista);
+        return mapeamentoDentista(dentista);
     }
 
     @Transactional
@@ -111,7 +109,7 @@ public class DentistaService {
     public List<DentistaDTO> listarParaExportacao() {
         List<Dentista> dentistas = repository.listarTodos();
         return dentistas.stream()
-                .map(DentistaMapper::mapeamentoDTO)
+                .map(DentistaMapper::mapeamentoDentista)
                 .toList();
     }
 }
