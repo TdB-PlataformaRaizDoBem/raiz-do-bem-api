@@ -44,11 +44,11 @@ public class AtendimentoService {
 
     @Transactional
     public AtendimentoDTO criarAtendimento(CriarAtendimentoDTO dto){
-        BeneficiarioDTO beneficiarioDTO = beneficiarioService.buscarPorId(dto.beneficiarioDTO().getId());
+        BeneficiarioDTO beneficiarioDTO = beneficiarioService.buscarPorCpf(dto.cpfBeneficiario());
         if(beneficiarioDTO == null)
             throw new NaoEncontradoException("Beneficiário não foi encontrado.");
 
-        Beneficiario beneficiario = beneficiarioRepository.buscarPorId(dto.beneficiarioDTO().getId());
+        Beneficiario beneficiario = beneficiarioRepository.buscarPorCpf(dto.cpfBeneficiario());
         DentistaDTO dentistaDTO = atendimentoMatchService.melhorMatchDentista(beneficiarioDTO);
 
         Dentista dentista = dentistaService.buscarEntidadePorId(dentistaDTO.id());

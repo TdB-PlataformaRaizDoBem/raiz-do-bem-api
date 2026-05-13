@@ -2,6 +2,7 @@ package br.com.raizdobem.api.service;
 
 import br.com.raizdobem.api.dto.request.AtualizarPedidoAjudaDTO;
 import br.com.raizdobem.api.dto.request.CriarPedidoAjudaDTO;
+import br.com.raizdobem.api.dto.response.PedidoAjudaDTO;
 import br.com.raizdobem.api.entity.*;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.exception.RegraNegocioException;
@@ -65,6 +66,10 @@ public class PedidoAjudaService {
 
     public PedidoAjuda buscarPorCpf(String cpf) {
         return repository.buscarPorCpf(cpf);
+    }
+
+    public PedidoAjuda buscarPeloId(Long id){
+        return repository.buscarPeloId(id);
     }
 
     public List<PedidoAjuda> listarPorData(LocalDate dataPedido) {

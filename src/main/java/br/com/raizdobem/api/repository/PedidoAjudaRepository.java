@@ -1,6 +1,7 @@
 package br.com.raizdobem.api.repository;
 
 import br.com.raizdobem.api.dto.request.AtualizarPedidoAjudaDTO;
+import br.com.raizdobem.api.dto.response.PedidoAjudaDTO;
 import br.com.raizdobem.api.entity.PedidoAjuda;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -23,6 +24,10 @@ public class PedidoAjudaRepository implements PanacheRepository<PedidoAjuda> {
         return find("cpf", cpf).firstResult();
     }
 
+    public PedidoAjuda buscarPeloId(Long id) {
+        return findById(id);
+    }
+
     public List<PedidoAjuda> listarPorData(LocalDate dataPedido) {
         return list("dataPedido", dataPedido);
     }
@@ -34,4 +39,6 @@ public class PedidoAjudaRepository implements PanacheRepository<PedidoAjuda> {
     public boolean excluir(Long id) {
         return deleteById(id);
     }
+
+
 }

@@ -1,6 +1,7 @@
 package br.com.raizdobem.api.util;
 
 import br.com.raizdobem.api.dto.response.AtendimentoDTO;
+import br.com.raizdobem.api.dto.response.BeneficiarioDTO;
 import br.com.raizdobem.api.dto.response.DentistaDTO;
 
 import java.util.List;
@@ -46,6 +47,14 @@ public class CsvUtil {
             csv.append(a.dataInicial()).append("|");
             csv.append(a.dataFim()).append("\n");
         }
+        return csv.toString();
+    }
+
+    public static String gerarCsvBeneficiarios(List<BeneficiarioDTO> beneficiarios){
+        StringBuilder csv = new StringBuilder();
+
+
+
         return csv.toString();
     }
 }

@@ -16,6 +16,7 @@ import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static br.com.raizdobem.api.mapper.BeneficiarioMapper.mapeamentoBeneficiario;
 import static br.com.raizdobem.api.mapper.BeneficiarioMapper.mapeamentoBeneficiarios;
@@ -38,12 +39,7 @@ public class BeneficiarioService {
         if(dto == null)
             throw new RequisicaoInvalidaException("Inserção de beneficiário inválida.");
 
-        if(ValidacaoService.validarCpf(dto.cpf()))
-            beneficiario.setCpf(dto.cpf());
-        else
-            throw new ValidacaoException("CPF inserido é inválido");
-
-        PedidoAjuda pedido = pedidoAjudaService.buscarPorCpf(dto.cpf());
+        PedidoAjuda pedido = pedidoAjudaService.buscarPeloId(dto.idPedidoAjuda());
         if(pedido == null)
             throw new NaoEncontradoException("Não foi possível encontrar pedido informado.");
 
@@ -118,5 +114,21 @@ public class BeneficiarioService {
         }
         long exclusao = repository.excluir(cpf);
         return exclusao > 0;
+    }
+
+    public List<BeneficiarioDTO> listarParaExportacao(){
+        return listarTodos().stream()
+                .map(b -> new BeneficiarioDTO(
+                        b.id(),
+                        b.cpf(),
+                        b.nomeCompleto(),
+                        b.dataNascimento(),
+                        b.telefone(),
+                        b.email(),
+                        b.pedido(),
+                        b.programaSocial(),
+                        b.endereco()
+                ))
+                .collect(Collectors.toList());
     }
 }

@@ -2,9 +2,11 @@ package br.com.raizdobem.api.resource;
 
 import br.com.raizdobem.api.dto.request.AtualizarBeneficiarioDTO;
 import br.com.raizdobem.api.dto.request.CriarBeneficiarioDTO;
+import br.com.raizdobem.api.dto.response.AtendimentoDTO;
 import br.com.raizdobem.api.dto.response.BeneficiarioDTO;
 import br.com.raizdobem.api.exception.RequisicaoInvalidaException;
 import br.com.raizdobem.api.service.BeneficiarioService;
+import br.com.raizdobem.api.util.CsvUtil;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
@@ -62,6 +64,20 @@ public class BeneficiarioResource {
     public Response listarPorPrograma(@PathParam("idProgramaSocial") long idProgramaSocial) {
         List<BeneficiarioDTO> beneficiarios = service.listarPorPrograma(idProgramaSocial);
         return Response.ok(beneficiarios).build();
+    }
+
+    @GET
+    @Path("/exportarCsv")
+    @Produces("text/csv")
+    @Operation(summary = "Endpoint para a exportar todos os atendimentos em um arquivo csv.")
+    public Response exportarCsv(){
+        List<BeneficiarioDTO> listaBeneficiarios = service.listarParaExportacao();
+
+        String csv = CsvUtil.gerarCsvBeneficiarios(listaBeneficiarios);
+
+        return Response.ok(csv).header("Content-Disposition",
+                        "attachment; filename=beneficiarios.csv")
+                .build();
     }
 
     @PUT

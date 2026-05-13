@@ -82,9 +82,5 @@ public class EnderecoService {
         endereco.setBairro(viaCep.bairro());
         endereco.setCidade(viaCep.cidade());
         endereco.setEstado(viaCep.uf());
-
-        TipoEndereco tipoEndereco = (dto.tipoEndereco());
-
-        endereco.setTipoEndereco(tipoEndereco);
     }
 }
