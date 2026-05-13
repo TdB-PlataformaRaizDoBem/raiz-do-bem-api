@@ -5,11 +5,13 @@ import br.com.raizdobem.api.dto.request.CriarAtendimentoDTO;
 import br.com.raizdobem.api.dto.response.AtendimentoDTO;
 import br.com.raizdobem.api.dto.response.BeneficiarioDTO;
 import br.com.raizdobem.api.dto.response.DentistaDTO;
+import br.com.raizdobem.api.entity.Beneficiario;
 import br.com.raizdobem.api.entity.Colaborador;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.entity.Atendimento;
 import br.com.raizdobem.api.entity.Dentista;
 import br.com.raizdobem.api.repository.AtendimentoRepository;
+import br.com.raizdobem.api.repository.BeneficiarioRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -35,29 +37,32 @@ public class AtendimentoService {
     @Inject
     GoogleMapsService googleMapsService;
 
+    @Inject
+    BeneficiarioRepository beneficiarioRepository;
+
     @Transactional
     public Atendimento criarAtendimento(CriarAtendimentoDTO dto){
 
-        BeneficiarioDTO beneficiario = beneficiarioService.buscarPorId(dto.getBeneficiario().getId());
-
-        if(beneficiario == null)
+        BeneficiarioDTO beneficiarioDTO = beneficiarioService.buscarPorId(dto.getBeneficiario().getId());
+        if(beneficiarioDTO == null)
             throw new NaoEncontradoException("Beneficiário não foi encontrado.");
 
-        DentistaDTO dentista = googleMapsService.buscarDentistaProximidade(beneficiario);
-        /*
-        Aqui vai entrar a lógica de atribuição de dentista
-        Dentista dentista = dentistaService.buscarPorId(dto.getDentista().getId());
+        Beneficiario beneficiario = beneficiarioRepository.buscarPorId(dto.getBeneficiario().getId());
+        DentistaDTO dentistaDTO = googleMapsService.buscarDentistaPorProximidade(beneficiarioDTO);
+
+        //Aqui vai entrar a lógica de atribuição de dentista
+        Dentista dentista = dentistaService.buscarEntidadePorId(dentistaDTO.id()));
 
         if(dentista == null)
             throw new NaoEncontradoException("Dentista não foi encontrado.");
 
-        */
+        /**/
         Atendimento atendimento = new Atendimento();
 
         atendimento.setProntuario(dto.getProntuario());
         atendimento.setDataInicial(LocalDate.now());
-//        atendimento.setBeneficiario(beneficiario);
-//        atendimento.setDentista(dentista);
+        atendimento.setBeneficiario(beneficiario);
+        atendimento.setDentista(dentista);
 
         repository.criar(atendimento);
         return atendimento;

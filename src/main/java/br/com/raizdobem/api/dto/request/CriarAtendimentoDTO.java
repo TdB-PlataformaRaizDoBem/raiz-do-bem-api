@@ -19,16 +19,6 @@ public class CriarAtendimentoDTO {
     private String prontuario;
 
     @NotNull
-    private LocalDate dataInicial;
-
-    @NotNull
-    private LocalDate dataFinal = null;
-
-    @NotNull
     @Valid
     private Beneficiario beneficiario;
-
-    @NotNull
-    @Valid
-    private Dentista dentista;
 }

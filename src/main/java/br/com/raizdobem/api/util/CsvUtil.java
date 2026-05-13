@@ -42,6 +42,7 @@ public class CsvUtil {
             csv.append(a.id()).append("|");
             csv.append(a.prontuario()).append("|");
             csv.append(a.beneficiario()).append("|");
+            csv.append(a.dentista()).append("|");
             csv.append(a.dataInicial()).append("|");
             csv.append(a.dataFim()).append("\n");
         }

@@ -22,21 +22,19 @@ public class AtendimentoMatchService {
         List<DentistaDTO> dentistas = dentistaService.listarDisponiveis();
 
         if(dentistas.isEmpty())
-            throw new NaoEncontradoException("Nenhum dentista disponível para vincular ao atendiemnto.");
+            throw new NaoEncontradoException("Nenhum dentista disponível para vincular ao atendimento.");
 
         String enderecoBeneficiario = montarEndereco(beneficiarioDTO.getEndereco());
 
-        return googleMapsService.calcularDistancia(enderecoBeneficiario, dentistas);
-
+        return googleMapsService.calcularDistanciaProximidade(enderecoBeneficiario, dentistas);
     }
 
     public static String montarEndereco(EnderecoDTO dto){
-        String endereco;
-        if(dto.numero() == null){
-            endereco = dto.logradouro() + ", " + dto.cidade() + ", " + dto.estado();
-            return endereco;
-        }
-        endereco = dto.logradouro() + ", " + dto.numero() + ", " + dto.cidade() + ", " + dto.estado();
-        return endereco;
+        if (dto == null)
+            throw new ValidacaoException("Endereço do beneficiário é obrigatório para calcular a proximidade com os dentistas.");
+
+        if(dto.numero() == null)
+            return dto.logradouro() + ", " + dto.cidade() + ", " + dto.estado();
+        return dto.logradouro() + ", " + dto.numero() + ", " + dto.cidade() + ", " + dto.estado();
     }
 }
