@@ -14,8 +14,8 @@ public class AtendimentoMapper {
         return new AtendimentoDTO(
                 atendimento.getId(),
                 atendimento.getProntuario(),
-                atendimento.getBeneficiario().getNomeCompleto(),
-                atendimento.getDentista().getNomeCompleto(),
+                atendimento.getBeneficiario() != null ? atendimento.getBeneficiario().getNomeCompleto() : "N/A",
+                atendimento.getDentista()!= null ? atendimento.getDentista().getNomeCompleto() : "N/A",
                 atendimento.getDataInicial(),
                 atendimento.getDataFinal() != null ? atendimento.getDataFinal().toString() : "NÃO FINALIZADO"
         );

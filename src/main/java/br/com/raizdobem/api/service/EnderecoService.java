@@ -79,6 +79,7 @@ public class EnderecoService {
 
         endereco.setCep(dto.cep());
         endereco.setLogradouro(viaCep.logradouro());
+        endereco.setNumero(dto.numero());
         endereco.setBairro(viaCep.bairro());
         endereco.setCidade(viaCep.cidade());
         endereco.setEstado(viaCep.uf());

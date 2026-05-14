@@ -46,14 +46,13 @@ public class BeneficiarioService {
         if(pedido.getStatus() != StatusPedido.APROVADO)
             throw new RequisicaoInvalidaException("Pedido de ajuda não foi APROVADO. Impossível seguir o processo de criação de beneficiário.");
 
-        if(beneficiario.getCpf().equals(pedido.getCpf())){
-            beneficiario.setNomeCompleto(pedido.getNomeCompleto());
-            beneficiario.setDataNascimento(pedido.getDataNascimento());
-            beneficiario.setTelefone(pedido.getTelefone());
-            beneficiario.setEmail(pedido.getEmail());
-            beneficiario.setEndereco(pedido.getEndereco());
-            beneficiario.setPedido(pedido);
-        }
+        beneficiario.setCpf(pedido.getCpf());
+        beneficiario.setNomeCompleto(pedido.getNomeCompleto());
+        beneficiario.setDataNascimento(pedido.getDataNascimento());
+        beneficiario.setTelefone(pedido.getTelefone());
+        beneficiario.setEmail(pedido.getEmail());
+        beneficiario.setEndereco(pedido.getEndereco());
+        beneficiario.setPedido(pedido);
 
         ProgramaSocial programaSocial = programaService.buscarPorId(dto.idProgramaSocial());
         if(programaSocial == null)

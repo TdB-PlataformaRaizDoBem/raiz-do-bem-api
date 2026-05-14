@@ -1,9 +1,8 @@
 package br.com.raizdobem.api.util;
 
-import br.com.raizdobem.api.dto.response.AtendimentoDTO;
-import br.com.raizdobem.api.dto.response.BeneficiarioDTO;
-import br.com.raizdobem.api.dto.response.DentistaDTO;
+import br.com.raizdobem.api.dto.response.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -37,7 +36,7 @@ public class CsvUtil {
 
     public static String gerarCsvAtendimentos(List<AtendimentoDTO> atendimentos){
         StringBuilder csv = new StringBuilder();
-        csv.append("ID|Prontuário|Beneficiário|Dentista|Data Inicial| Data Final\n");
+        csv.append("ID|Prontuário|Beneficiário|Dentista|Data Inicial|Data Final\n");
 
         for(AtendimentoDTO a : atendimentos){
             csv.append(a.id()).append("|");
@@ -52,9 +51,22 @@ public class CsvUtil {
 
     public static String gerarCsvBeneficiarios(List<BeneficiarioDTO> beneficiarios){
         StringBuilder csv = new StringBuilder();
+        csv.append("ID,CPF,Nome Completo,Data de Nascimento,Telefone,Email,IdPedidoAjuda,ProgramaSocial,Logradouro,Número,Cidade,Estado\n");
 
-
-
+        for(BeneficiarioDTO b : beneficiarios){
+            csv.append(b.id()).append(",");
+            csv.append(b.cpf()).append(",");
+            csv.append(b.nomeCompleto()).append(",");
+            csv.append(b.dataNascimento()).append(",");
+            csv.append(b.telefone()).append(",");
+            csv.append(b.email()).append(",");
+            csv.append(b.pedido().id()).append(",");
+            csv.append(b.programaSocial()).append(",");
+            csv.append(b.endereco().logradouro()).append(",");
+            csv.append(b.endereco().numero()).append(",");
+            csv.append(b.endereco().cidade()).append(",");
+            csv.append(b.endereco().estado()).append("\n");
+        }
         return csv.toString();
     }
 }
