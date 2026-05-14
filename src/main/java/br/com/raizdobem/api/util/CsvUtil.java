@@ -2,7 +2,6 @@ package br.com.raizdobem.api.util;
 
 import br.com.raizdobem.api.dto.response.*;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 

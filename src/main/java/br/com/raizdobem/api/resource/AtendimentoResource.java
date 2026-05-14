@@ -5,7 +5,6 @@ import br.com.raizdobem.api.dto.request.CriarAtendimentoDTO;
 import br.com.raizdobem.api.dto.response.AtendimentoDTO;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.exception.RequisicaoInvalidaException;
-import br.com.raizdobem.api.entity.Atendimento;
 import br.com.raizdobem.api.service.AtendimentoService;
 import br.com.raizdobem.api.util.CsvUtil;
 import jakarta.enterprise.context.RequestScoped;
@@ -30,7 +29,7 @@ public class AtendimentoResource {
     AtendimentoService service;
     
     @GET
-    public List<Atendimento> listarTodos(){
+    public List<AtendimentoDTO> listarTodos(){
         return service.listarAtendimentos();
     }
 
@@ -46,7 +45,7 @@ public class AtendimentoResource {
     @GET
     @Path("/{cpf}")
     public Response buscarPorCpf(@PathParam("cpf") String cpf){
-        Atendimento atendimento = service.buscarPorCpf(cpf);
+        AtendimentoDTO atendimento = service.buscarPorCpf(cpf);
         if (atendimento == null) {
             throw new NaoEncontradoException("Não foi possível encontrar atendimento com o CPF inserido.");
         }

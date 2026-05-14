@@ -10,6 +10,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @ApplicationScoped
@@ -24,10 +25,22 @@ public class ColaboradorService {
         if (!ValidacaoService.validarCpf(dto.cpf())) {
             throw new ValidacaoException("CPF inserido é inválido");
         }
-        colaborador.setCpf(dto.cpf());
+        Colaborador colaboradorExistente = repository.buscarPorCpf(dto.cpf());
+        if(colaboradorExistente != null){
+            throw new ValidacaoException("Já existe um colaborador com esse CPF");
+        }
 
+        colaborador.setCpf(dto.cpf());
+        if(dto.nomeCompleto() == null || dto.nomeCompleto().isBlank())
+            throw new NaoEncontradoException("Nome completo deve ser inserido.");
         colaborador.setNomeCompleto(dto.nomeCompleto());
+
+        if(dto.dataNascimento() == null || dto.dataNascimento().isAfter(LocalDate.now()))
+            throw new NaoEncontradoException("Data de nascimento inválida.");
         colaborador.setDataNascimento(dto.dataNascimento());
+
+        if(dto.dataContratacao() == null || dto.dataContratacao().isAfter(LocalDate.now()) )
+            throw new NaoEncontradoException("Data de contratação inválida.");
         colaborador.setDataContratacao(dto.dataContratacao());
         colaborador.setEmail(dto.email());
 

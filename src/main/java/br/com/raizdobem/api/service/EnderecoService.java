@@ -7,7 +7,6 @@ import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.exception.RegraNegocioException;
 import br.com.raizdobem.api.entity.Endereco;
 import br.com.raizdobem.api.repository.EnderecoRepository;
-import br.com.raizdobem.api.entity.TipoEndereco;
 
 import java.util.List;
 

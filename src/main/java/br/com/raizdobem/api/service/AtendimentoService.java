@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static br.com.raizdobem.api.mapper.AtendimentoMapper.mapeamentoAtendimento;
+import static br.com.raizdobem.api.mapper.AtendimentoMapper.mapeamentoAtendimentos;
 
 @ApplicationScoped
 public class AtendimentoService {
@@ -66,12 +67,14 @@ public class AtendimentoService {
         return mapeamentoAtendimento(atendimento);
     }
 
-    public Atendimento buscarPorCpf(String cpf) {
-        return repository.buscarPeloCpf(cpf);
+    public AtendimentoDTO buscarPorCpf(String cpf) {
+        Atendimento atendimento = repository.buscarPeloCpf(cpf);
+        return mapeamentoAtendimento(atendimento);
     }
 
-    public List<Atendimento> listarAtendimentos(){
-        return repository.listarTodos();
+    public List<AtendimentoDTO> listarAtendimentos(){
+        List<Atendimento> atendimentos = repository.listarTodos();
+        return mapeamentoAtendimentos(atendimentos);
     }
 
     @Transactional
@@ -104,12 +107,12 @@ public class AtendimentoService {
     public List<AtendimentoDTO> listarParaExportacao() {
         return listarAtendimentos().stream()
                 .map(a -> new AtendimentoDTO(
-                        a.getId(),
-                        a.getProntuario(),
-                        a.getBeneficiario() != null ? a.getBeneficiario().getNomeCompleto() : "BENEFICIÁRIO NÃO ENCONTRADO",
-                        a.getDentista() != null ? a.getDentista().getNomeCompleto() : "DENTISTA NÃO ENCONTRADO",
-                        a.getDataInicial(),
-                        a.getDataFinal() != null ? String.valueOf(a.getDataFinal()) : "NAO FINALIZADO"
+                        a.id(),
+                        a.prontuario(),
+                        a.beneficiario() != null ? a.beneficiario() : "BENEFICIÁRIO NÃO ENCONTRADO",
+                        a.dentista() != null ? a.dentista() : "DENTISTA NÃO ENCONTRADO",
+                        a.dataInicial(),
+                        a.dataFim() != null ? a.dataFim() : "NAO FINALIZADO"
                 ))
                 .collect(Collectors.toList());
     }

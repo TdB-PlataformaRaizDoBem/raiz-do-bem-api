@@ -7,6 +7,7 @@ import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
@@ -22,18 +23,21 @@ public class ProgramaSocialResource {
 
     @GET
     @Operation(summary = "Lista programas sociais")
-    public List<ProgramaSocial> listarTodos(){
-        return service.listarProgramasSociais();
+    public Response listarTodos(){
+        List<ProgramaSocial> programas = service.listarProgramasSociais();
+        if(programas == null || programas.isEmpty())
+            throw new NaoEncontradoException("Lista de programas sociais não encontrada/vazia");
+        return Response.ok().entity(programas).build();
     }
 
     @GET
     @Path("/{id}")
     @Operation(summary = "Busca programa social por id")
-    public ProgramaSocial buscarPorId(@PathParam("id") Long id) {
+    public Response buscarPorId(@PathParam("id") Long id) {
         ProgramaSocial programa = service.buscarPorId(id);
         if (programa == null) {
             throw new NaoEncontradoException("Programa social não encontrado.");
         }
-        return programa;
+        return Response.ok().entity(programa).build();
     }
 }
