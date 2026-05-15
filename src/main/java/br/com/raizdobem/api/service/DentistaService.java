@@ -60,16 +60,19 @@ public class DentistaService {
         return mapeamentoDentista(dentista);
     }
 
+    @Transactional
     public List<DentistaDTO> listarTodos() {
         List<Dentista> dentistas = repository.listarTodos();
         return mapeamentoListaDTO(dentistas);
     }
 
+    @Transactional
     public List<DentistaDTO> listarDisponiveis() {
         List<Dentista> dentistas = repository.listarDisponiveis();
         return mapeamentoListaDTO(dentistas);
     }
 
+    @Transactional
     public DentistaDTO buscarPorId(Long id) {
         Dentista dentista = repository.findById(id);
         if(dentista == null)
@@ -81,6 +84,7 @@ public class DentistaService {
         return repository.findById(id);
     }
 
+    @Transactional
     public DentistaDTO exibirDentista(String cpf) {
         Dentista dentista = repository.buscarPorCpf(cpf);
         if(dentista == null)
@@ -88,6 +92,7 @@ public class DentistaService {
         return mapeamentoDentista(dentista);
     }
 
+    @Transactional
     public List<DentistaDTO> listarPorCidades(String cidade) {
         List<Dentista> dentistas = repository.listarPorCidade(cidade);
         return mapeamentoListaDTO(dentistas);
@@ -106,6 +111,7 @@ public class DentistaService {
         return repository.excluir(cpf);
     }
 
+    @Transactional
     public List<DentistaDTO> listarParaExportacao() {
         List<Dentista> dentistas = repository.listarTodos();
         return dentistas.stream()

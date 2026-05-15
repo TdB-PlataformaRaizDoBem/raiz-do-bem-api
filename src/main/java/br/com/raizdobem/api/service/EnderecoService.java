@@ -74,7 +74,7 @@ public class EnderecoService {
     }
 
     public void entradaEndereco(Endereco endereco, EntradaEnderecoDTO dto){
-        ViaCepDTO viaCep = buscarEndereco(endereco.getCep());
+        ViaCepDTO viaCep = buscarEndereco(dto.cep());
 
         endereco.setCep(dto.cep());
         endereco.setLogradouro(viaCep.logradouro());
