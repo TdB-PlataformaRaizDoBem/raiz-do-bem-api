@@ -4,7 +4,6 @@ import br.com.raizdobem.api.dto.external.GoogleMapsEnderecoDTO;
 import br.com.raizdobem.api.dto.external.GoogleMapsRequestDTO;
 import br.com.raizdobem.api.dto.external.GoogleMapsResponseDTO;
 import br.com.raizdobem.api.dto.external.PontoParadaDTO;
-import br.com.raizdobem.api.dto.response.BeneficiarioDTO;
 import br.com.raizdobem.api.dto.response.DentistaDTO;
 import br.com.raizdobem.api.client.GoogleMapsClient;
 import jakarta.enterprise.context.ApplicationScoped;

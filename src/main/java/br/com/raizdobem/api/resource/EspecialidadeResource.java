@@ -27,7 +27,7 @@ public class EspecialidadeResource {
         List<Especialidade> especialidades = service.listarEspecialidades();
         if(especialidades == null || especialidades.isEmpty())
             throw new NaoEncontradoException("Lista de especialidades vazia/não encontrada");
-        return Response.ok().build();
+        return Response.ok(especialidades).build();
     }
 
     @GET
