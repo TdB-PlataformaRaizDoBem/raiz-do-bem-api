@@ -13,6 +13,7 @@ public record PedidoAjudaDTO(Long id,
                              String descricaoProblema,
                              LocalDate dataPedido,
                              StatusPedido status,
-                             String dentistaResponsavel) {
+                             String dentistaResponsavel,
+                             String endereco) {
 
 }

@@ -67,11 +67,13 @@ public class AtendimentoService {
         return mapeamentoAtendimento(atendimento);
     }
 
+    @Transactional
     public AtendimentoDTO buscarPorCpf(String cpf) {
         Atendimento atendimento = repository.buscarPeloCpf(cpf);
         return mapeamentoAtendimento(atendimento);
     }
 
+    @Transactional
     public List<AtendimentoDTO> listarAtendimentos(){
         List<Atendimento> atendimentos = repository.listarTodos();
         return mapeamentoAtendimentos(atendimentos);
@@ -104,6 +106,7 @@ public class AtendimentoService {
         return repository.excluir(id);
     }
 
+    @Transactional
     public List<AtendimentoDTO> listarParaExportacao() {
         return listarAtendimentos().stream()
                 .map(a -> new AtendimentoDTO(

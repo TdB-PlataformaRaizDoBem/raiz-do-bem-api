@@ -9,6 +9,7 @@ import br.com.raizdobem.api.entity.PedidoAjuda;
 import br.com.raizdobem.api.service.PedidoAjudaService;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;

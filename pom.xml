@@ -151,6 +151,36 @@
                     </systemPropertyVariables>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>com.microsoft.azure</groupId>
+                <artifactId>azure-webapp-maven-plugin</artifactId>
+                <version>2.13.0</version>
+                <configuration>
+                    <schemaVersion>v2</schemaVersion>
+                    <subscriptionId>b4ad0d13-b7d8-4366-b605-d446f2753002</subscriptionId>
+                    <resourceGroup>rg-raizdobem-backend</resourceGroup>
+                    <appName>raizdobem-backend</appName>
+                    <pricingTier>F1</pricingTier>
+                    <region>canadacentral</region>
+                    <runtime>
+                        <os>Linux</os>
+                        <javaVersion>Java 21</javaVersion>
+                        <webContainer>Java SE</webContainer>
+                    </runtime>
+                    <deployment>
+                        <deploymentType>zip</deploymentType>
+                        <resources>
+                            <resource>
+                                <directory>${project.basedir}/target/quarkus-app</directory>
+                                <targetPath>/</targetPath>
+                                <includes>
+                                    <include>**/*</include>
+                                </includes>
+                            </resource>
+                        </resources>
+                    </deployment>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 

@@ -16,10 +16,10 @@ import java.time.LocalDate;
 import java.time.Period;
 import java.util.List;
 
-import static br.com.raizdobem.api.mapper.DentistaMapper.mapeamentoListaDTO;
 import static br.com.raizdobem.api.mapper.PedidoAjudaMapper.mapeamentoListaPedidos;
 import static br.com.raizdobem.api.mapper.PedidoAjudaMapper.mapeamentoPedido;
 
+@Transactional
 @ApplicationScoped
 public class PedidoAjudaService {
     @Inject
@@ -31,7 +31,6 @@ public class PedidoAjudaService {
     @Inject
     DentistaService dentistaService;
 
-    @Transactional
     public PedidoAjuda criar(CriarPedidoAjudaDTO dto) {
         PedidoAjuda pedidoAjuda = new PedidoAjuda();
 
@@ -64,30 +63,25 @@ public class PedidoAjudaService {
         return pedidoAjuda;
     }
 
-    @Transactional
     public List<PedidoAjudaDTO> listarTodos() {
         List<PedidoAjuda> pedidos = repository.listarTodos();
         return mapeamentoListaPedidos(pedidos);
     }
 
-    @Transactional
     public PedidoAjudaDTO buscarPorCpf(String cpf) {
         PedidoAjuda pedido = repository.buscarPorCpf(cpf);
         return mapeamentoPedido(pedido);
     }
-    @Transactional
-    public PedidoAjudaDTO buscarPeloId(Long id){
-        PedidoAjuda pedido = repository.buscarPeloId(id);
-        return mapeamentoPedido(pedido);
+
+    public PedidoAjuda buscarEntidadePorId(Long id) {
+        return repository.findById(id);
     }
 
-    @Transactional
     public List<PedidoAjudaDTO> listarPorData(LocalDate dataPedido) {
         List<PedidoAjuda> pedidos = repository.listarPorData(dataPedido);
         return mapeamentoListaPedidos(pedidos);
     }
 
-    @Transactional
     public PedidoAjudaDTO processarPedido(long id, AtualizarPedidoAjudaDTO dto){
         PedidoAjuda pedido = repository.findById(id);
         if(pedido == null)
@@ -122,7 +116,7 @@ public class PedidoAjudaService {
 
         return mapeamentoPedido(pedido);
     }
-    @Transactional
+
     public boolean excluir(Long id) {
         return repository.excluir(id);
     }
