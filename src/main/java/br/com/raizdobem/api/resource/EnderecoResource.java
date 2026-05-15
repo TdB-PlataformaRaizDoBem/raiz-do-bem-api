@@ -26,9 +26,6 @@ public class EnderecoResource {
 
     @POST
     @Operation(summary = "Endpoint para a criação de endereços.")
-//    @APIResponse(responseCode = "201", description = "Endereço criado com sucesso")
-//    @APIResponse(responseCode = "400", description = "Dados de endereço inválidos")
-//    @APIResponse(responseCode = "422", description = "Regra de negócio inválida")
     public Response criar(EntradaEnderecoDTO request){
         Endereco endereco = service.criar(request);
         if(endereco.getTipoEndereco() == null){
@@ -37,28 +34,36 @@ public class EnderecoResource {
         if(request.cep().isEmpty()){
             throw new NaoEncontradoException("CEP não encontrado.");
         }
-
         return Response.status(Response.Status.CREATED).entity(endereco).build();
     }
 
     @GET
     @Operation(summary = "Endpoint para a listagem de todos os endereços.")
-    public List<Endereco> listarTodos(){
-        return service.listarTodos();
+    public Response listarTodos(){
+        List<Endereco> enderecos = service.listarTodos();
+        if(enderecos == null || enderecos.isEmpty()){
+            throw new NaoEncontradoException("Nenhum pedido de ajuda encontrado.");
+        }
+        return Response.ok(enderecos).build();
     }
 
     @GET
     @Operation(summary = "Endpoint para a listagem de endereços por cidade.")
     @Path("/{cidade}")
-    public List<Endereco> listarPorCidade(@PathParam("cidade") String cidade){
-        return service.listarPorCidades(cidade);
+    public Response listarPorCidade(@PathParam("cidade") String cidade){
+        List<Endereco> enderecos = service.listarPorCidades(cidade);
+        if(enderecos == null || enderecos.isEmpty()){
+            throw new NaoEncontradoException("Nenhum pedido de ajuda encontrado.");
+        }
+        return Response.ok(enderecos).build();
     }
 
     @GET
     @Operation(summary = "Endpoint para buscar endereço específico pelo id.")
     @Path("/id/{id}")
-    public Endereco buscarEndereco(@PathParam("id") Long id){
-        return service.buscaPorId(id);
+    public Response buscarEndereco(@PathParam("id") Long id){
+        Endereco endereco = service.buscaPorId(id);
+        return Response.ok(endereco).build();
     }
 
     @GET

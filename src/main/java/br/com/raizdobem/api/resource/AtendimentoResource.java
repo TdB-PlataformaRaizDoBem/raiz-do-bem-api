@@ -29,8 +29,12 @@ public class AtendimentoResource {
     AtendimentoService service;
     
     @GET
-    public List<AtendimentoDTO> listarTodos(){
-        return service.listarAtendimentos();
+    public Response listarTodos(){
+        List<AtendimentoDTO> pedidos = service.listarAtendimentos();
+        if(pedidos == null || pedidos.isEmpty()){
+            throw new NaoEncontradoException("Nenhum atendimento encontrado.");
+        }
+        return Response.ok(pedidos).build();
     }
 
     @POST

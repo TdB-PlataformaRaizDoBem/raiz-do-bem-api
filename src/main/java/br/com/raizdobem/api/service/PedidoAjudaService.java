@@ -16,6 +16,10 @@ import java.time.LocalDate;
 import java.time.Period;
 import java.util.List;
 
+import static br.com.raizdobem.api.mapper.DentistaMapper.mapeamentoListaDTO;
+import static br.com.raizdobem.api.mapper.PedidoAjudaMapper.mapeamentoListaPedidos;
+import static br.com.raizdobem.api.mapper.PedidoAjudaMapper.mapeamentoPedido;
+
 @ApplicationScoped
 public class PedidoAjudaService {
     @Inject
@@ -60,24 +64,31 @@ public class PedidoAjudaService {
         return pedidoAjuda;
     }
 
-    public List<PedidoAjuda> listarTodos() {
-        return repository.listarTodos();
-    }
-
-    public PedidoAjuda buscarPorCpf(String cpf) {
-        return repository.buscarPorCpf(cpf);
-    }
-
-    public PedidoAjuda buscarPeloId(Long id){
-        return repository.buscarPeloId(id);
-    }
-
-    public List<PedidoAjuda> listarPorData(LocalDate dataPedido) {
-        return repository.listarPorData(dataPedido);
+    @Transactional
+    public List<PedidoAjudaDTO> listarTodos() {
+        List<PedidoAjuda> pedidos = repository.listarTodos();
+        return mapeamentoListaPedidos(pedidos);
     }
 
     @Transactional
-    public PedidoAjuda processarPedido(long id, AtualizarPedidoAjudaDTO dto){
+    public PedidoAjudaDTO buscarPorCpf(String cpf) {
+        PedidoAjuda pedido = repository.buscarPorCpf(cpf);
+        return mapeamentoPedido(pedido);
+    }
+    @Transactional
+    public PedidoAjudaDTO buscarPeloId(Long id){
+        PedidoAjuda pedido = repository.buscarPeloId(id);
+        return mapeamentoPedido(pedido);
+    }
+
+    @Transactional
+    public List<PedidoAjudaDTO> listarPorData(LocalDate dataPedido) {
+        List<PedidoAjuda> pedidos = repository.listarPorData(dataPedido);
+        return mapeamentoListaPedidos(pedidos);
+    }
+
+    @Transactional
+    public PedidoAjudaDTO processarPedido(long id, AtualizarPedidoAjudaDTO dto){
         PedidoAjuda pedido = repository.findById(id);
         if(pedido == null)
             throw new NaoEncontradoException("Pedido de ajuda não encontrado.");
@@ -108,7 +119,8 @@ public class PedidoAjudaService {
             }
         }
         pedido.setStatus(novoStatus);
-        return pedido;
+
+        return mapeamentoPedido(pedido);
     }
     @Transactional
     public boolean excluir(Long id) {

@@ -2,6 +2,7 @@ package br.com.raizdobem.api.resource;
 
 import br.com.raizdobem.api.dto.request.AtualizarPedidoAjudaDTO;
 import br.com.raizdobem.api.dto.request.CriarPedidoAjudaDTO;
+import br.com.raizdobem.api.dto.response.PedidoAjudaDTO;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.exception.RequisicaoInvalidaException;
 import br.com.raizdobem.api.entity.PedidoAjuda;
@@ -28,14 +29,22 @@ public class PedidoAjudaResource {
     PedidoAjudaService service;
 
     @GET
-    public List<PedidoAjuda> listarTodos(){
-        return service.listarTodos();
+    public Response listarTodos(){
+        List<PedidoAjudaDTO> pedidos = service.listarTodos();
+        if(pedidos == null || pedidos.isEmpty()){
+            throw new NaoEncontradoException("Nenhum pedido de ajuda encontrado.");
+        }
+        return Response.ok(pedidos).build();
     }
 
     @GET
     @Path("/data/{data}")
-    public List<PedidoAjuda> listarPorData(@PathParam("data") String data) {
-        return service.listarPorData(LocalDate.parse(data));
+    public Response listarPorData(@PathParam("data") String data) {
+        List<PedidoAjudaDTO> pedidos = service.listarPorData(LocalDate.parse(data));
+        if(pedidos == null || pedidos.isEmpty()){
+            throw new NaoEncontradoException("Nenhum pedido de ajuda encontrado.");
+        }
+        return Response.ok(pedidos).build();
     }
 
     @POST
@@ -50,7 +59,7 @@ public class PedidoAjudaResource {
     @PUT
     @Path("/{id}")
     public Response atualizar(@PathParam("id") long id, @RequestBody AtualizarPedidoAjudaDTO dto){
-        PedidoAjuda pedido = service.processarPedido(id, dto);
+        PedidoAjudaDTO pedido = service.processarPedido(id, dto);
         return Response.ok(pedido).build();
     }
 

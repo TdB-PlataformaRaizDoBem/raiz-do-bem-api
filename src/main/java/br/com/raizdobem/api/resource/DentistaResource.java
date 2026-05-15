@@ -44,7 +44,7 @@ public class DentistaResource {
         List<DentistaDTO> dentistas = service.listarTodos();
         if(dentistas == null)
             throw new NaoEncontradoException("Lista de dentistas vazia.");
-        return Response.status(200).entity(dentistas).build();
+        return Response.ok().entity(dentistas).build();
     }
 
     @GET
@@ -54,14 +54,15 @@ public class DentistaResource {
         List<DentistaDTO> dentistas = service.listarDisponiveis();
         if(dentistas == null)
             throw new NaoEncontradoException("Lista de dentistas disponíveis vazia.");
-        return Response.status(200).entity(dentistas).build();
+        return Response.ok().entity(dentistas).build();
     }
 
     @GET
     @Path("/{cpf}")
     @Operation(summary = "Endpoint para a listagem de um único dentista.")
-    public DentistaDTO exibirDentista(@PathParam("cpf") String cpf){
-        return service.exibirDentista(cpf);
+    public Response exibirDentista(@PathParam("cpf") String cpf){
+        DentistaDTO dentista = service.exibirDentista(cpf);
+        return Response.ok().entity(dentista).build();
     }
 
     @GET
