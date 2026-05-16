@@ -1,7 +1,7 @@
 package br.com.raizdobem.api.resource;
 
 import br.com.raizdobem.api.dto.external.ViaCepDTO;
-import br.com.raizdobem.api.dto.request.EntradaEnderecoDTO;
+import br.com.raizdobem.api.dto.request.EntradaEnderecoCompletoDTO;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.entity.Endereco;
 import br.com.raizdobem.api.service.EnderecoService;
@@ -26,7 +26,7 @@ public class EnderecoResource {
 
     @POST
     @Operation(summary = "Endpoint para a criação de endereços.")
-    public Response criar(EntradaEnderecoDTO request){
+    public Response criar(EntradaEnderecoCompletoDTO request){
         Endereco endereco = service.criar(request);
         if(endereco.getTipoEndereco() == null){
             throw new NaoEncontradoException("Tipo de endereço inválido.");
@@ -80,7 +80,7 @@ public class EnderecoResource {
     @PUT
     @Operation(summary = "Endpoint criado para atualizar endereços.")
     @Path("/{id}")
-    public Response atualizar(@PathParam("id") Long id, @RequestBody EntradaEnderecoDTO request){
+    public Response atualizar(@PathParam("id") Long id, @RequestBody EntradaEnderecoCompletoDTO request){
         Endereco endereco = service.atualizarEndereco(id, request);
         return Response.ok().entity(endereco).build();
     }

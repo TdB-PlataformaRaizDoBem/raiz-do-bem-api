@@ -1,8 +1,10 @@
 package br.com.raizdobem.api.service;
 
 import br.com.raizdobem.api.client.ViaCepClient;
-import br.com.raizdobem.api.dto.request.EntradaEnderecoDTO;
+import br.com.raizdobem.api.dto.request.EntradaEnderecoCompletoDTO;
 import br.com.raizdobem.api.dto.external.ViaCepDTO;
+import br.com.raizdobem.api.dto.request.EntradaEnderecoDTO;
+import br.com.raizdobem.api.entity.TipoEndereco;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.exception.RegraNegocioException;
 import br.com.raizdobem.api.entity.Endereco;
@@ -26,13 +28,13 @@ public class EnderecoService {
     ViaCepClient client;
 
     @Transactional
-    public Endereco criar(EntradaEnderecoDTO dto) {
+    public Endereco criar(EntradaEnderecoCompletoDTO dto) {
         if(!validarCep(dto.cep())){
             throw new RegraNegocioException("CEP inválido! Insira 8 dígitos!");
         }
         Endereco endereco = new Endereco();
 
-        entradaEndereco(endereco, dto);
+        entradaEnderecoCompleto(endereco, dto);
         repository.criar(endereco);
         return endereco;
 }
@@ -58,12 +60,12 @@ public class EnderecoService {
     }
 
     @Transactional
-    public Endereco atualizarEndereco(Long id, EntradaEnderecoDTO dto) {
+    public Endereco atualizarEndereco(Long id, EntradaEnderecoCompletoDTO dto) {
         Endereco endereco = buscaPorId(id);
         if(endereco == null)
             throw new NaoEncontradoException("Endereço não encontrado.");
 
-        entradaEndereco(endereco, dto);
+        entradaEnderecoCompleto(endereco, dto);
 
         repository.persist(endereco);
         return endereco;
@@ -74,19 +76,39 @@ public class EnderecoService {
         return repository.excluir(id);
     }
 
-    public void entradaEndereco(Endereco endereco, EntradaEnderecoDTO dto){
+    public void entradaEndereco(Endereco endereco, EntradaEnderecoDTO dto, TipoEndereco tipoEndereco){
         ViaCepDTO viaCep = client.buscarEndereco(dto.cep());
         if(viaCep == null){
              throw new RequisicaoInvalidaException("Requisição ViaCep inválida.");
         }
         if("true".equals(viaCep.erro()) ){
             throw new NaoEncontradoException("Endereço Inválido. CEP não encontrado");
+        }else{
+            endereco.setTipoEndereco(tipoEndereco);
+            endereco.setCep(dto.cep());
+            endereco.setLogradouro(viaCep.logradouro());
+            endereco.setNumero(dto.numero());
+            endereco.setBairro(viaCep.bairro());
+            endereco.setCidade(viaCep.cidade());
+            endereco.setEstado(viaCep.uf());
         }
-        endereco.setCep(dto.cep());
-        endereco.setLogradouro(viaCep.logradouro());
-        endereco.setNumero(dto.numero());
-        endereco.setBairro(viaCep.bairro());
-        endereco.setCidade(viaCep.cidade());
-        endereco.setEstado(viaCep.uf());
+    }
+
+    public void entradaEnderecoCompleto(Endereco endereco, EntradaEnderecoCompletoDTO dto){
+        ViaCepDTO viaCep = client.buscarEndereco(dto.cep());
+        if(viaCep == null){
+            throw new RequisicaoInvalidaException("Requisição ViaCep inválida.");
+        }
+        if("true".equals(viaCep.erro()) ){
+            throw new NaoEncontradoException("Endereço Inválido. CEP não encontrado");
+        }else{
+            endereco.setTipoEndereco(TipoEndereco.valueOf(dto.tipoEndereco()));
+            endereco.setCep(dto.cep());
+            endereco.setLogradouro(viaCep.logradouro());
+            endereco.setNumero(dto.numero());
+            endereco.setBairro(viaCep.bairro());
+            endereco.setCidade(viaCep.cidade());
+            endereco.setEstado(viaCep.uf());
+        }
     }
 }

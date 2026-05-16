@@ -38,5 +38,5 @@ public record CriarDentistaDTO(
 
                               @NotNull
                               @Valid
-                              EntradaEnderecoDTO endereco) {
+                              EntradaEnderecoCompletoDTO endereco) {
 }
