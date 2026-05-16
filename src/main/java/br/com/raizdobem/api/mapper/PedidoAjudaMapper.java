@@ -23,7 +23,7 @@ public class PedidoAjudaMapper {
                 pedido.getDescricaoProblema(),
                 pedido.getDataPedido(),
                 pedido.getStatus(),
-                pedido.getDentista().getNomeCompleto(),
+                pedido.getDentista() != null ? pedido.getDentista().getNomeCompleto() : "Aguardando aprovação",
                 pedido.getEndereco()!= null ? pedido.getEndereco().getLogradouro() + ", " + pedido.getEndereco().getNumero()
                 + ", " + pedido.getEndereco().getCidade() + ", " + pedido.getEndereco().getEstado() : null
         );
