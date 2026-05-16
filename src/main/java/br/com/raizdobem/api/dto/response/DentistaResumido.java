@@ -1,7 +1,4 @@
 package br.com.raizdobem.api.dto.response;
-
-import java.util.List;
-
 public record DentistaResumido(Long id,
                             String croDentista,
                             String nomeCompleto,
