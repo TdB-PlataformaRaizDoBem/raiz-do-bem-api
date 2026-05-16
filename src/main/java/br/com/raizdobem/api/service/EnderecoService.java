@@ -6,6 +6,7 @@ import br.com.raizdobem.api.dto.external.ViaCepDTO;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.exception.RegraNegocioException;
 import br.com.raizdobem.api.entity.Endereco;
+import br.com.raizdobem.api.exception.RequisicaoInvalidaException;
 import br.com.raizdobem.api.repository.EnderecoRepository;
 
 import java.util.List;
@@ -74,8 +75,13 @@ public class EnderecoService {
     }
 
     public void entradaEndereco(Endereco endereco, EntradaEnderecoDTO dto){
-        ViaCepDTO viaCep = buscarEndereco(dto.cep());
-
+        ViaCepDTO viaCep = client.buscarEndereco(dto.cep());
+        if(viaCep == null){
+             throw new RequisicaoInvalidaException("Requisição ViaCep inválida.");
+        }
+        if("true".equals(viaCep.erro()) ){
+            throw new NaoEncontradoException("Endereço Inválido. CEP não encontrado");
+        }
         endereco.setCep(dto.cep());
         endereco.setLogradouro(viaCep.logradouro());
         endereco.setNumero(dto.numero());
