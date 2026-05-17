@@ -113,6 +113,9 @@ public class AtendimentoService {
                         a.prontuario(),
                         a.beneficiario() != null ? a.beneficiario() : "BENEFICIÁRIO NÃO ENCONTRADO",
                         a.dentista() != null ? a.dentista() : "DENTISTA NÃO ENCONTRADO",
+                        a.contatoDentista(),
+                        a.emailDentista(),
+                        a.enderecoDentista(),
                         a.dataInicial(),
                         a.dataFim() != null ? a.dataFim() : "NAO FINALIZADO"
                 ))

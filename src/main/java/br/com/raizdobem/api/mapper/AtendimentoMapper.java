@@ -16,6 +16,13 @@ public class AtendimentoMapper {
                 atendimento.getProntuario(),
                 atendimento.getBeneficiario() != null ? atendimento.getBeneficiario().getNomeCompleto() : "N/A",
                 atendimento.getDentista()!= null ? atendimento.getDentista().getNomeCompleto() : "N/A",
+                atendimento.getDentista()!= null ? atendimento.getDentista().getTelefone() : "N/A",
+                atendimento.getDentista()!= null ? atendimento.getDentista().getEmail() : "N/A",
+                atendimento.getDentista()!= null ?
+                        atendimento.getDentista().getEndereco().getLogradouro() + ", " +
+                        atendimento.getDentista().getEndereco().getNumero()  + ", "  +
+                        atendimento.getDentista().getEndereco().getCidade() + ", " +
+                        atendimento.getDentista().getEndereco().getEstado() : "N/A",
                 atendimento.getDataInicial(),
                 atendimento.getDataFinal() != null ? atendimento.getDataFinal().toString() : "NÃO FINALIZADO"
         );
