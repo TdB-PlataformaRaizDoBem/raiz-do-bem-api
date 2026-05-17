@@ -97,7 +97,6 @@ public class AtendimentoService {
             throw new NaoEncontradoException("Colaborador inválido, não foi possível atualizar atendimento.");
 
         atendimento.setColaborador(colaborador);
-
         atendimento.setDataFinal(LocalDate.now());
     }
 
