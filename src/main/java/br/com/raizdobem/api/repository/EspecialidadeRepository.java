@@ -11,4 +11,7 @@ public class EspecialidadeRepository implements PanacheRepository<Especialidade>
     public List<Especialidade> listarTodas(){
         return listAll();
     }
+    public Especialidade buscarPorId(long id){
+        return findById(id);
+    }
 }

@@ -2,13 +2,20 @@ package br.com.raizdobem.api.repository;
 
 import br.com.raizdobem.api.dto.request.AtualizarDentistaDTO;
 import br.com.raizdobem.api.entity.Dentista;
+import br.com.raizdobem.api.entity.Endereco;
+import br.com.raizdobem.api.entity.Especialidade;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @ApplicationScoped
 public class DentistaRepository implements PanacheRepository<Dentista> {
+
+    @Inject
+    EspecialidadeRepository repository;
 
     public void criar(Dentista dentista){
         persist(dentista);
@@ -51,6 +58,20 @@ public class DentistaRepository implements PanacheRepository<Dentista> {
         if(dto.disponivel() != null)
             dentista.setDisponivel(dto.disponivel());
 
+        if(dto.idEspecialidade()!= null){
+            Especialidade especialidade = repository.buscarPorId(dto.idEspecialidade());
+            dentista.setEspecialidades(
+                    new ArrayList<>(List.of(especialidade)));
+        }
+
+        if(dto.endereco() != null){
+            Endereco endereco = dentista.getEndereco();
+
+            endereco.setCep(dto.endereco().cep());
+            endereco.setNumero(dto.endereco().numero());
+
+            dentista.setEndereco(endereco);
+        }
         return dentista;
     }
     public long excluir(String cpf) {

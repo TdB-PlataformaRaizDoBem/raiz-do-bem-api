@@ -6,36 +6,40 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 
+import java.util.List;
+
 public record CriarDentistaDTO(
-                              @NotBlank
+        @NotBlank
                               @Pattern(regexp = "^(?i)[A-Z0-9-/ ]{3,10}$", message = "CRO deve ter entre 3 e 10 caracteres.")
                               String croDentista,
 
-                              @NotBlank
+        @NotBlank
                               @Pattern(regexp = "^\\d{11}$",
                                         message = "CPF deve conter 11 números.")
                               String cpf,
 
-                              @NotBlank
+        @NotBlank
                               String nomeCompleto,
 
-                              @NotBlank
+        @NotBlank
                               String sexo,
 
-                              @NotBlank
+        @NotBlank
                               @Email
                               String email,
 
-                              @NotBlank
+        @NotBlank
                               String telefone,
 
-                              @NotBlank
+        @NotBlank
                               String categoria,
+
+        Long idEspecialidade,
 
                               @NotBlank
                               String disponivel,
 
-                              @NotNull
+        @NotNull
                               @Valid
                               EntradaEnderecoDTO endereco) {
 }

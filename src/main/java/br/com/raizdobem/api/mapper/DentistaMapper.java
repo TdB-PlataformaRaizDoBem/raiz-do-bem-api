@@ -2,6 +2,8 @@ package br.com.raizdobem.api.mapper;
 
 import br.com.raizdobem.api.dto.response.DentistaDTO;
 import br.com.raizdobem.api.entity.Dentista;
+import br.com.raizdobem.api.entity.Especialidade;
+import br.com.raizdobem.api.entity.ProgramaSocial;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,16 +25,17 @@ public class DentistaMapper {
                 dentista.getTelefone(),
                 dentista.getCategoria(),
                 dentista.getEspecialidades() != null ? dentista.getEspecialidades().stream()
-                        .map(e -> e.getDescricao())
+                        .map(Especialidade::getDescricao)
                         .collect(Collectors.toList()) : new ArrayList<>(),
                 dentista.getProgramasSociais() != null ? dentista.getProgramasSociais().stream()
-                        .map(p -> p.getPrograma())
+                        .map(ProgramaSocial::getPrograma)
                         .collect(Collectors.toList()) : new ArrayList<>(),
                 dentista.getDisponivel(),
                 dentista.getEndereco() != null ? dentista.getEndereco().getLogradouro() : null,
                 dentista.getEndereco() != null ? dentista.getEndereco().getNumero() : null,
                 dentista.getEndereco() != null ? dentista.getEndereco().getCidade() : null,
-                dentista.getEndereco() != null ? dentista.getEndereco().getEstado() : null
+                dentista.getEndereco() != null ? dentista.getEndereco().getEstado() : null,
+                dentista.getEndereco() != null ? dentista.getEndereco().getCep() : null
         );
     }
 

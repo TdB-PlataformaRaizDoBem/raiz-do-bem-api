@@ -3,14 +3,12 @@ package br.com.raizdobem.api.service;
 import br.com.raizdobem.api.dto.request.AtualizarDentistaDTO;
 import br.com.raizdobem.api.dto.request.CriarDentistaDTO;
 import br.com.raizdobem.api.dto.response.DentistaDTO;
-import br.com.raizdobem.api.entity.TipoEndereco;
+import br.com.raizdobem.api.entity.*;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.exception.ValidacaoException;
-import br.com.raizdobem.api.entity.Dentista;
-import br.com.raizdobem.api.entity.Endereco;
-import br.com.raizdobem.api.entity.Sexo;
 import br.com.raizdobem.api.mapper.DentistaMapper;
 import br.com.raizdobem.api.repository.DentistaRepository;
+import br.com.raizdobem.api.repository.EspecialidadeRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -28,6 +26,9 @@ public class DentistaService {
     @Inject
     EnderecoService enderecoService;
 
+    @Inject
+    EspecialidadeRepository especialidadeRepository;
+
     @Transactional
     public DentistaDTO criarDentista(CriarDentistaDTO dto){
         Dentista dentista = new Dentista();
@@ -42,10 +43,15 @@ public class DentistaService {
 
         dentista.setCroDentista(dto.croDentista());
         dentista.setNomeCompleto(dto.nomeCompleto());
-        dentista.setSexo(Sexo.valueOf(sexoEntrada));
+        dentista.setSexo(Sexo.valueOf(sexoEntrada.toUpperCase()));
         dentista.setTelefone(dto.telefone());
         dentista.setEmail(dto.email());
         dentista.setCategoria(dto.categoria());
+        Especialidade especialidade = especialidadeRepository.buscarPorId(dto.idEspecialidade());
+        if(especialidade == null){
+            throw new NaoEncontradoException("Especialidade não encontrada.");
+        }
+        dentista.setEspecialidades(List.of(especialidade));
         dentista.setDisponivel(dto.disponivel());
         Endereco endereco = enderecoService.criarComoSuporte(dto.endereco(), TipoEndereco.PROFISSIONAL);
         if(endereco == null)
@@ -96,7 +102,7 @@ public class DentistaService {
     }
 
     @Transactional
-    public DentistaDTO atualizar(String cpf, @Valid AtualizarDentistaDTO request) {
+    public DentistaDTO atualizar(String cpf, AtualizarDentistaDTO request) {
         Dentista dentista = repository.atualizar(cpf, request);
         if(dentista == null)
             throw new NaoEncontradoException("Dentista não encontrado.");

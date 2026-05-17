@@ -1,5 +1,6 @@
 package br.com.raizdobem.api.repository;
 
+import br.com.raizdobem.api.dto.external.ViaCepDTO;
 import br.com.raizdobem.api.dto.request.AtualizarBeneficiarioDTO;
 import br.com.raizdobem.api.entity.Beneficiario;
 import br.com.raizdobem.api.entity.Endereco;

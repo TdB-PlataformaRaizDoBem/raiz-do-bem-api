@@ -16,7 +16,8 @@ public record DentistaDTO(Long id,
                           String logradouro,
                           String numero,
                           String cidade,
-                          String estado) {
+                          String estado,
+                          String cep) {
 }
 
 

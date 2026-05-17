@@ -50,10 +50,9 @@ public class Dentista {
     @JoinColumn(name = "id_endereco")
     private Endereco endereco;
 
-    //Havia me esquecido da relação Dentista N:N com especialidades
     @ManyToMany
     @JoinTable(
-            name = "Dentista_Especialidade",
+            name = "dentista_especialidade",
             joinColumns = @JoinColumn(name = "id_dentista"),
             inverseJoinColumns = @JoinColumn(name = "id_especialidade")
     )
