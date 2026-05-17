@@ -42,7 +42,7 @@ public class DentistaResource {
     @Operation(summary = "Endpoint para a listagem de todos os dentistas.")
     public Response listarTodos(){
         List<DentistaDTO> dentistas = service.listarTodos();
-        if(dentistas == null)
+        if(dentistas == null || dentistas.isEmpty())
             throw new NaoEncontradoException("Lista de dentistas vazia.");
         return Response.ok().entity(dentistas).build();
     }

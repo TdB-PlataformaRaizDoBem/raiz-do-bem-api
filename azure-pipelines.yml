@@ -5,7 +5,6 @@ trigger:
       - develop
 
 pool:
-  # vmImage: 'ubuntu-latest'
   name: Default
 
 variables:
@@ -17,7 +16,7 @@ steps:
 
   - task: PublishBuildArtifacts@1
     inputs:
-      PathtoPublish: 'target'
+      PathtoPublish: 'target/quarkus-app'
       ArtifactName: 'drop'
 
   - task: AzureWebApp@1
@@ -25,4 +24,4 @@ steps:
     inputs:
       azureSubscription: 'sc-raizdobem-backend'
       appName: 'raizdobem-backend'
-      package: '$(System.DefaultWorkingDirectory)/drop/quarkus-app'
+      package: '$(System.DefaultWorkingDirectory)/target/quarkus-app'
