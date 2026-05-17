@@ -29,6 +29,9 @@ public class BeneficiarioService {
     @Inject
     ProgramaService programaService;
 
+    @Inject
+    EnderecoService enderecoService;
+
     @Transactional
     public BeneficiarioDTO criarBeneficiario(CriarBeneficiarioDTO dto) {
         Beneficiario beneficiario = new Beneficiario();
@@ -103,6 +106,10 @@ public class BeneficiarioService {
         Beneficiario beneficiario = repository.atualizar(cpf, request);
         if(beneficiario == null)
             throw new NaoEncontradoException("Beneficiário não encontrado, CPF inválido.");
+
+        beneficiario.setTelefone(request.telefone());
+        beneficiario.setEmail(request.email());
+        enderecoService.entradaEndereco(beneficiario.getEndereco(), request.endereco(), TipoEndereco.RESIDENCIAL);
 
         return mapeamentoBeneficiario(beneficiario);
     }

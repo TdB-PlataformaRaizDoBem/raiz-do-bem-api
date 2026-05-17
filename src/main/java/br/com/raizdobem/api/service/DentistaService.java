@@ -13,6 +13,8 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import static br.com.raizdobem.api.mapper.DentistaMapper.mapeamentoDentista;
@@ -106,6 +108,13 @@ public class DentistaService {
         Dentista dentista = repository.atualizar(cpf, request);
         if(dentista == null)
             throw new NaoEncontradoException("Dentista não encontrado.");
+
+        dentista.setTelefone(request.telefone());
+        dentista.setEmail(request.email());
+        dentista.setCategoria(request.categoriaDentista());
+        dentista.setDisponivel(request.disponivel());
+
+        enderecoService.entradaEndereco(dentista.getEndereco(), request.endereco(), TipoEndereco.RESIDENCIAL);
         return mapeamentoDentista(dentista);
     }
 

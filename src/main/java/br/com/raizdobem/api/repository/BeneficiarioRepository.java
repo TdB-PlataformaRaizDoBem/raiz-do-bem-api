@@ -1,9 +1,7 @@
 package br.com.raizdobem.api.repository;
 
-import br.com.raizdobem.api.dto.external.ViaCepDTO;
 import br.com.raizdobem.api.dto.request.AtualizarBeneficiarioDTO;
 import br.com.raizdobem.api.entity.Beneficiario;
-import br.com.raizdobem.api.entity.Endereco;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 
@@ -37,22 +35,7 @@ public class BeneficiarioRepository implements PanacheRepository<Beneficiario> {
     }
 
     public Beneficiario atualizar(String cpf, AtualizarBeneficiarioDTO dto){
-        Beneficiario beneficiario = find("cpf", cpf).firstResult();
-        if(beneficiario == null)
-            return null;
-
-        beneficiario.setTelefone(dto.telefone());
-        beneficiario.setEmail(dto.email());
-
-        if(dto.endereco() != null){
-            Endereco endereco = beneficiario.getEndereco();
-
-            endereco.setCep(dto.endereco().cep());
-            endereco.setNumero(dto.endereco().numero());
-
-            beneficiario.setEndereco(endereco);
-        }
-        return beneficiario;
+        return find("cpf", cpf).firstResult();
     }
 
     public long excluir(String cpf) {
