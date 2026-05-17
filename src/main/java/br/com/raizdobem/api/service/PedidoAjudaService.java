@@ -52,11 +52,10 @@ public class PedidoAjudaService {
         pedidoAjuda.setDescricaoProblema(dto.descricaoProblema());
         pedidoAjuda.setDataPedido(LocalDate.now());
 
-        Endereco endereco = enderecoService.criar(dto.endereco());
+        Endereco endereco = enderecoService.criarComoSuporte(dto.endereco(), TipoEndereco.RESIDENCIAL);
         if(endereco == null){
             throw new NaoEncontradoException("Endereço não encontrado.");
         }
-        endereco.setTipoEndereco(TipoEndereco.RESIDENCIAL);
         pedidoAjuda.setEndereco(endereco);
 
         repository.criar(pedidoAjuda);

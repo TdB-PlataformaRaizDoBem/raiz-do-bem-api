@@ -16,6 +16,8 @@ import java.util.List;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 @ApplicationScoped
@@ -37,7 +39,23 @@ public class EnderecoService {
         entradaEnderecoCompleto(endereco, dto);
         repository.criar(endereco);
         return endereco;
-}
+    }
+
+    @Transactional
+    public Endereco criarComoSuporte(
+            EntradaEnderecoDTO dto,
+            TipoEndereco tipoEndereco) {
+
+        if(!validarCep(dto.cep())){
+            throw new RegraNegocioException("CEP inválido! Insira 8 dígitos!");
+        }
+
+        Endereco endereco = new Endereco();
+
+        entradaEndereco(endereco, dto, tipoEndereco);
+        repository.criar(endereco);
+        return endereco;
+    }
 
     public Endereco buscaPorId(Long id){
         return repository.buscarPeloId(id);

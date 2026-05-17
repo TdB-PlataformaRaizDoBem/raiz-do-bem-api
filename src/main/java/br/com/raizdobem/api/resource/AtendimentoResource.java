@@ -72,7 +72,7 @@ public class AtendimentoResource {
 
     @PUT
     @Path("/{cpf}")
-    public Response atualizar(@PathParam("cpf") String cpf,@Valid @RequestBody AtualizarAtendimentoDTO dto){
+    public Response atualizar(@PathParam("cpf") String cpf, @RequestBody AtualizarAtendimentoDTO dto){
         service.encerrarAtendimento(cpf, dto);
         return Response.ok().build();
     }

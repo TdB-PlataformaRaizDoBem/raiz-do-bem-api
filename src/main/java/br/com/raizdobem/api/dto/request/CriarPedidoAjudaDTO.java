@@ -35,6 +35,6 @@ public record CriarPedidoAjudaDTO(@NotBlank @Pattern(regexp = "^\\d{11}$",
 
                                   @NotNull
                                   @Valid
-                                  EntradaEnderecoCompletoDTO endereco) {
+                                  EntradaEnderecoDTO endereco) {
 
 }

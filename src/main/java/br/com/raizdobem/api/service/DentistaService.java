@@ -29,7 +29,7 @@ public class DentistaService {
     EnderecoService enderecoService;
 
     @Transactional
-    public DentistaDTO criarDentista(@Valid CriarDentistaDTO dto){
+    public DentistaDTO criarDentista(CriarDentistaDTO dto){
         Dentista dentista = new Dentista();
 
         String cpfEntrada = dto.cpf();
@@ -46,15 +46,12 @@ public class DentistaService {
         dentista.setTelefone(dto.telefone());
         dentista.setEmail(dto.email());
         dentista.setCategoria(dto.categoria());
-        Endereco endereco = enderecoService.criar(dto.endereco());
+        dentista.setDisponivel(dto.disponivel());
+        Endereco endereco = enderecoService.criarComoSuporte(dto.endereco(), TipoEndereco.PROFISSIONAL);
         if(endereco == null)
             throw new NaoEncontradoException("Endereço não encontrado!");
-        else{
-            endereco.setTipoEndereco(TipoEndereco.PROFISSIONAL);
-            dentista.setEndereco(endereco);
-        }
 
-        dentista.setDisponivel(dto.disponivel());
+        dentista.setEndereco(endereco);
 
         repository.criar(dentista);
         return mapeamentoDentista(dentista);
