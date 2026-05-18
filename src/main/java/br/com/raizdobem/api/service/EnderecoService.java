@@ -10,14 +10,10 @@ import br.com.raizdobem.api.exception.RegraNegocioException;
 import br.com.raizdobem.api.entity.Endereco;
 import br.com.raizdobem.api.exception.RequisicaoInvalidaException;
 import br.com.raizdobem.api.repository.EnderecoRepository;
-
 import java.util.List;
-
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 @ApplicationScoped

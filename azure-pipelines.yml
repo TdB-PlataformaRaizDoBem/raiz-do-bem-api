@@ -3,8 +3,10 @@ trigger:
     include:
       - main
       - develop
+
 #pool:
 #  vmImage: 'windows-latest'
+
 pool:
   name: Default
 
@@ -12,12 +14,6 @@ variables:
   javaVersion: '21'
 
 steps:
-
-  - task: JavaToolInstaller@0
-    inputs:
-      versionSpec: '21'
-      jdkArchitectureOption: 'x64'
-      jdkSourceOption: 'PreInstalled'
 
   - script: mvn -B clean package -DskipTests -Dquarkus.package.type=fast-jar
     displayName: 'Build Maven'

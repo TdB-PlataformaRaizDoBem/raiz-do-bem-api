@@ -2,13 +2,8 @@ package br.com.raizdobem.api.repository;
 
 import br.com.raizdobem.api.dto.request.AtualizarDentistaDTO;
 import br.com.raizdobem.api.entity.Dentista;
-import br.com.raizdobem.api.entity.Endereco;
-import br.com.raizdobem.api.entity.Especialidade;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
-
-import java.util.ArrayList;
 import java.util.List;
 
 @ApplicationScoped

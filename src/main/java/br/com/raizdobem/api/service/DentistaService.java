@@ -12,9 +12,6 @@ import br.com.raizdobem.api.repository.EspecialidadeRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
-import jakarta.validation.Valid;
-
-import java.util.ArrayList;
 import java.util.List;
 
 import static br.com.raizdobem.api.mapper.DentistaMapper.mapeamentoDentista;
