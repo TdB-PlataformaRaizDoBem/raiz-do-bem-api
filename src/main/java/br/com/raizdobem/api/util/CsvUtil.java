@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 public class CsvUtil {
     public static String gerarCsvDentistas(List<DentistaDTO> dentistas){
         StringBuilder csv = new StringBuilder();
-        csv.append("ID,CRO,CPF,Nome Completo,Sexo,Email,Telefone,Categoria,Disponível,Especialidade,ProgramasSociais,Logradouro,Número,Cidade,Estado\n");
+        csv.append("ID,CRO,CPF,Nome Completo,Sexo,Email,Telefone,Categoria,Disponível,Especialidade,ProgramasSociais,Logradouro,Cidade,Estado\n");
 
         for(DentistaDTO dentista : dentistas){
             csv.append(dentista.id()).append(",");
@@ -26,7 +26,7 @@ public class CsvUtil {
             csv.append(dentista.programasSociais().stream()
                     .map(Object::toString)
                     .collect(Collectors.joining("; "))).append(",");
-            csv.append(dentista.logradouro()).append(" ").append(dentista.numero()).append(",");
+            csv.append(dentista.logradouro()).append(" - ").append(dentista.numero()).append(",");
             csv.append(dentista.cidade()).append(",");
             csv.append(dentista.estado()).append("\n");
         }
