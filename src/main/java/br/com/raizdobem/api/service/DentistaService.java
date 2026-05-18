@@ -28,7 +28,7 @@ public class DentistaService {
 
     @Inject
     EspecialidadeRepository especialidadeRepository;
-    
+
     @Inject
     ProgramaRepository programaRepository;
 
