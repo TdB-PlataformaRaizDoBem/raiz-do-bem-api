@@ -3,9 +3,10 @@ trigger:
     include:
       - main
       - develop
-
+#pool:
+#  vmImage: 'windows-latest'
 pool:
-  vmImage: 'windows-latest'
+  name: Default
 
 variables:
   javaVersion: '21'
