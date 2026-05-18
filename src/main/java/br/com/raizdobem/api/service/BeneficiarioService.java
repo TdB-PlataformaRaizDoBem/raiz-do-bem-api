@@ -86,6 +86,8 @@ public class BeneficiarioService {
     @Transactional
     public List<BeneficiarioDTO> listarTodos() {
         List <Beneficiario> beneficiarios = repository.listarTodos();
+        if(beneficiarios == null || beneficiarios.isEmpty())
+            throw new NaoEncontradoException("Lista de beneficiários vazia.");
         return mapeamentoBeneficiarios(beneficiarios);
     }
 
