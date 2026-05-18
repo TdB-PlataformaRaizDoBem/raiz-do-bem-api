@@ -5,12 +5,19 @@ trigger:
       - develop
 
 pool:
-  name: Default
+  vmImage: 'ubuntu-latest'
 
 variables:
   javaVersion: '21'
 
 steps:
+
+  - task: JavaToolInstaller@0
+    inputs:
+      versionSpec: '21'
+      jdkArchitectureOption: 'x64'
+      jdkSourceOption: 'PreInstalled'
+
   - script: mvn -B clean package -DskipTests -Dquarkus.package.type=fast-jar
     displayName: 'Build Maven'
 
@@ -24,4 +31,4 @@ steps:
     inputs:
       azureSubscription: 'sc-raizdobem-backend'
       appName: 'raizdobem-backend'
-      package: '$(System.DefaultWorkingDirectory)/target/quarkus-app'
+      package: '$(System.DefaultWorkingDirectory)/target/quarkus-app/'
