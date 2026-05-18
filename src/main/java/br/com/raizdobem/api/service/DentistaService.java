@@ -9,6 +9,7 @@ import br.com.raizdobem.api.exception.ValidacaoException;
 import br.com.raizdobem.api.mapper.DentistaMapper;
 import br.com.raizdobem.api.repository.DentistaRepository;
 import br.com.raizdobem.api.repository.EspecialidadeRepository;
+import br.com.raizdobem.api.repository.ProgramaRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -27,6 +28,9 @@ public class DentistaService {
 
     @Inject
     EspecialidadeRepository especialidadeRepository;
+    
+    @Inject
+    ProgramaRepository programaRepository;
 
     @Transactional
     public DentistaDTO criarDentista(CriarDentistaDTO dto){
@@ -51,6 +55,10 @@ public class DentistaService {
             throw new NaoEncontradoException("Especialidade não encontrada.");
         }
         dentista.setEspecialidades(List.of(especialidade));
+        ProgramaSocial p1 = programaRepository.buscarPorId(1);
+        ProgramaSocial p2 = programaRepository.buscarPorId(2);
+
+        dentista.setProgramasSociais(List.of(p1,p2));
         dentista.setDisponivel(dto.disponivel());
         Endereco endereco = enderecoService.criarComoSuporte(dto.endereco(), TipoEndereco.PROFISSIONAL);
         if(endereco == null)
