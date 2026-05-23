@@ -49,7 +49,7 @@ public class DentistaResource {
 
     @GET
     @Path("/disponiveis")
-    @Operation(summary = "Endpoint para a listagem de dentistas disponíveis.")
+    @Operation(summary = "Endpoint de listagem dos dentistas disponíveis.")
     public Response listarDisponiveis() {
         List<DentistaDTO> dentistas = service.listarDisponiveis();
         if(dentistas == null)
@@ -59,7 +59,7 @@ public class DentistaResource {
 
     @GET
     @Path("/{cpf}")
-    @Operation(summary = "Endpoint para a listagem de um único dentista.")
+    @Operation(summary = "Endpoint de exibição de um único dentista usando o CPF.")
     public Response exibirDentista(@PathParam("cpf") String cpf){
         DentistaDTO dentista = service.exibirDentista(cpf);
         return Response.ok().entity(dentista).build();
@@ -67,7 +67,7 @@ public class DentistaResource {
 
     @GET
     @Path("/cidade/{cidade}")
-    @Operation(summary = "Endpoint para a listagem de todos os dentistas de uma cidade específica.")
+    @Operation(summary = "Endpoint de listagem de todos os dentistas de uma cidade específica.")
     public Response listarTodos(@PathParam("cidade") String cidade){
         List<DentistaDTO> dentistas = service.listarPorCidades(cidade);
         if(dentistas == null || dentistas.isEmpty())
@@ -78,7 +78,7 @@ public class DentistaResource {
     @GET
     @Path("/exportarCsv")
     @Produces("text/csv")
-    @Operation(summary = "Endpoint para a exportar todos os dentistas em arquivo csv.")
+    @Operation(summary = "Endpoint de exportação de todos os dentistas em arquivo csv.")
     public Response exportarCsv(){
         List<DentistaDTO> lista = service.listarParaExportacao();
 

@@ -29,6 +29,7 @@ public class AtendimentoResource {
     AtendimentoService service;
     
     @GET
+    @Operation(summary = "Endpoint de listagem dos atendimentos.")
     public Response listarTodos(){
         List<AtendimentoDTO> pedidos = service.listarAtendimentos();
         if(pedidos == null || pedidos.isEmpty()){
@@ -38,6 +39,7 @@ public class AtendimentoResource {
     }
 
     @POST
+    @Operation(summary = "Endpoint de criação dos atendimentos de beneficiários cadastrados.")
     public Response criar(@Valid CriarAtendimentoDTO request) {
         AtendimentoDTO atendimento = service.criarAtendimento(request);
         if (atendimento == null) {
@@ -59,7 +61,7 @@ public class AtendimentoResource {
     @GET
     @Path("/exportarCsv")
     @Produces("text/csv")
-    @Operation(summary = "Endpoint para a exportar todos os atendimentos em um arquivo csv.")
+    @Operation(summary = "Endpoint para exportar todos os atendimentos em um arquivo csv.")
     public Response exportarCsv(){
         List<AtendimentoDTO> lista = service.listarParaExportacao();
 
@@ -71,6 +73,7 @@ public class AtendimentoResource {
     }
 
     @PUT
+    @Operation(summary = "Endpoint para finalizar atendimento.")
     @Path("/{cpf}")
     public Response atualizar(@PathParam("cpf") String cpf, @RequestBody AtualizarAtendimentoDTO dto){
         service.encerrarAtendimento(cpf, dto);
@@ -78,6 +81,7 @@ public class AtendimentoResource {
     }
 
     @DELETE
+    @Operation(summary = "Endpoint para exclusão de atendimento.")
     @Path("/{id}")
     public Response excluirAtendimento(@PathParam("id") Long id){
         boolean apagado = service.excluir(id);

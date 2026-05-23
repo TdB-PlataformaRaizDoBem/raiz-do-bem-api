@@ -22,7 +22,7 @@ public class EspecialidadeResource {
     EspecialidadeService service;
 
     @GET
-    @Operation(summary = "Lista todas as especialidades")
+    @Operation(summary = "Lista todas as especialidades que podem ser atribuídas a um dentista.")
     public Response listarTodas(){
         List<Especialidade> especialidades = service.listarEspecialidades();
         if(especialidades == null || especialidades.isEmpty())
@@ -32,7 +32,7 @@ public class EspecialidadeResource {
 
     @GET
     @Path("/{id}")
-    @Operation(summary = "Busca especialidade por id")
+    @Operation(summary = "Busca especialidade específica pelo id")
     public Response buscarPorId(@PathParam("id") Long id) {
         Especialidade especialidade = service.buscarPorId(id);
         if(especialidade == null)

@@ -35,7 +35,7 @@ public class BeneficiarioResource {
     }
 
     @POST
-    @Operation(summary = "Endpoint para a criação de beneficiários.")
+    @Operation(summary = "Endpoint para a criação de beneficiário, de um pedido de ajuda aprovado.")
     public Response criar(@Valid CriarBeneficiarioDTO request){
         BeneficiarioDTO beneficiario = service.criarBeneficiario(request);
         return Response.status(Response.Status.CREATED).entity(beneficiario).build();

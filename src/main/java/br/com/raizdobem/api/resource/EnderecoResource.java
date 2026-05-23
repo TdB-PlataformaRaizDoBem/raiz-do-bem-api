@@ -25,7 +25,7 @@ public class EnderecoResource {
     EnderecoService service;
 
     @POST
-    @Operation(summary = "Endpoint para a criação de endereços.")
+    @Operation(summary = "Endpoint de criação de endereço.")
     public Response criar(EntradaEnderecoCompletoDTO request){
         Endereco endereco = service.criar(request);
         if(endereco.getTipoEndereco() == null){
@@ -38,7 +38,7 @@ public class EnderecoResource {
     }
 
     @GET
-    @Operation(summary = "Endpoint para a listagem de todos os endereços.")
+    @Operation(summary = "Endpoint de listagem de todos os endereços.")
     public Response listarTodos(){
         List<Endereco> enderecos = service.listarTodos();
         if(enderecos == null || enderecos.isEmpty()){
@@ -59,7 +59,7 @@ public class EnderecoResource {
     }
 
     @GET
-    @Operation(summary = "Endpoint para buscar endereço específico pelo id.")
+    @Operation(summary = "Endpoint de busca de endereço específico pelo id.")
     @Path("/id/{id}")
     public Response buscarEndereco(@PathParam("id") Long id){
         Endereco endereco = service.buscaPorId(id);
@@ -67,7 +67,7 @@ public class EnderecoResource {
     }
 
     @GET
-    @Operation(summary = "Endpoint para buscar endereços na API do ViaCep.")
+    @Operation(summary = "Endpoint de busca de informações de endereços na API do ViaCep.")
     @Path("/viacep/{cep}")
     public Response buscarViaCep(@PathParam("cep") String cep){
         ViaCepDTO responseViaCep = service.buscarEndereco(cep);
@@ -78,7 +78,7 @@ public class EnderecoResource {
     }
 
     @PUT
-    @Operation(summary = "Endpoint criado para atualizar endereços.")
+    @Operation(summary = "Endpoint de atualização de endereço.")
     @Path("/{id}")
     public Response atualizar(@PathParam("id") Long id, @RequestBody EntradaEnderecoCompletoDTO request){
         Endereco endereco = service.atualizarEndereco(id, request);
@@ -86,7 +86,7 @@ public class EnderecoResource {
     }
 
     @DELETE
-    @Operation(summary = "Endpoint para apagar endereços.")
+    @Operation(summary = "Endpoint de exclusão de endereço.")
     @Path("/{id}")
     public Response excluir(@PathParam("id") Long id) {
         boolean apagado = service.excluir(id);

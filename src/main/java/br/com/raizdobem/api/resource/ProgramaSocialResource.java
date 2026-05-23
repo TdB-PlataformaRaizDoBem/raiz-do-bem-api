@@ -22,7 +22,7 @@ public class ProgramaSocialResource {
     ProgramaService service;
 
     @GET
-    @Operation(summary = "Lista programas sociais")
+    @Operation(summary = "Lista os programas sociais presentes na ONG: Dentista do Bem e Apolônias do Bem")
     public Response listarTodos(){
         List<ProgramaSocial> programas = service.listarProgramasSociais();
         if(programas == null || programas.isEmpty())
@@ -32,7 +32,7 @@ public class ProgramaSocialResource {
 
     @GET
     @Path("/{id}")
-    @Operation(summary = "Busca programa social por id")
+    @Operation(summary = "Busca programa social com o id")
     public Response buscarPorId(@PathParam("id") Long id) {
         ProgramaSocial programa = service.buscarPorId(id);
         if (programa == null) {

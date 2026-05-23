@@ -26,7 +26,7 @@ public class ColaboradorResource {
     ColaboradorService service;
 
     @POST
-    @Operation(summary = "Endpoint para a criação de colaborador.")
+    @Operation(summary = "Endpoint de criação de um colaborador da ONG.")
     public Response criar(@Valid CriarColaboradorDTO request){
         Colaborador colaborador = service.criarColaborador(request);
         if(colaborador == null){
@@ -36,7 +36,7 @@ public class ColaboradorResource {
     }
 
     @GET
-    @Operation(summary = "Endpoint para a listagem de colaboradores.")
+    @Operation(summary = "Endpoint de listagem de todos os colaboradores.")
     public Response listarTodos(){
         List<Colaborador> colaboradores = service.listarTodos();
         if(colaboradores == null || colaboradores.isEmpty())
@@ -46,14 +46,14 @@ public class ColaboradorResource {
 
     @GET
     @Path("/{cpf}")
-    @Operation(summary = "Endpoint para exibir colaborador único.")
+    @Operation(summary = "Endpoint que exibe um colaborador único usando o CPF.")
     public Colaborador buscarUnico(@PathParam("cpf") String cpf){
         return service.exibirColaborador(cpf);
     }
 
     @PUT
     @Path("/{cpf}")
-    @Operation(summary = "Endpoint para a atualização de colaborador.")
+    @Operation(summary = "Endpoint de atualização de email do colaborador.")
     public Response atualizar(@PathParam("cpf") String cpf, @Valid @RequestBody AtualizarColaboradorDTO dto){
         service.atualizarColaborador(cpf, dto);
         return Response.ok().build();
@@ -61,7 +61,7 @@ public class ColaboradorResource {
 
     @DELETE
     @Path("/{cpf}")
-    @Operation(summary = "Endpoint para a exclusão de colaborador.")
+    @Operation(summary = "Endpoint de exclusão de um colaborador.")
     public Response excluir(@PathParam("cpf") String cpf){
         long excluido = service.excluir(cpf);
         if(excluido == 0){

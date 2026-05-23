@@ -13,6 +13,7 @@ import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
@@ -29,6 +30,7 @@ public class PedidoAjudaResource {
     PedidoAjudaService service;
 
     @GET
+    @Operation(summary = "Endpoint de listagem de todos os pedidos de ajuda registrados.")
     public Response listarTodos(){
         List<PedidoAjudaDTO> pedidos = service.listarTodos();
         if(pedidos == null || pedidos.isEmpty()){
@@ -38,6 +40,7 @@ public class PedidoAjudaResource {
     }
 
     @GET
+    @Operation(summary = "Endpoint de listagem dos pedidos de ajuda de uma data específica.")
     @Path("/data/{data}")
     public Response listarPorData(@PathParam("data") String data) {
         List<PedidoAjudaDTO> pedidos = service.listarPorData(LocalDate.parse(data));
@@ -48,6 +51,7 @@ public class PedidoAjudaResource {
     }
 
     @POST
+    @Operation(summary = "Endpoint de criação de um pedido de ajuda.")
     public Response criar(@Valid CriarPedidoAjudaDTO request){
         PedidoAjuda pedidoAjuda = service.criar(request);
         if(pedidoAjuda == null){
@@ -57,6 +61,7 @@ public class PedidoAjudaResource {
     }
 
     @PUT
+    @Operation(summary = "Endpoint de processamento de um pedido de ajuda.")
     @Path("/{id}")
     public Response atualizar(@PathParam("id") long id, @RequestBody AtualizarPedidoAjudaDTO dto){
         PedidoAjudaDTO pedido = service.processarPedido(id, dto);
@@ -65,6 +70,7 @@ public class PedidoAjudaResource {
 
     @DELETE
     @Path("/{id}")
+    @Operation(summary = "Endpoint de exclusão de um pedido de ajuda.")
     public Response excluir(@PathParam("id") Long id){
         boolean apagado = service.excluir(id);
 
