@@ -27,4 +27,6 @@ public class Colaborador {
     @Column(name = "data_contratacao")
     private LocalDate dataContratacao;
     private String email;
+
+    private String senha;
 }

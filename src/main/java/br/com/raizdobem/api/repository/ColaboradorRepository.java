@@ -26,6 +26,10 @@ public class ColaboradorRepository implements PanacheRepository<Colaborador> {
         return findById(id);
     }
 
+    public Colaborador buscarPorEmail(String email){
+        return find("email", email).firstResult();
+    }
+
     public void atualizar(String cpf, AtualizarColaboradorDTO dto){
         update("email = ?1 where cpf = ?2", dto.email(), cpf);
     }
