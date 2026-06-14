@@ -29,4 +29,7 @@ public class Colaborador {
     private String email;
 
     private String senha;
+
+
+    private String role = "COLABORADOR";
 }

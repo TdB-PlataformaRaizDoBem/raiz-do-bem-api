@@ -3,6 +3,7 @@ package br.com.raizdobem.api.resource;
 import br.com.raizdobem.api.entity.ProgramaSocial;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.service.ProgramaService;
+import jakarta.annotation.security.PermitAll;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
@@ -23,6 +24,7 @@ public class ProgramaSocialResource {
 
     @GET
     @Operation(summary = "Lista os programas sociais presentes na ONG: Dentista do Bem e Apolônias do Bem")
+    @PermitAll
     public Response listarTodos(){
         List<ProgramaSocial> programas = service.listarProgramasSociais();
         if(programas == null || programas.isEmpty())
@@ -33,6 +35,7 @@ public class ProgramaSocialResource {
     @GET
     @Path("/{id}")
     @Operation(summary = "Busca programa social com o id")
+    @PermitAll
     public Response buscarPorId(@PathParam("id") Long id) {
         ProgramaSocial programa = service.buscarPorId(id);
         if (programa == null) {

@@ -7,6 +7,8 @@ import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.exception.RequisicaoInvalidaException;
 import br.com.raizdobem.api.service.AtendimentoService;
 import br.com.raizdobem.api.util.CsvUtil;
+import io.vertx.core.cli.annotations.Hidden;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
@@ -30,6 +32,7 @@ public class AtendimentoResource {
     
     @GET
     @Operation(summary = "Endpoint de listagem dos atendimentos.")
+    @RolesAllowed({"ADMIN", "COLABORADOR"})
     public Response listarTodos(){
         List<AtendimentoDTO> pedidos = service.listarAtendimentos();
         if(pedidos == null || pedidos.isEmpty()){
@@ -40,6 +43,7 @@ public class AtendimentoResource {
 
     @POST
     @Operation(summary = "Endpoint de criação dos atendimentos de beneficiários cadastrados.")
+    @RolesAllowed({"ADMIN", "COLABORADOR"})
     public Response criar(@Valid CriarAtendimentoDTO request) {
         AtendimentoDTO atendimento = service.criarAtendimento(request);
         if (atendimento == null) {
@@ -50,6 +54,7 @@ public class AtendimentoResource {
 
     @GET
     @Path("/{cpf}")
+    @RolesAllowed({"ADMIN", "COLABORADOR"})
     public Response buscarPorCpf(@PathParam("cpf") String cpf){
         AtendimentoDTO atendimento = service.buscarPorCpf(cpf);
         if (atendimento == null) {
@@ -62,6 +67,7 @@ public class AtendimentoResource {
     @Path("/exportarCsv")
     @Produces("text/csv")
     @Operation(summary = "Endpoint para exportar todos os atendimentos em um arquivo csv.")
+    @RolesAllowed("ADMIN")
     public Response exportarCsv(){
         List<AtendimentoDTO> lista = service.listarParaExportacao();
 
@@ -75,6 +81,7 @@ public class AtendimentoResource {
     @PUT
     @Operation(summary = "Endpoint para finalizar atendimento.")
     @Path("/{cpf}")
+    @RolesAllowed({"ADMIN", "COLABORADOR"})
     public Response atualizar(@PathParam("cpf") String cpf, @RequestBody AtualizarAtendimentoDTO dto){
         service.encerrarAtendimento(cpf, dto);
         return Response.ok().build();
@@ -83,6 +90,8 @@ public class AtendimentoResource {
     @DELETE
     @Operation(summary = "Endpoint para exclusão de atendimento.")
     @Path("/{id}")
+    @RolesAllowed("ADMIN")
+    @Hidden
     public Response excluirAtendimento(@PathParam("id") Long id){
         boolean apagado = service.excluir(id);
 

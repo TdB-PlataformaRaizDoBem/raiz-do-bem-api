@@ -13,5 +13,7 @@ public record CriarColaboradorDTO(@Pattern(regexp = "^\\d{11}$",
                                   String nomeCompleto,
                                   LocalDate dataNascimento,
                                   LocalDate dataContratacao,
-                                  @Email String email) {
+                                  @Email String email,
+                                  String senha,
+                                  String role) {
 }

@@ -3,6 +3,7 @@ package br.com.raizdobem.api.resource;
 import br.com.raizdobem.api.entity.Especialidade;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.service.EspecialidadeService;
+import jakarta.annotation.security.PermitAll;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
@@ -23,6 +24,7 @@ public class EspecialidadeResource {
 
     @GET
     @Operation(summary = "Lista todas as especialidades que podem ser atribuídas a um dentista.")
+    @PermitAll
     public Response listarTodas(){
         List<Especialidade> especialidades = service.listarEspecialidades();
         if(especialidades == null || especialidades.isEmpty())
@@ -33,6 +35,7 @@ public class EspecialidadeResource {
     @GET
     @Path("/{id}")
     @Operation(summary = "Busca especialidade específica pelo id")
+    @PermitAll
     public Response buscarPorId(@PathParam("id") Long id) {
         Especialidade especialidade = service.buscarPorId(id);
         if(especialidade == null)

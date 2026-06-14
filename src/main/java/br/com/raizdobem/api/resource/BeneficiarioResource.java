@@ -6,6 +6,8 @@ import br.com.raizdobem.api.dto.response.BeneficiarioDTO;
 import br.com.raizdobem.api.exception.RequisicaoInvalidaException;
 import br.com.raizdobem.api.service.BeneficiarioService;
 import br.com.raizdobem.api.util.CsvUtil;
+import io.vertx.core.cli.annotations.Hidden;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
@@ -29,6 +31,7 @@ public class BeneficiarioResource {
 
     @GET
     @Operation(summary = "Endpoint de listagem dos beneficiários cadastrados.")
+    @RolesAllowed({"ADMIN", "COLABORADOR"})
     public Response listarTodos(){
         List<BeneficiarioDTO> beneficiarios = service.listarTodos();
         return Response.ok(beneficiarios).build();
@@ -36,6 +39,7 @@ public class BeneficiarioResource {
 
     @POST
     @Operation(summary = "Endpoint para a criação de beneficiário, de um pedido de ajuda aprovado.")
+    @RolesAllowed({"ADMIN", "COLABORADOR"})
     public Response criar(@Valid CriarBeneficiarioDTO request){
         BeneficiarioDTO beneficiario = service.criarBeneficiario(request);
         return Response.status(Response.Status.CREATED).entity(beneficiario).build();
@@ -44,6 +48,7 @@ public class BeneficiarioResource {
     @GET
     @Path("/{cpf}")
     @Operation(summary = "Endpoint para encontrar um beneficiário específico.")
+    @RolesAllowed({"ADMIN", "COLABORADOR"})
     public Response buscarPorCpf(@PathParam("cpf") String cpf){
         BeneficiarioDTO beneficiario = service.buscarPorCpf(cpf);
         return Response.ok(beneficiario).build();
@@ -52,6 +57,7 @@ public class BeneficiarioResource {
     @GET
     @Path("/cidade/{cidade}")
     @Operation(summary = "Endpoint para listar beneficiários por cidade.")
+    @RolesAllowed({"ADMIN", "COLABORADOR"})
     public Response listarPorCidade(@PathParam("cidade") String cidade) {
         List<BeneficiarioDTO> beneficiarios = service.listarPorCidade(cidade);
         return Response.ok(beneficiarios).build();
@@ -60,6 +66,7 @@ public class BeneficiarioResource {
     @GET
     @Path("/programa/{idProgramaSocial}")
     @Operation(summary = "Endpoint para listar beneficiários por programa social.")
+    @RolesAllowed({"ADMIN", "COLABORADOR"})
     public Response listarPorPrograma(@PathParam("idProgramaSocial") long idProgramaSocial) {
         List<BeneficiarioDTO> beneficiarios = service.listarPorPrograma(idProgramaSocial);
         return Response.ok(beneficiarios).build();
@@ -69,6 +76,7 @@ public class BeneficiarioResource {
     @Path("/exportarCsv")
     @Produces("text/csv")
     @Operation(summary = "Endpoint para a exportar todos os atendimentos em um arquivo csv.")
+    @RolesAllowed("ADMIN")
     public Response exportarCsv(){
         List<BeneficiarioDTO> listaBeneficiarios = service.listarParaExportacao();
 
@@ -82,6 +90,7 @@ public class BeneficiarioResource {
     @PUT
     @Path("/{cpf}")
     @Operation(summary = "Endpoint de atualização de informações de beneficiário.")
+    @RolesAllowed({"ADMIN", "COLABORADOR"})
     public Response atualizar(@PathParam("cpf") String cpf, @Valid @RequestBody AtualizarBeneficiarioDTO dto){
         BeneficiarioDTO beneficiario = service.atualizar(cpf, dto);
         return Response.ok().entity(beneficiario).build();
@@ -90,6 +99,8 @@ public class BeneficiarioResource {
     @DELETE
     @Path("/{cpf}")
     @Operation(summary = "Endpoint para apagar beneficiário existente.")
+    @RolesAllowed("ADMIN")
+    @Hidden
     public Response excluir(@PathParam("cpf") String cpf){
        boolean exclusao = service.excluir(cpf);
        if(!exclusao)

@@ -7,6 +7,9 @@ import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.exception.RequisicaoInvalidaException;
 import br.com.raizdobem.api.entity.PedidoAjuda;
 import br.com.raizdobem.api.service.PedidoAjudaService;
+import io.vertx.core.cli.annotations.Hidden;
+import jakarta.annotation.security.PermitAll;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
@@ -31,6 +34,7 @@ public class PedidoAjudaResource {
 
     @GET
     @Operation(summary = "Endpoint de listagem de todos os pedidos de ajuda registrados.")
+    @RolesAllowed({"ADMIN", "COLABORADOR"})
     public Response listarTodos(){
         List<PedidoAjudaDTO> pedidos = service.listarTodos();
         if(pedidos == null || pedidos.isEmpty()){
@@ -42,6 +46,7 @@ public class PedidoAjudaResource {
     @GET
     @Operation(summary = "Endpoint de listagem dos pedidos de ajuda de uma data específica.")
     @Path("/data/{data}")
+    @RolesAllowed({"ADMIN", "COLABORADOR"})
     public Response listarPorData(@PathParam("data") String data) {
         List<PedidoAjudaDTO> pedidos = service.listarPorData(LocalDate.parse(data));
         if(pedidos == null || pedidos.isEmpty()){
@@ -52,6 +57,7 @@ public class PedidoAjudaResource {
 
     @POST
     @Operation(summary = "Endpoint de criação de um pedido de ajuda.")
+    @PermitAll
     public Response criar(@Valid CriarPedidoAjudaDTO request){
         PedidoAjuda pedidoAjuda = service.criar(request);
         if(pedidoAjuda == null){
@@ -63,6 +69,7 @@ public class PedidoAjudaResource {
     @PUT
     @Operation(summary = "Endpoint de processamento de um pedido de ajuda.")
     @Path("/{id}")
+    @RolesAllowed({"ADMIN", "COLABORADOR"})
     public Response atualizar(@PathParam("id") long id, @RequestBody AtualizarPedidoAjudaDTO dto){
         PedidoAjudaDTO pedido = service.processarPedido(id, dto);
         return Response.ok(pedido).build();
@@ -71,6 +78,8 @@ public class PedidoAjudaResource {
     @DELETE
     @Path("/{id}")
     @Operation(summary = "Endpoint de exclusão de um pedido de ajuda.")
+    @RolesAllowed("ADMIN")
+    @Hidden
     public Response excluir(@PathParam("id") Long id){
         boolean apagado = service.excluir(id);
 

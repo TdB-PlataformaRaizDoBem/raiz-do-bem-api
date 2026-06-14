@@ -7,6 +7,8 @@ import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.exception.RequisicaoInvalidaException;
 import br.com.raizdobem.api.service.DentistaService;
 import br.com.raizdobem.api.util.CsvUtil;
+import io.vertx.core.cli.annotations.Hidden;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
@@ -30,6 +32,7 @@ public class DentistaResource {
 
     @POST
     @Operation(summary = "Endpoint para a criação de dentista.")
+    @RolesAllowed({"ADMIN", "COLABORADOR"})
     public Response criar(@Valid CriarDentistaDTO request){
         DentistaDTO dentista = service.criarDentista(request);
         if(dentista == null){
@@ -40,6 +43,7 @@ public class DentistaResource {
 
     @GET
     @Operation(summary = "Endpoint para a listagem de todos os dentistas.")
+    @RolesAllowed({"ADMIN", "COLABORADOR"})
     public Response listarTodos(){
         List<DentistaDTO> dentistas = service.listarTodos();
         if(dentistas == null || dentistas.isEmpty())
@@ -50,6 +54,7 @@ public class DentistaResource {
     @GET
     @Path("/disponiveis")
     @Operation(summary = "Endpoint de listagem dos dentistas disponíveis.")
+    @RolesAllowed({"ADMIN", "COLABORADOR"})
     public Response listarDisponiveis() {
         List<DentistaDTO> dentistas = service.listarDisponiveis();
         if(dentistas == null)
@@ -60,6 +65,7 @@ public class DentistaResource {
     @GET
     @Path("/{cpf}")
     @Operation(summary = "Endpoint de exibição de um único dentista usando o CPF.")
+    @RolesAllowed({"ADMIN", "COLABORADOR"})
     public Response exibirDentista(@PathParam("cpf") String cpf){
         DentistaDTO dentista = service.exibirDentista(cpf);
         return Response.ok().entity(dentista).build();
@@ -68,6 +74,7 @@ public class DentistaResource {
     @GET
     @Path("/cidade/{cidade}")
     @Operation(summary = "Endpoint de listagem de todos os dentistas de uma cidade específica.")
+    @RolesAllowed({"ADMIN", "COLABORADOR"})
     public Response listarTodos(@PathParam("cidade") String cidade){
         List<DentistaDTO> dentistas = service.listarPorCidades(cidade);
         if(dentistas == null || dentistas.isEmpty())
@@ -79,6 +86,7 @@ public class DentistaResource {
     @Path("/exportarCsv")
     @Produces("text/csv")
     @Operation(summary = "Endpoint de exportação de todos os dentistas em arquivo csv.")
+    @RolesAllowed({"ADMIN", "COLABORADOR"})
     public Response exportarCsv(){
         List<DentistaDTO> lista = service.listarParaExportacao();
 
@@ -92,6 +100,7 @@ public class DentistaResource {
     @PUT
     @Path("/{cpf}")
     @Operation(summary = "Endpoint para a atualização de dentista.")
+    @RolesAllowed({"ADMIN", "COLABORADOR"})
     public Response atualizar(@PathParam("cpf") String cpf, @Valid @RequestBody AtualizarDentistaDTO request){
         DentistaDTO dentista = service.atualizar(cpf, request);
         return Response.status(Response.Status.OK).entity(dentista).build();
@@ -100,6 +109,8 @@ public class DentistaResource {
     @DELETE
     @Path("/{cpf}")
     @Operation(summary = "Endpoint para a exclusão de dentista.")
+    @RolesAllowed("ADMIN")
+    @Hidden
     public Response excluir(@PathParam("cpf") String cpf){
         long responseDelete = service.excluir(cpf);
 

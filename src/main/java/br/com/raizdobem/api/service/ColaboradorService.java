@@ -43,6 +43,8 @@ public class ColaboradorService {
             throw new NaoEncontradoException("Data de contratação inválida.");
         colaborador.setDataContratacao(dto.dataContratacao());
         colaborador.setEmail(dto.email());
+        colaborador.setSenha(dto.senha());
+        colaborador.setRole(dto.role());
 
         repository.criar(colaborador);
         return colaborador;

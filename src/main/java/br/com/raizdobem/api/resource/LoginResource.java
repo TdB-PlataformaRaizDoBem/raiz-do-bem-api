@@ -17,7 +17,7 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import java.util.Map;
 
 @RequestScoped
-@Path("/login")
+@Path("/auth")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Tag(name = "Autenticação", description = "Disponibiliza funções para autenticação JWT.")
@@ -29,10 +29,10 @@ public class LoginResource {
     @POST
     @Path("/login")
     @PermitAll
-    @Operation(summary = "Login de usuário", description = "Realiza o login do usuário e retorna um token JWT para autenticação.")
-    public Response loginUsuario(LoginDTO loginDTO) {
+    @Operation(summary = "Login de colaborador", description = "Realiza o login do usuário e retorna um token JWT para autenticação.")
+    public Response login(LoginDTO loginDTO) {
         return Response.ok(Map.of(
-                "token", service.login(loginDTO), "tipo", "Bearer"
+                "token", service.login(loginDTO), "tipo", "BearerToken"
         )).build();
     }
 }

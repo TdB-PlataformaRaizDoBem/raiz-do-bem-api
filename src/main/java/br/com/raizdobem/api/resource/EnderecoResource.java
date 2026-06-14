@@ -5,6 +5,7 @@ import br.com.raizdobem.api.dto.request.EntradaEnderecoCompletoDTO;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.entity.Endereco;
 import br.com.raizdobem.api.service.EnderecoService;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
@@ -26,6 +27,7 @@ public class EnderecoResource {
 
     @POST
     @Operation(summary = "Endpoint de criação de endereço.")
+    @RolesAllowed({"ADMIN", "COLABORADOR"})
     public Response criar(EntradaEnderecoCompletoDTO request){
         Endereco endereco = service.criar(request);
         if(endereco.getTipoEndereco() == null){
@@ -39,6 +41,7 @@ public class EnderecoResource {
 
     @GET
     @Operation(summary = "Endpoint de listagem de todos os endereços.")
+    @RolesAllowed({"ADMIN", "COLABORADOR"})
     public Response listarTodos(){
         List<Endereco> enderecos = service.listarTodos();
         if(enderecos == null || enderecos.isEmpty()){
@@ -50,6 +53,7 @@ public class EnderecoResource {
     @GET
     @Operation(summary = "Endpoint para a listagem de endereços por cidade.")
     @Path("/{cidade}")
+    @RolesAllowed({"ADMIN", "COLABORADOR"})
     public Response listarPorCidade(@PathParam("cidade") String cidade){
         List<Endereco> enderecos = service.listarPorCidades(cidade);
         if(enderecos == null || enderecos.isEmpty()){
@@ -61,6 +65,7 @@ public class EnderecoResource {
     @GET
     @Operation(summary = "Endpoint de busca de endereço específico pelo id.")
     @Path("/id/{id}")
+    @RolesAllowed({"ADMIN", "COLABORADOR"})
     public Response buscarEndereco(@PathParam("id") Long id){
         Endereco endereco = service.buscaPorId(id);
         return Response.ok(endereco).build();
@@ -69,6 +74,7 @@ public class EnderecoResource {
     @GET
     @Operation(summary = "Endpoint de busca de informações de endereços na API do ViaCep.")
     @Path("/viacep/{cep}")
+    @RolesAllowed({"ADMIN", "COLABORADOR"})
     public Response buscarViaCep(@PathParam("cep") String cep){
         ViaCepDTO responseViaCep = service.buscarEndereco(cep);
         if(responseViaCep == null){
@@ -80,6 +86,7 @@ public class EnderecoResource {
     @PUT
     @Operation(summary = "Endpoint de atualização de endereço.")
     @Path("/{id}")
+    @RolesAllowed({"ADMIN", "COLABORADOR"})
     public Response atualizar(@PathParam("id") Long id, @RequestBody EntradaEnderecoCompletoDTO request){
         Endereco endereco = service.atualizarEndereco(id, request);
         return Response.ok().entity(endereco).build();
@@ -88,6 +95,7 @@ public class EnderecoResource {
     @DELETE
     @Operation(summary = "Endpoint de exclusão de endereço.")
     @Path("/{id}")
+    @RolesAllowed("ADMIN")
     public Response excluir(@PathParam("id") Long id) {
         boolean apagado = service.excluir(id);
 
