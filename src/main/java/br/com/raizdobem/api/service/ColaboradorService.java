@@ -67,7 +67,16 @@ public class ColaboradorService {
         if(colaboradorEncontrado == null){
             throw new NaoEncontradoException("Colaborador não encontrado");
         }
-        repository.atualizar(cpf, dto);
+        String novoEmail = (dto.email() != null && !dto.email().isBlank())
+                ? dto.email()
+                : colaboradorEncontrado.getEmail();
+
+        String novaSenha = (dto.senha() != null && !dto.senha().isBlank())
+                ? dto.senha()
+                : colaboradorEncontrado.getSenha();
+
+        AtualizarColaboradorDTO dtoValido = new AtualizarColaboradorDTO(novoEmail, novaSenha);
+        repository.atualizar(cpf, dtoValido);
     }
 
     @Transactional

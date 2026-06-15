@@ -31,7 +31,7 @@ public class ColaboradorRepository implements PanacheRepository<Colaborador> {
     }
 
     public void atualizar(String cpf, AtualizarColaboradorDTO dto){
-        update("email = ?1 where cpf = ?2", dto.email(), cpf);
+        update("email = ?1, senha = ?2 where cpf = ?3", dto.email(), dto.senha(), cpf);
     }
 
     public long excluir(String cpf) {
