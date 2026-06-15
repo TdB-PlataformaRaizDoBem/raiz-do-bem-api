@@ -2,12 +2,16 @@ package br.com.raizdobem.api.util;
 
 import br.com.raizdobem.api.dto.response.*;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class CsvUtil {
+    private static final String formatacaoUtf8 = "\uFEFF";
     public static String gerarCsvDentistas(List<DentistaDTO> dentistas){
         StringBuilder csv = new StringBuilder();
+        csv.append(formatacaoUtf8);
         csv.append("ID,CRO,CPF,Nome Completo,Sexo,Email,Telefone,Categoria,Disponível,Especialidade,ProgramasSociais,Logradouro,Cidade,Estado\n");
 
         for(DentistaDTO dentista : dentistas){
@@ -35,6 +39,7 @@ public class CsvUtil {
 
     public static String gerarCsvAtendimentos(List<AtendimentoDTO> atendimentos){
         StringBuilder csv = new StringBuilder();
+        csv.append(formatacaoUtf8);
         csv.append("ID|Prontuário|Beneficiário|Dentista|Data Inicial|Data Final\n");
 
         for(AtendimentoDTO a : atendimentos){
@@ -50,6 +55,7 @@ public class CsvUtil {
 
     public static String gerarCsvBeneficiarios(List<BeneficiarioDTO> beneficiarios){
         StringBuilder csv = new StringBuilder();
+        csv.append(formatacaoUtf8);
         csv.append("ID,CPF,Nome Completo,Data de Nascimento,Telefone,Email,IdPedidoAjuda,ProgramaSocial,Logradouro,Número,Cidade,Estado\n");
 
         for(BeneficiarioDTO b : beneficiarios){
@@ -67,5 +73,12 @@ public class CsvUtil {
             csv.append(b.endereco().estado()).append("\n");
         }
         return csv.toString();
+    }
+    public static String gerarNomeArquivo(String tipoRelatorio){
+        LocalDate agora = LocalDate.now();
+        DateTimeFormatter formatador = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        String dataFormatada = agora.format(formatador);
+
+        return tipoRelatorio + "_" + dataFormatada + ".csv";
     }
 }

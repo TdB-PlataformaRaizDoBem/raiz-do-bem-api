@@ -19,6 +19,7 @@ import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @RequestScoped
@@ -84,16 +85,20 @@ public class DentistaResource {
 
     @GET
     @Path("/exportarCsv")
-    @Produces("text/csv")
+    @Produces("text/csv; charset=UTF-8")
     @Operation(summary = "Endpoint de exportação de todos os dentistas em arquivo csv.")
     @RolesAllowed({"ADMIN", "COLABORADOR"})
     public Response exportarCsv(){
         List<DentistaDTO> lista = service.listarParaExportacao();
 
         String csv = CsvUtil.gerarCsvDentistas(lista);
+        String nomeArquivo = CsvUtil.gerarNomeArquivo("Dentistas");
 
-        return Response.ok(csv).header("Content-Disposition",
-                "attachment; filename=dentistas.csv")
+        byte [] csvBytes = csv.getBytes(StandardCharsets.UTF_8);
+
+        return Response.ok(csvBytes).header("Content-Disposition",
+                        "attachment; filename=\"" + nomeArquivo + "\"")
+                .header("Content-Type", "text/csv; charset=UTF-8")
                 .build();
     }
 

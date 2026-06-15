@@ -18,7 +18,10 @@ import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
+
+import static java.time.temporal.WeekFields.ISO;
 
 @RequestScoped
 @Path("/beneficiario")
@@ -74,16 +77,21 @@ public class BeneficiarioResource {
 
     @GET
     @Path("/exportarCsv")
-    @Produces("text/csv")
-    @Operation(summary = "Endpoint para a exportar todos os atendimentos em um arquivo csv.")
+    @Produces("text/csv; charset=UTF-8")
+    @Operation(summary = "Endpoint para exportar todos os atendimentos em um arquivo csv.")
     @RolesAllowed("ADMIN")
     public Response exportarCsv(){
         List<BeneficiarioDTO> listaBeneficiarios = service.listarParaExportacao();
 
         String csv = CsvUtil.gerarCsvBeneficiarios(listaBeneficiarios);
 
-        return Response.ok(csv).header("Content-Disposition",
-                        "attachment; filename=beneficiarios.csv")
+        String nomeArquivo = CsvUtil.gerarNomeArquivo("Beneficiarios");
+
+        byte [] csvBytes = csv.getBytes(StandardCharsets.UTF_8);
+
+        return Response.ok(csvBytes).header("Content-Disposition",
+                        "attachment; filename=\"" + nomeArquivo + "\"")
+                .header("Content-Type", "text/csv; charset=UTF-8")
                 .build();
     }
 
