@@ -19,6 +19,7 @@ import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @RequestScoped
@@ -73,8 +74,13 @@ public class AtendimentoResource {
 
         String csv = CsvUtil.gerarCsvAtendimentos(lista);
 
-        return Response.ok(csv).header("Content-Disposition",
-                        "attachment; filename=atendimentos.csv")
+        String nomeArquivo = CsvUtil.gerarNomeArquivo("Atendimentos");
+
+        byte [] csvBytes = csv.getBytes(StandardCharsets.UTF_8);
+
+        return Response.ok(csvBytes).header("Content-Disposition",
+                        "attachment; filename=\"" + nomeArquivo + "\"")
+                .header("Content-Type", "text/csv; charset=UTF-8")
                 .build();
     }
 
