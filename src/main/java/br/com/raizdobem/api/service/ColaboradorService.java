@@ -6,6 +6,7 @@ import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.exception.ValidacaoException;
 import br.com.raizdobem.api.entity.Colaborador;
 import br.com.raizdobem.api.repository.ColaboradorRepository;
+import io.quarkus.elytron.security.common.BcryptUtil;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -43,7 +44,9 @@ public class ColaboradorService {
             throw new NaoEncontradoException("Data de contratação inválida.");
         colaborador.setDataContratacao(dto.dataContratacao());
         colaborador.setEmail(dto.email());
-        colaborador.setSenha(dto.senha());
+        colaborador.setSenha(
+                BcryptUtil.bcryptHash(dto.senha())
+        );
         colaborador.setRole(dto.role());
 
         repository.criar(colaborador);
@@ -72,7 +75,7 @@ public class ColaboradorService {
                 : colaboradorEncontrado.getEmail();
 
         String novaSenha = (dto.senha() != null && !dto.senha().isBlank())
-                ? dto.senha()
+                ? BcryptUtil.bcryptHash(dto.senha())
                 : colaboradorEncontrado.getSenha();
 
         AtualizarColaboradorDTO dtoValido = new AtualizarColaboradorDTO(novoEmail, novaSenha);
