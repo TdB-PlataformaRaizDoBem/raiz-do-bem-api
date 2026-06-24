@@ -2,7 +2,6 @@ package br.com.raizdobem.api.service;
 
 import br.com.raizdobem.api.dto.request.LoginDTO;
 import br.com.raizdobem.api.entity.Colaborador;
-import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.exception.ValidacaoException;
 import br.com.raizdobem.api.repository.ColaboradorRepository;
 import io.smallrye.jwt.build.Jwt;

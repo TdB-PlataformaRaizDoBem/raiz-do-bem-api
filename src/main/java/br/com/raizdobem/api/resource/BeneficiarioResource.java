@@ -21,8 +21,6 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-import static java.time.temporal.WeekFields.ISO;
-
 @RequestScoped
 @Path("/beneficiario")
 @Tag(name = "Beneficiario", description = "Disponibiliza funcionalidades relacionadas aos beneficiários.")
