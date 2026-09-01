@@ -10,6 +10,7 @@ import br.com.raizdobem.api.entity.Colaborador;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.entity.Atendimento;
 import br.com.raizdobem.api.entity.Dentista;
+import br.com.raizdobem.api.mapper.BeneficiarioMapper;
 import br.com.raizdobem.api.repository.AtendimentoRepository;
 import br.com.raizdobem.api.repository.BeneficiarioRepository;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -29,9 +30,6 @@ public class AtendimentoService {
     AtendimentoRepository repository;
 
     @Inject
-    BeneficiarioService beneficiarioService;
-
-    @Inject
     DentistaService dentistaService;
 
     @Inject
@@ -45,13 +43,13 @@ public class AtendimentoService {
 
     @Transactional
     public AtendimentoDTO criarAtendimento(CriarAtendimentoDTO dto){
-        BeneficiarioDTO beneficiarioDTO = beneficiarioService.buscarPorCpf(dto.cpfBeneficiario());
-        if(beneficiarioDTO == null)
+        Beneficiario beneficiario = beneficiarioRepository.buscarPorCpf(dto.cpfBeneficiario());
+        if(beneficiario == null)
             throw new NaoEncontradoException("Beneficiário não foi encontrado.");
 
-        Beneficiario beneficiario = beneficiarioRepository.buscarPorCpf(dto.cpfBeneficiario());
-        DentistaDTO dentistaDTO = atendimentoMatchService.melhorMatchDentista(beneficiarioDTO);
+        BeneficiarioDTO beneficiarioDTO = BeneficiarioMapper.mapeamentoBeneficiario(beneficiario);
 
+        DentistaDTO dentistaDTO = atendimentoMatchService.melhorMatchDentista(beneficiarioDTO);
         Dentista dentista = dentistaService.buscarEntidadePorId(dentistaDTO.id());
         if(dentista == null)
             throw new NaoEncontradoException("Dentista não foi encontrado.");
