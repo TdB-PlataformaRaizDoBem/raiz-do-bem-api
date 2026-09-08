@@ -64,7 +64,6 @@ public class BeneficiarioService {
         return mapeamentoBeneficiario(beneficiario);
     }
 
-    @Transactional
     public BeneficiarioDTO buscarPorCpf(String cpf) {
         if(!ValidacaoService.validarCpf(cpf))
             throw new ValidacaoException("CPF inválido.");
@@ -75,7 +74,6 @@ public class BeneficiarioService {
         return mapeamentoBeneficiario(beneficiario);
     }
 
-    @Transactional
     public BeneficiarioDTO buscarPorId(Long id) {
         Beneficiario beneficiario = repository.buscarPorId(id);
         if(beneficiario == null)
@@ -83,7 +81,6 @@ public class BeneficiarioService {
         return mapeamentoBeneficiario(beneficiario);
     }
 
-    @Transactional
     public List<BeneficiarioDTO> listarTodos() {
         List <Beneficiario> beneficiarios = repository.listarTodos();
         if(beneficiarios == null || beneficiarios.isEmpty())
@@ -91,13 +88,11 @@ public class BeneficiarioService {
         return mapeamentoBeneficiarios(beneficiarios);
     }
 
-    @Transactional
     public List<BeneficiarioDTO> listarPorCidade(String cidade) {
         List <Beneficiario> beneficiarios = repository.listarPorCidade(cidade);
         return mapeamentoBeneficiarios(beneficiarios);
     }
 
-    @Transactional
     public List<BeneficiarioDTO> listarPorPrograma(long idProgramaSocial) {
         List <Beneficiario> beneficiarios = repository.listarPorPrograma(idProgramaSocial);
         return mapeamentoBeneficiarios(beneficiarios);
@@ -125,7 +120,6 @@ public class BeneficiarioService {
         return exclusao > 0;
     }
 
-    @Transactional
     public List<BeneficiarioDTO> listarParaExportacao(){
         return listarTodos().stream()
                 .map(b -> new BeneficiarioDTO(
