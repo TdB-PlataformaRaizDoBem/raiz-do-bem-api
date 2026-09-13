@@ -58,7 +58,6 @@ public class Dentista {
     )
     private List<Especialidade> especialidades;
 
-    //Havia me esquecido da relação Dentista N:N com o programaSocial
     @ManyToMany
     @JoinTable(
             name = "Dentista_Programa_Social",

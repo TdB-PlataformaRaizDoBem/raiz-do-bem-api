@@ -37,9 +37,6 @@ public class PedidoAjudaResource {
     @RolesAllowed({"ADMIN", "COLABORADOR"})
     public Response listarTodos(){
         List<PedidoAjudaDTO> pedidos = service.listarTodos();
-        if(pedidos == null || pedidos.isEmpty()){
-            throw new NaoEncontradoException("Nenhum pedido de ajuda encontrado.");
-        }
         return Response.ok(pedidos).build();
     }
 

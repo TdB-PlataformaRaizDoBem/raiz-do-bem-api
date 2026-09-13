@@ -31,7 +31,7 @@ public class PedidoAjudaRepository implements PanacheRepository<PedidoAjuda> {
     }
 
     public void atualizar(String cpf, AtualizarPedidoAjudaDTO request){
-        find("cpf", cpf).firstResult();
+        PedidoAjuda pedido = find("cpf", cpf).firstResult();
     }
 
     public boolean excluir(Long id) {

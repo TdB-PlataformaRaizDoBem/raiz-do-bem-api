@@ -19,6 +19,7 @@ import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
@@ -36,9 +37,6 @@ public class AtendimentoResource {
     @RolesAllowed({"ADMIN", "COLABORADOR"})
     public Response listarTodos(){
         List<AtendimentoDTO> pedidos = service.listarAtendimentos();
-        if(pedidos == null || pedidos.isEmpty()){
-            throw new NaoEncontradoException("Nenhum atendimento encontrado.");
-        }
         return Response.ok(pedidos).build();
     }
 
@@ -50,7 +48,7 @@ public class AtendimentoResource {
         if (atendimento == null) {
             throw new RequisicaoInvalidaException("Não foi possível criar atendimento.");
         }
-        return Response.ok(atendimento).build();
+        return Response.created(URI.create("api/atendimento" + atendimento.id())).build();
     }
 
     @GET

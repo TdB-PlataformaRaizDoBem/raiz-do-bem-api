@@ -44,9 +44,6 @@ public class EnderecoResource {
     @RolesAllowed({"ADMIN", "COLABORADOR"})
     public Response listarTodos(){
         List<Endereco> enderecos = service.listarTodos();
-        if(enderecos == null || enderecos.isEmpty()){
-            throw new NaoEncontradoException("Nenhum pedido de ajuda encontrado.");
-        }
         return Response.ok(enderecos).build();
     }
 

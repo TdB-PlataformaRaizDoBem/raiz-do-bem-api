@@ -7,7 +7,7 @@ import br.com.raizdobem.api.entity.Beneficiario;
 
 import java.util.List;
 
-public class BeneficiarioMapper {
+public final class BeneficiarioMapper {
     public static BeneficiarioDTO mapeamentoBeneficiario(Beneficiario beneficiario) {
         if (beneficiario == null) {
             return null;

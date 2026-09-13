@@ -7,6 +7,7 @@ import br.com.raizdobem.api.entity.*;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.exception.RequisicaoInvalidaException;
 import br.com.raizdobem.api.exception.ValidacaoException;
+import br.com.raizdobem.api.mapper.BeneficiarioMapper;
 import br.com.raizdobem.api.repository.BeneficiarioRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -82,10 +83,7 @@ public class BeneficiarioService {
     }
 
     public List<BeneficiarioDTO> listarTodos() {
-        List <Beneficiario> beneficiarios = repository.listarTodos();
-        if(beneficiarios == null || beneficiarios.isEmpty())
-            throw new NaoEncontradoException("Lista de beneficiários vazia.");
-        return mapeamentoBeneficiarios(beneficiarios);
+        return BeneficiarioMapper.mapeamentoBeneficiarios(repository.listarTodos());
     }
 
     public List<BeneficiarioDTO> listarPorCidade(String cidade) {

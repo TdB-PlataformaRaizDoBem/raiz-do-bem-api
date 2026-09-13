@@ -47,8 +47,6 @@ public class DentistaResource {
     @RolesAllowed({"ADMIN", "COLABORADOR"})
     public Response listarTodos(){
         List<DentistaDTO> dentistas = service.listarTodos();
-        if(dentistas == null || dentistas.isEmpty())
-            throw new NaoEncontradoException("Lista de dentistas vazia.");
         return Response.ok().entity(dentistas).build();
     }
 

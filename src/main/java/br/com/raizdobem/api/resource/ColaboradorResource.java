@@ -42,8 +42,6 @@ public class ColaboradorResource {
     @RolesAllowed({"ADMIN", "COLABORADOR"})
     public Response listarTodos(){
         List<Colaborador> colaboradores = service.listarTodos();
-        if(colaboradores == null || colaboradores.isEmpty())
-            throw new NaoEncontradoException("Nenhum colaborador encontrado.");
         return Response.ok(colaboradores).build();
     }
 

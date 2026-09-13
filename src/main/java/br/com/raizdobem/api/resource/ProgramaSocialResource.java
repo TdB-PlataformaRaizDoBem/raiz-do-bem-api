@@ -27,8 +27,6 @@ public class ProgramaSocialResource {
     @PermitAll
     public Response listarTodos(){
         List<ProgramaSocial> programas = service.listarProgramasSociais();
-        if(programas == null || programas.isEmpty())
-            throw new NaoEncontradoException("Lista de programas sociais não encontrada/vazia");
         return Response.ok().entity(programas).build();
     }
 
