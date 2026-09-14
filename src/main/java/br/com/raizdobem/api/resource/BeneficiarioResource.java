@@ -1,7 +1,7 @@
 package br.com.raizdobem.api.resource;
 
-import br.com.raizdobem.api.dto.request.AtualizarBeneficiarioDTO;
-import br.com.raizdobem.api.dto.request.CriarBeneficiarioDTO;
+import br.com.raizdobem.api.dto.request.BeneficiarioUpdateRequest;
+import br.com.raizdobem.api.dto.request.BeneficiarioCreateRequest;
 import br.com.raizdobem.api.dto.response.BeneficiarioDTO;
 import br.com.raizdobem.api.exception.RequisicaoInvalidaException;
 import br.com.raizdobem.api.service.BeneficiarioService;
@@ -41,7 +41,7 @@ public class BeneficiarioResource {
     @POST
     @Operation(summary = "Endpoint para a criação de beneficiário, de um pedido de ajuda aprovado.")
     @RolesAllowed({"ADMIN", "COLABORADOR"})
-    public Response criar(@Valid CriarBeneficiarioDTO request){
+    public Response criar(@Valid BeneficiarioCreateRequest request){
         BeneficiarioDTO beneficiario = service.criarBeneficiario(request);
         return Response.status(Response.Status.CREATED).entity(beneficiario).build();
     }
@@ -97,7 +97,7 @@ public class BeneficiarioResource {
     @Path("/{cpf}")
     @Operation(summary = "Endpoint de atualização de informações de beneficiário.")
     @RolesAllowed({"ADMIN", "COLABORADOR"})
-    public Response atualizar(@PathParam("cpf") String cpf, @Valid @RequestBody AtualizarBeneficiarioDTO dto){
+    public Response atualizar(@PathParam("cpf") String cpf, @Valid @RequestBody BeneficiarioUpdateRequest dto){
         BeneficiarioDTO beneficiario = service.atualizar(cpf, dto);
         return Response.ok().entity(beneficiario).build();
     }

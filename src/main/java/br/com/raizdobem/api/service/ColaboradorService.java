@@ -1,11 +1,12 @@
 package br.com.raizdobem.api.service;
 
-import br.com.raizdobem.api.dto.request.AtualizarColaboradorDTO;
-import br.com.raizdobem.api.dto.request.CriarColaboradorDTO;
+import br.com.raizdobem.api.dto.request.ColaboradorUpdateRequest;
+import br.com.raizdobem.api.dto.request.ColaboradorCreateRequest;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.exception.ValidacaoException;
 import br.com.raizdobem.api.entity.Colaborador;
 import br.com.raizdobem.api.repository.ColaboradorRepository;
+import br.com.raizdobem.api.util.CpfValidatorUtil;
 import io.quarkus.elytron.security.common.BcryptUtil;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -20,12 +21,12 @@ public class ColaboradorService {
     ColaboradorRepository repository;
 
     @Transactional
-    public Colaborador criarColaborador(CriarColaboradorDTO dto) {
+    public Colaborador criarColaborador(ColaboradorCreateRequest dto) {
+        if(!CpfValidatorUtil.cpfValido(dto.cpf())){
+            throw new ValidacaoException("Cpf inválido");
+        }
         Colaborador colaborador = new Colaborador();
 
-        if (!ValidacaoService.validarCpf(dto.cpf())) {
-            throw new ValidacaoException("CPF inserido é inválido");
-        }
         Colaborador colaboradorExistente = repository.buscarPorCpf(dto.cpf());
         if(colaboradorExistente != null){
             throw new ValidacaoException("Já existe um colaborador com esse CPF");
@@ -65,7 +66,7 @@ public class ColaboradorService {
     }
 
     @Transactional
-    public void atualizarColaborador(String cpf, AtualizarColaboradorDTO dto) {
+    public void atualizarColaborador(String cpf, ColaboradorUpdateRequest dto) {
         Colaborador colaboradorEncontrado = repository.buscarPorCpf(cpf);
         if(colaboradorEncontrado == null){
             throw new NaoEncontradoException("Colaborador não encontrado");
@@ -78,7 +79,7 @@ public class ColaboradorService {
                 ? BcryptUtil.bcryptHash(dto.senha())
                 : colaboradorEncontrado.getSenha();
 
-        AtualizarColaboradorDTO dtoValido = new AtualizarColaboradorDTO(novoEmail, novaSenha);
+        ColaboradorUpdateRequest dtoValido = new ColaboradorUpdateRequest(novoEmail, novaSenha);
         repository.atualizar(cpf, dtoValido);
     }
 

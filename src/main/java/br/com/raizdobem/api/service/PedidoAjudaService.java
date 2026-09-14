@@ -1,13 +1,14 @@
 package br.com.raizdobem.api.service;
 
-import br.com.raizdobem.api.dto.request.AtualizarPedidoAjudaDTO;
-import br.com.raizdobem.api.dto.request.CriarPedidoAjudaDTO;
+import br.com.raizdobem.api.dto.request.PedidoAjudaUpdateRequest;
+import br.com.raizdobem.api.dto.request.PedidoAjudaCreateRequest;
 import br.com.raizdobem.api.dto.response.PedidoAjudaDTO;
 import br.com.raizdobem.api.entity.*;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.exception.RegraNegocioException;
 import br.com.raizdobem.api.exception.ValidacaoException;
 import br.com.raizdobem.api.repository.PedidoAjudaRepository;
+import br.com.raizdobem.api.util.CpfValidatorUtil;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -31,7 +32,11 @@ public class PedidoAjudaService {
     @Inject
     DentistaService dentistaService;
 
-    public PedidoAjuda criar(CriarPedidoAjudaDTO dto) {
+    public PedidoAjuda criar(PedidoAjudaCreateRequest dto) {
+        if(!CpfValidatorUtil.cpfValido(dto.cpf())){
+            throw new ValidacaoException("Cpf inválido");
+        }
+
         PedidoAjuda pedidoAjuda = new PedidoAjuda();
 
         pedidoAjuda.setCpf(dto.cpf());
@@ -69,6 +74,9 @@ public class PedidoAjudaService {
 
     public PedidoAjudaDTO buscarPorCpf(String cpf) {
         PedidoAjuda pedido = repository.buscarPorCpf(cpf);
+        if (pedido == null) {
+            throw new NaoEncontradoException("Pedido de ajuda não encontrado.");
+        }
         return mapeamentoPedido(pedido);
     }
 
@@ -81,7 +89,7 @@ public class PedidoAjudaService {
         return mapeamentoListaPedidos(pedidos);
     }
 
-    public PedidoAjudaDTO processarPedido(long id, AtualizarPedidoAjudaDTO dto){
+    public PedidoAjudaDTO processarPedido(long id, PedidoAjudaUpdateRequest dto){
         PedidoAjuda pedido = repository.findById(id);
         if(pedido == null)
             throw new NaoEncontradoException("Pedido de ajuda não encontrado.");

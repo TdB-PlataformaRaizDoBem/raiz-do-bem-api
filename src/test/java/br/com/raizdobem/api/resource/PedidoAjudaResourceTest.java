@@ -1,13 +1,14 @@
 package br.com.raizdobem.api.resource;
 
-import br.com.raizdobem.api.dto.request.AtualizarPedidoAjudaDTO;
-import br.com.raizdobem.api.dto.request.CriarPedidoAjudaDTO;
-import br.com.raizdobem.api.dto.request.EntradaEnderecoDTO;
+import br.com.raizdobem.api.dto.request.PedidoAjudaUpdateRequest;
+import br.com.raizdobem.api.dto.request.PedidoAjudaCreateRequest;
+import br.com.raizdobem.api.dto.request.EnderecoRequest;
 import br.com.raizdobem.api.dto.response.PedidoAjudaDTO;
 import br.com.raizdobem.api.entity.PedidoAjuda;
 import br.com.raizdobem.api.entity.StatusPedido;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.exception.RequisicaoInvalidaException;
+import br.com.raizdobem.api.mapper.PedidoAjudaMapper;
 import br.com.raizdobem.api.service.PedidoAjudaService;
 import jakarta.ws.rs.core.Response;
 import org.junit.jupiter.api.DisplayName;
@@ -100,7 +101,7 @@ class PedidoAjudaResourceTest {
     @DisplayName("Deve criar pedido de ajuda com sucesso retornando HTTP 201 Created")
     void deveCriarPedidoRetornandoStatus201() {
         // Arrange
-        CriarPedidoAjudaDTO request = new CriarPedidoAjudaDTO(
+        PedidoAjudaCreateRequest request = new PedidoAjudaCreateRequest(
                 "12345678901",
                 "Carlos Souza",
                 LocalDate.of(2010, 5, 20),
@@ -108,7 +109,7 @@ class PedidoAjudaResourceTest {
                 "11988887777",
                 "carlos@email.com",
                 "Urgência",
-                new EntradaEnderecoDTO("01001000", "10")
+                new EnderecoRequest("01001000", "10")
         );
         PedidoAjuda pedido = new PedidoAjuda();
         pedido.setId(1L);
@@ -120,14 +121,14 @@ class PedidoAjudaResourceTest {
 
         // Assert
         assertThat(response.getStatus()).isEqualTo(201);
-        assertThat(response.getEntity()).isEqualTo(pedido);
+        assertThat(response.getEntity()).isEqualTo(PedidoAjudaMapper.mapeamentoPedido(pedido));
     }
 
     @Test
     @DisplayName("Deve lançar RequisicaoInvalidaException quando serviço retornar nulo ao criar")
     void deveLancarRequisicaoInvalidaExceptionQuandoCriacaoRetornarNulo() {
         // Arrange
-        CriarPedidoAjudaDTO request = new CriarPedidoAjudaDTO(
+        PedidoAjudaCreateRequest request = new PedidoAjudaCreateRequest(
                 "12345678901", "Nome", LocalDate.now(), "M", "tel", "email@email.com", "desc", null
         );
         when(service.criar(request)).thenReturn(null);
@@ -143,7 +144,7 @@ class PedidoAjudaResourceTest {
     void deveAtualizarPedidoRetornandoStatus200() {
         // Arrange
         long id = 1L;
-        AtualizarPedidoAjudaDTO dto = new AtualizarPedidoAjudaDTO(StatusPedido.APROVADO, 5L);
+        PedidoAjudaUpdateRequest dto = new PedidoAjudaUpdateRequest(StatusPedido.APROVADO, 5L);
         PedidoAjudaDTO pedidoAtualizado = criarPedidoDTO(id);
 
         when(service.processarPedido(id, dto)).thenReturn(pedidoAtualizado);

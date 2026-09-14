@@ -1,7 +1,7 @@
 package br.com.raizdobem.api.service;
 
-import br.com.raizdobem.api.dto.request.AtualizarDentistaDTO;
-import br.com.raizdobem.api.dto.request.CriarDentistaDTO;
+import br.com.raizdobem.api.dto.request.DentistaUpdateRequest;
+import br.com.raizdobem.api.dto.request.DentistaCreateRequest;
 import br.com.raizdobem.api.dto.response.DentistaDTO;
 import br.com.raizdobem.api.entity.*;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
@@ -10,6 +10,7 @@ import br.com.raizdobem.api.mapper.DentistaMapper;
 import br.com.raizdobem.api.repository.DentistaRepository;
 import br.com.raizdobem.api.repository.EspecialidadeRepository;
 import br.com.raizdobem.api.repository.ProgramaRepository;
+import br.com.raizdobem.api.util.CpfValidatorUtil;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -33,17 +34,16 @@ public class DentistaService {
     ProgramaRepository programaRepository;
 
     @Transactional
-    public DentistaDTO criarDentista(CriarDentistaDTO dto){
+    public DentistaDTO criarDentista(DentistaCreateRequest dto){
+        if(!CpfValidatorUtil.cpfValido(dto.cpf())){
+            throw new ValidacaoException("CPF inserido é inválido");
+        }
+
         Dentista dentista = new Dentista();
 
-        String cpfEntrada = dto.cpf();
         String sexoEntrada = dto.sexo().toUpperCase();
 
-        if(ValidacaoService.validarCpf(cpfEntrada))
-            dentista.setCpf(cpfEntrada);
-        else
-            throw new ValidacaoException("CPF inserido é inválido");
-
+        dentista.setCpf(dto.cpf());
         dentista.setCroDentista(dto.croDentista());
         dentista.setNomeCompleto(dto.nomeCompleto());
         dentista.setSexo(Sexo.valueOf(sexoEntrada.toUpperCase()));
@@ -55,10 +55,8 @@ public class DentistaService {
             throw new NaoEncontradoException("Especialidade não encontrada.");
         }
         dentista.setEspecialidades(List.of(especialidade));
-        ProgramaSocial p1 = programaRepository.buscarPorId(1);
-        ProgramaSocial p2 = programaRepository.buscarPorId(2);
 
-        dentista.setProgramasSociais(List.of(p1,p2));
+        dentista.setProgramasSociais(programaRepository.listarTodos());
         dentista.setDisponivel(dto.disponivel());
         Endereco endereco = enderecoService.criarComoSuporte(dto.endereco(), TipoEndereco.PROFISSIONAL);
         if(endereco == null)
@@ -104,8 +102,8 @@ public class DentistaService {
     }
 
     @Transactional
-    public DentistaDTO atualizar(String cpf, AtualizarDentistaDTO request) {
-        Dentista dentista = repository.atualizar(cpf, request);
+    public DentistaDTO atualizar(String cpf, DentistaUpdateRequest request) {
+        Dentista dentista = repository.buscarPorCpf(cpf);
         if(dentista == null)
             throw new NaoEncontradoException("Dentista não encontrado.");
 

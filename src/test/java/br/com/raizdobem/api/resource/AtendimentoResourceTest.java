@@ -1,8 +1,8 @@
 package br.com.raizdobem.api.resource;
 
-import br.com.raizdobem.api.dto.request.AtualizarAtendimentoDTO;
-import br.com.raizdobem.api.dto.request.CriarAtendimentoDTO;
-import br.com.raizdobem.api.dto.response.AtendimentoDTO;
+import br.com.raizdobem.api.dto.request.AtendimentoUpdateRequest;
+import br.com.raizdobem.api.dto.request.AtendimentoCreateRequest;
+import br.com.raizdobem.api.dto.response.AtendimentoResponse;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.exception.RequisicaoInvalidaException;
 import br.com.raizdobem.api.service.AtendimentoService;
@@ -14,7 +14,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.net.URI;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -32,8 +31,8 @@ class AtendimentoResourceTest {
     @InjectMocks
     private AtendimentoResource resource;
 
-    private AtendimentoDTO criarAtendimentoDTO(Long id) {
-        return new AtendimentoDTO(
+    private AtendimentoResponse criarAtendimentoDTO(Long id) {
+        return new AtendimentoResponse(
                 id,
                 "PRONT-001",
                 "Joãozinho Silva",
@@ -64,8 +63,8 @@ class AtendimentoResourceTest {
     @DisplayName("Deve criar atendimento com sucesso retornando HTTP 201 Created com Location")
     void deveCriarAtendimentoRetornandoStatus201() {
         // Arrange
-        CriarAtendimentoDTO request = new CriarAtendimentoDTO("PRONT-001", "12345678901");
-        AtendimentoDTO responseDTO = criarAtendimentoDTO(5L);
+        AtendimentoCreateRequest request = new AtendimentoCreateRequest("PRONT-001", "12345678901");
+        AtendimentoResponse responseDTO = criarAtendimentoDTO(5L);
         when(service.criarAtendimento(request)).thenReturn(responseDTO);
 
         // Act
@@ -74,14 +73,14 @@ class AtendimentoResourceTest {
         // Assert
         assertThat(response.getStatus()).isEqualTo(201);
         assertThat(response.getLocation()).isNotNull();
-        assertThat(response.getLocation().toString()).isEqualTo("api/atendimento5");
+        assertThat(response.getLocation().toString()).isEqualTo("api/atendimento/" + responseDTO.id());
     }
 
     @Test
     @DisplayName("Deve lançar RequisicaoInvalidaException quando serviço retornar nulo ao criar atendimento")
     void deveLancarRequisicaoInvalidaExceptionQuandoCriacaoRetornarNulo() {
         // Arrange
-        CriarAtendimentoDTO request = new CriarAtendimentoDTO("PRONT-001", "12345678901");
+        AtendimentoCreateRequest request = new AtendimentoCreateRequest("PRONT-001", "12345678901");
         when(service.criarAtendimento(request)).thenReturn(null);
 
         // Act & Assert
@@ -95,7 +94,7 @@ class AtendimentoResourceTest {
     void deveBuscarPorCpfRetornandoStatus200() {
         // Arrange
         String cpf = "12345678901";
-        AtendimentoDTO dto = criarAtendimentoDTO(1L);
+        AtendimentoResponse dto = criarAtendimentoDTO(1L);
         when(service.buscarPorCpf(cpf)).thenReturn(dto);
 
         // Act
@@ -138,7 +137,7 @@ class AtendimentoResourceTest {
     void deveFinalizarAtendimentoRetornandoStatus200() {
         // Arrange
         String cpf = "12345678901";
-        AtualizarAtendimentoDTO dto = new AtualizarAtendimentoDTO("PRONT-ENCERRADO", 2L);
+        AtendimentoUpdateRequest dto = new AtendimentoUpdateRequest("PRONT-ENCERRADO", 2L);
 
         // Act
         Response response = resource.atualizar(cpf, dto);

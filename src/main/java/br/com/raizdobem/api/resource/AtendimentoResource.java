@@ -1,8 +1,8 @@
 package br.com.raizdobem.api.resource;
 
-import br.com.raizdobem.api.dto.request.AtualizarAtendimentoDTO;
-import br.com.raizdobem.api.dto.request.CriarAtendimentoDTO;
-import br.com.raizdobem.api.dto.response.AtendimentoDTO;
+import br.com.raizdobem.api.dto.request.AtendimentoUpdateRequest;
+import br.com.raizdobem.api.dto.request.AtendimentoCreateRequest;
+import br.com.raizdobem.api.dto.response.AtendimentoResponse;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.exception.RequisicaoInvalidaException;
 import br.com.raizdobem.api.service.AtendimentoService;
@@ -24,7 +24,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @RequestScoped
-@Path("/atendimento")
+@Path("/atendimento/")
 @Tag(name = "Atendimento", description = "Disponibiliza funcionalidades relacionadas aos atendimentos.")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -36,26 +36,26 @@ public class AtendimentoResource {
     @Operation(summary = "Endpoint de listagem dos atendimentos.")
     @RolesAllowed({"ADMIN", "COLABORADOR"})
     public Response listarTodos(){
-        List<AtendimentoDTO> pedidos = service.listarAtendimentos();
+        List<AtendimentoResponse> pedidos = service.listarAtendimentos();
         return Response.ok(pedidos).build();
     }
 
     @POST
     @Operation(summary = "Endpoint de criação dos atendimentos de beneficiários cadastrados.")
     @RolesAllowed({"ADMIN", "COLABORADOR"})
-    public Response criar(@Valid CriarAtendimentoDTO request) {
-        AtendimentoDTO atendimento = service.criarAtendimento(request);
+    public Response criar(@Valid AtendimentoCreateRequest request) {
+        AtendimentoResponse atendimento = service.criarAtendimento(request);
         if (atendimento == null) {
             throw new RequisicaoInvalidaException("Não foi possível criar atendimento.");
         }
-        return Response.created(URI.create("api/atendimento" + atendimento.id())).build();
+        return Response.created(URI.create("api/atendimento/" + atendimento.id())).build();
     }
 
     @GET
     @Path("/{cpf}")
     @RolesAllowed({"ADMIN", "COLABORADOR"})
     public Response buscarPorCpf(@PathParam("cpf") String cpf){
-        AtendimentoDTO atendimento = service.buscarPorCpf(cpf);
+        AtendimentoResponse atendimento = service.buscarPorCpf(cpf);
         if (atendimento == null) {
             throw new NaoEncontradoException("Não foi possível encontrar atendimento com o CPF inserido.");
         }
@@ -63,12 +63,12 @@ public class AtendimentoResource {
     }
 
     @GET
-    @Path("/exportarCsv")
+    @Path("exportarCsv")
     @Produces("text/csv")
     @Operation(summary = "Endpoint para exportar todos os atendimentos em um arquivo csv.")
     @RolesAllowed("ADMIN")
     public Response exportarCsv(){
-        List<AtendimentoDTO> lista = service.listarParaExportacao();
+        List<AtendimentoResponse> lista = service.listarParaExportacao();
 
         String csv = CsvUtil.gerarCsvAtendimentos(lista);
 
@@ -84,16 +84,16 @@ public class AtendimentoResource {
 
     @PUT
     @Operation(summary = "Endpoint para finalizar atendimento.")
-    @Path("/{cpf}")
+    @Path("{cpf}")
     @RolesAllowed({"ADMIN", "COLABORADOR"})
-    public Response atualizar(@PathParam("cpf") String cpf, @RequestBody AtualizarAtendimentoDTO dto){
+    public Response atualizar(@PathParam("cpf") String cpf, @RequestBody AtendimentoUpdateRequest dto){
         service.encerrarAtendimento(cpf, dto);
         return Response.ok().build();
     }
 
     @DELETE
     @Operation(summary = "Endpoint para exclusão de atendimento.")
-    @Path("/{id}")
+    @Path("{id}")
     @RolesAllowed("ADMIN")
     @Hidden
     public Response excluirAtendimento(@PathParam("id") Long id){

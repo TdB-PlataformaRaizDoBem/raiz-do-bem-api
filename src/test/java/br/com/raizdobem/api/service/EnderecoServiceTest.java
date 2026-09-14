@@ -3,7 +3,7 @@ package br.com.raizdobem.api.service;
 import br.com.raizdobem.api.client.ViaCepClient;
 import br.com.raizdobem.api.dto.external.ViaCepDTO;
 import br.com.raizdobem.api.dto.request.EntradaEnderecoCompletoDTO;
-import br.com.raizdobem.api.dto.request.EntradaEnderecoDTO;
+import br.com.raizdobem.api.dto.request.EnderecoRequest;
 import br.com.raizdobem.api.entity.Endereco;
 import br.com.raizdobem.api.entity.TipoEndereco;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
@@ -83,7 +83,7 @@ class EnderecoServiceTest {
     void deveCriarEnderecoComoSuporteComSucesso() {
         // Arrange
         String cep = "01001000";
-        EntradaEnderecoDTO dto = new EntradaEnderecoDTO(cep, "50");
+        EnderecoRequest dto = new EnderecoRequest(cep, "50");
         ViaCepDTO viaCep = new ViaCepDTO(cep, "Praça da Sé", "Sé", "São Paulo", "SP", "São Paulo", null);
 
         when(client.buscarEndereco(cep)).thenReturn(viaCep);

@@ -37,12 +37,12 @@ public class CsvUtil {
         return csv.toString();
     }
 
-    public static String gerarCsvAtendimentos(List<AtendimentoDTO> atendimentos){
+    public static String gerarCsvAtendimentos(List<AtendimentoResponse> atendimentos){
         StringBuilder csv = new StringBuilder();
         csv.append(formatacaoUtf8);
         csv.append("ID|Prontuário|Beneficiário|Dentista|Data Inicial|Data Final\n");
 
-        for(AtendimentoDTO a : atendimentos){
+        for(AtendimentoResponse a : atendimentos){
             csv.append(a.id()).append("|");
             csv.append(a.prontuario()).append("|");
             csv.append(a.beneficiario()).append("|");

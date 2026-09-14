@@ -1,6 +1,6 @@
 package br.com.raizdobem.api.repository;
 
-import br.com.raizdobem.api.dto.request.AtualizarColaboradorDTO;
+import br.com.raizdobem.api.dto.request.ColaboradorUpdateRequest;
 import br.com.raizdobem.api.entity.Colaborador;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -30,7 +30,7 @@ public class ColaboradorRepository implements PanacheRepository<Colaborador> {
         return find("email", email).firstResult();
     }
 
-    public void atualizar(String cpf, AtualizarColaboradorDTO dto){
+    public void atualizar(String cpf, ColaboradorUpdateRequest dto){
         update("email = ?1, senha = ?2 where cpf = ?3", dto.email(), dto.senha(), cpf);
     }
 

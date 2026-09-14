@@ -21,10 +21,6 @@ public class AtendimentoRepository implements PanacheRepository<Atendimento> {
         return find("beneficiario.cpf", cpf).firstResult();
     }
 
-    public void atualizar(String cpf) {
-        //Metodo vazio, atualização é feita na service
-    }
-
     public boolean excluir(Long id) {
         return deleteById(id);
     }

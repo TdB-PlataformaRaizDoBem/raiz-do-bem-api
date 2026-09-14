@@ -1,6 +1,6 @@
 package br.com.raizdobem.api.repository;
 
-import br.com.raizdobem.api.dto.request.AtualizarDentistaDTO;
+import br.com.raizdobem.api.dto.request.DentistaUpdateRequest;
 import br.com.raizdobem.api.entity.Dentista;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -33,7 +33,7 @@ public class DentistaRepository implements PanacheRepository<Dentista> {
         return list("disponivel", "S");
     }
 
-    public Dentista atualizar(String cpf, AtualizarDentistaDTO dto) {
+    public Dentista atualizar(String cpf, DentistaUpdateRequest dto) {
         return find("cpf", cpf).firstResult();
     }
     public long excluir(String cpf) {

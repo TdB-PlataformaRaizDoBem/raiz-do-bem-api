@@ -1,8 +1,8 @@
 package br.com.raizdobem.api.service;
 
-import br.com.raizdobem.api.dto.request.AtualizarBeneficiarioDTO;
-import br.com.raizdobem.api.dto.request.CriarBeneficiarioDTO;
-import br.com.raizdobem.api.dto.request.EntradaEnderecoDTO;
+import br.com.raizdobem.api.dto.request.BeneficiarioUpdateRequest;
+import br.com.raizdobem.api.dto.request.BeneficiarioCreateRequest;
+import br.com.raizdobem.api.dto.request.EnderecoRequest;
 import br.com.raizdobem.api.dto.response.BeneficiarioDTO;
 import br.com.raizdobem.api.entity.*;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
@@ -28,6 +28,8 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 @DisplayName("Testes Unitários - BeneficiarioService")
 class BeneficiarioServiceTest {
+
+    private static final String CPF_VALIDO = "52998224725";
 
     @Mock
     private BeneficiarioRepository repository;
@@ -60,7 +62,7 @@ class BeneficiarioServiceTest {
     private PedidoAjuda criarPedido(Long id, StatusPedido status) {
         PedidoAjuda pedido = new PedidoAjuda();
         pedido.setId(id);
-        pedido.setCpf("12345678901");
+        pedido.setCpf(CPF_VALIDO);
         pedido.setNomeCompleto("Maria Joana da Silva");
         pedido.setDataNascimento(LocalDate.of(2012, 3, 15));
         pedido.setTelefone("11987654321");
@@ -80,7 +82,7 @@ class BeneficiarioServiceTest {
     private Beneficiario criarBeneficiario(Long id) {
         Beneficiario b = new Beneficiario();
         b.setId(id);
-        b.setCpf("12345678901");
+        b.setCpf(CPF_VALIDO);
         b.setNomeCompleto("Maria Joana da Silva");
         b.setDataNascimento(LocalDate.of(2012, 3, 15));
         b.setTelefone("11987654321");
@@ -94,7 +96,7 @@ class BeneficiarioServiceTest {
     @DisplayName("Deve criar beneficiário com sucesso quando pedido estiver APROVADO e programa social existir")
     void deveCriarBeneficiarioComSucessoQuandoDadosForemValidos() {
         // Arrange
-        CriarBeneficiarioDTO dto = new CriarBeneficiarioDTO(10L, 1L);
+        BeneficiarioCreateRequest dto = new BeneficiarioCreateRequest(10L, 1L);
         PedidoAjuda pedidoAprovado = criarPedido(10L, StatusPedido.APROVADO);
         ProgramaSocial programaSocial = criarPrograma(1L, "Sorriso Criança");
 
@@ -106,7 +108,7 @@ class BeneficiarioServiceTest {
 
         // Assert
         assertThat(resultado).isNotNull();
-        assertThat(resultado.cpf()).isEqualTo("12345678901");
+        assertThat(resultado.cpf()).isEqualTo(CPF_VALIDO);
         assertThat(resultado.nomeCompleto()).isEqualTo("Maria Joana da Silva");
         assertThat(resultado.programaSocial()).isEqualTo("Sorriso Criança");
 
@@ -117,7 +119,7 @@ class BeneficiarioServiceTest {
     @DisplayName("Deve lançar RequisicaoInvalidaException quando DTO for nulo")
     void deveLancarRequisicaoInvalidaExceptionQuandoDtoForNulo() {
         // Act & Assert
-        assertThatThrownBy(() -> beneficiarioService.criarBeneficiario((CriarBeneficiarioDTO) null))
+        assertThatThrownBy(() -> beneficiarioService.criarBeneficiario((BeneficiarioCreateRequest) null))
                 .isInstanceOf(RequisicaoInvalidaException.class)
                 .hasMessage("Inserção de beneficiário inválida.");
 
@@ -128,7 +130,7 @@ class BeneficiarioServiceTest {
     @DisplayName("Deve lançar NaoEncontradoException quando pedido de ajuda informado não existir")
     void deveLancarNaoEncontradoExceptionQuandoPedidoNaoExistir() {
         // Arrange
-        CriarBeneficiarioDTO dto = new CriarBeneficiarioDTO(99L, 1L);
+        BeneficiarioCreateRequest dto = new BeneficiarioCreateRequest(99L, 1L);
         when(pedidoAjudaService.buscarEntidadePorId(99L)).thenReturn(null);
 
         // Act & Assert
@@ -144,7 +146,7 @@ class BeneficiarioServiceTest {
     @DisplayName("Deve lançar RequisicaoInvalidaException quando pedido de ajuda não estiver APROVADO")
     void deveLancarRequisicaoInvalidaExceptionQuandoPedidoNaoEstiverAprovado() {
         // Arrange
-        CriarBeneficiarioDTO dto = new CriarBeneficiarioDTO(10L, 1L);
+        BeneficiarioCreateRequest dto = new BeneficiarioCreateRequest(10L, 1L);
         PedidoAjuda pedidoPendente = criarPedido(10L, StatusPedido.PENDENTE);
         when(pedidoAjudaService.buscarEntidadePorId(10L)).thenReturn(pedidoPendente);
 
@@ -161,7 +163,7 @@ class BeneficiarioServiceTest {
     @DisplayName("Deve lançar NaoEncontradoException quando programa social informado não existir")
     void deveLancarNaoEncontradoExceptionQuandoProgramaSocialNaoExistir() {
         // Arrange
-        CriarBeneficiarioDTO dto = new CriarBeneficiarioDTO(10L, 99L);
+        BeneficiarioCreateRequest dto = new BeneficiarioCreateRequest(10L, 99L);
         PedidoAjuda pedidoAprovado = criarPedido(10L, StatusPedido.APROVADO);
         when(pedidoAjudaService.buscarEntidadePorId(10L)).thenReturn(pedidoAprovado);
         when(programaService.buscarPorId(99L)).thenReturn(null);
@@ -178,7 +180,7 @@ class BeneficiarioServiceTest {
     @DisplayName("Deve buscar beneficiário por CPF com sucesso")
     void deveBuscarBeneficiarioPorCpfComSucesso() {
         // Arrange
-        String cpf = "12345678901";
+        String cpf = CPF_VALIDO;
         Beneficiario beneficiario = criarBeneficiario(1L);
         when(repository.buscarPorCpf(cpf)).thenReturn(beneficiario);
 
@@ -209,11 +211,11 @@ class BeneficiarioServiceTest {
     @DisplayName("Deve lançar NaoEncontradoException ao buscar por CPF inexistente")
     void deveLancarNaoEncontradoExceptionAoBuscarPorCpfInexistente() {
         // Arrange
-        String cpf = "98765432100";
-        when(repository.buscarPorCpf(cpf)).thenReturn(null);
+        String cpfInexistente = "52998224725";
+        when(repository.buscarPorCpf(cpfInexistente)).thenReturn(null);
 
         // Act & Assert
-        assertThatThrownBy(() -> beneficiarioService.buscarPorCpf(cpf))
+        assertThatThrownBy(() -> beneficiarioService.buscarPorCpf(cpfInexistente))
                 .isInstanceOf(NaoEncontradoException.class)
                 .hasMessage("Beneficiário não encontrado.");
     }
@@ -294,9 +296,9 @@ class BeneficiarioServiceTest {
     @DisplayName("Deve atualizar dados do beneficiário e delegar atualização de endereço")
     void deveAtualizarBeneficiarioComSucesso() {
         // Arrange
-        String cpf = "12345678901";
-        EntradaEnderecoDTO novoEnderecoDTO = new EntradaEnderecoDTO("01001000", "200");
-        AtualizarBeneficiarioDTO request = new AtualizarBeneficiarioDTO("11911112222", "novo@email.com", novoEnderecoDTO);
+        String cpf = CPF_VALIDO;
+        EnderecoRequest novoEnderecoDTO = new EnderecoRequest("01001000", "200");
+        BeneficiarioUpdateRequest request = new BeneficiarioUpdateRequest("11911112222", "novo@email.com", novoEnderecoDTO);
         Beneficiario beneficiario = criarBeneficiario(1L);
 
         when(repository.atualizar(cpf, request)).thenReturn(beneficiario);
@@ -320,7 +322,7 @@ class BeneficiarioServiceTest {
     void deveLancarNaoEncontradoExceptionAoAtualizarBeneficiarioInexistente() {
         // Arrange
         String cpf = "00000000000";
-        AtualizarBeneficiarioDTO request = new AtualizarBeneficiarioDTO("11911112222", "novo@email.com", null);
+        BeneficiarioUpdateRequest request = new BeneficiarioUpdateRequest("11911112222", "novo@email.com", null);
         when(repository.atualizar(cpf, request)).thenReturn(null);
 
         // Act & Assert
@@ -335,7 +337,7 @@ class BeneficiarioServiceTest {
     @DisplayName("Deve excluir beneficiário com sucesso quando CPF for válido e registro existir")
     void deveExcluirBeneficiarioComSucesso() {
         // Arrange
-        String cpfValido = "12345678901";
+        String cpfValido = CPF_VALIDO;
         when(repository.excluir(cpfValido)).thenReturn(1L);
 
         // Act

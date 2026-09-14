@@ -1,8 +1,8 @@
 package br.com.raizdobem.api.service;
 
-import br.com.raizdobem.api.dto.request.AtualizarPedidoAjudaDTO;
-import br.com.raizdobem.api.dto.request.CriarPedidoAjudaDTO;
-import br.com.raizdobem.api.dto.request.EntradaEnderecoDTO;
+import br.com.raizdobem.api.dto.request.PedidoAjudaUpdateRequest;
+import br.com.raizdobem.api.dto.request.PedidoAjudaCreateRequest;
+import br.com.raizdobem.api.dto.request.EnderecoRequest;
 import br.com.raizdobem.api.dto.response.PedidoAjudaDTO;
 import br.com.raizdobem.api.entity.*;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
@@ -28,6 +28,8 @@ import static org.mockito.Mockito.*;
 @DisplayName("Testes Unitários - PedidoAjudaService")
 class PedidoAjudaServiceTest {
 
+    private static final String CPF_VALIDO = "52998224725";
+
     @Mock
     private PedidoAjudaRepository repository;
 
@@ -40,8 +42,8 @@ class PedidoAjudaServiceTest {
     @InjectMocks
     private PedidoAjudaService pedidoAjudaService;
 
-    private EntradaEnderecoDTO criarEntradaEnderecoDTO() {
-        return new EntradaEnderecoDTO("01001000", "100");
+    private EnderecoRequest criarEntradaEnderecoDTO() {
+        return new EnderecoRequest("01001000", "100");
     }
 
     private Endereco criarEnderecoEntidade() {
@@ -57,9 +59,9 @@ class PedidoAjudaServiceTest {
         return endereco;
     }
 
-    private CriarPedidoAjudaDTO criarPedidoDTO(String sexo, LocalDate dataNascimento) {
-        return new CriarPedidoAjudaDTO(
-                "12345678901",
+    private PedidoAjudaCreateRequest criarPedidoDTO(String sexo, LocalDate dataNascimento) {
+        return new PedidoAjudaCreateRequest(
+                CPF_VALIDO,
                 "Carlos Souza",
                 dataNascimento,
                 sexo,
@@ -73,7 +75,7 @@ class PedidoAjudaServiceTest {
     private PedidoAjuda criarPedidoEntidade(Long id, StatusPedido status) {
         PedidoAjuda pedido = new PedidoAjuda();
         pedido.setId(id);
-        pedido.setCpf("12345678901");
+        pedido.setCpf(CPF_VALIDO);
         pedido.setNomeCompleto("Carlos Souza");
         pedido.setDataNascimento(LocalDate.of(2010, 1, 1));
         pedido.setSexo(Sexo.M);
@@ -99,7 +101,7 @@ class PedidoAjudaServiceTest {
     void deveCriarPedidoComStatusPendenteQuandoSexoFeminino() {
         // Arrange
         LocalDate dataNascimento = LocalDate.now().minusYears(25);
-        CriarPedidoAjudaDTO dto = criarPedidoDTO("F", dataNascimento);
+        PedidoAjudaCreateRequest dto = criarPedidoDTO("F", dataNascimento);
         Endereco endereco = criarEnderecoEntidade();
         when(enderecoService.criarComoSuporte(dto.endereco(), TipoEndereco.RESIDENCIAL)).thenReturn(endereco);
 
@@ -119,7 +121,7 @@ class PedidoAjudaServiceTest {
     void deveCriarPedidoComStatusPendenteQuandoSexoMasculinoMenorDeIdade() {
         // Arrange
         LocalDate dataNascimento = LocalDate.now().minusYears(15);
-        CriarPedidoAjudaDTO dto = criarPedidoDTO("M", dataNascimento);
+        PedidoAjudaCreateRequest dto = criarPedidoDTO("M", dataNascimento);
         Endereco endereco = criarEnderecoEntidade();
         when(enderecoService.criarComoSuporte(dto.endereco(), TipoEndereco.RESIDENCIAL)).thenReturn(endereco);
 
@@ -138,7 +140,7 @@ class PedidoAjudaServiceTest {
     void deveCriarPedidoComStatusRejeitadoQuandoSexoMasculinoEMaiorDeIdade() {
         // Arrange
         LocalDate dataNascimento = LocalDate.now().minusYears(20);
-        CriarPedidoAjudaDTO dto = criarPedidoDTO("M", dataNascimento);
+        PedidoAjudaCreateRequest dto = criarPedidoDTO("M", dataNascimento);
         Endereco endereco = criarEnderecoEntidade();
         when(enderecoService.criarComoSuporte(dto.endereco(), TipoEndereco.RESIDENCIAL)).thenReturn(endereco);
 
@@ -152,10 +154,34 @@ class PedidoAjudaServiceTest {
     }
 
     @Test
+    @DisplayName("Deve lançar ValidacaoException ao criar pedido com CPF inválido")
+    void deveLancarValidacaoExceptionAoCriarPedidoComCpfInvalido() {
+        // Arrange
+        PedidoAjudaCreateRequest dto = new PedidoAjudaCreateRequest(
+                "11111111111",
+                "Carlos Souza",
+                LocalDate.now().minusYears(20),
+                "F",
+                "11999990000",
+                "carlos@email.com",
+                "Dor de dente",
+                criarEntradaEnderecoDTO()
+        );
+
+        // Act & Assert
+        assertThatThrownBy(() -> pedidoAjudaService.criar(dto))
+                .isInstanceOf(ValidacaoException.class)
+                .hasMessage("Cpf inválido");
+
+        verifyNoInteractions(enderecoService);
+        verifyNoInteractions(repository);
+    }
+
+    @Test
     @DisplayName("Deve lançar ValidacaoException ao criar pedido quando campo sexo for nulo")
     void deveLancarValidacaoExceptionAoCriarPedidoQuandoSexoForNulo() {
         // Arrange
-        CriarPedidoAjudaDTO dto = criarPedidoDTO(null, LocalDate.of(2000, 1, 1));
+        PedidoAjudaCreateRequest dto = criarPedidoDTO(null, LocalDate.of(2000, 1, 1));
 
         // Act & Assert
         assertThatThrownBy(() -> pedidoAjudaService.criar(dto))
@@ -170,7 +196,7 @@ class PedidoAjudaServiceTest {
     @DisplayName("Deve lançar NaoEncontradoException ao criar pedido quando endereço retornado for nulo")
     void deveLancarNaoEncontradoExceptionAoCriarPedidoQuandoEnderecoNaoForEncontrado() {
         // Arrange
-        CriarPedidoAjudaDTO dto = criarPedidoDTO("F", LocalDate.now().minusYears(10));
+        PedidoAjudaCreateRequest dto = criarPedidoDTO("F", LocalDate.now().minusYears(10));
         when(enderecoService.criarComoSuporte(dto.endereco(), TipoEndereco.RESIDENCIAL)).thenReturn(null);
 
         // Act & Assert
@@ -187,7 +213,7 @@ class PedidoAjudaServiceTest {
         // Arrange
         long pedidoId = 10L;
         long dentistaId = 5L;
-        AtualizarPedidoAjudaDTO dto = new AtualizarPedidoAjudaDTO(StatusPedido.APROVADO, dentistaId);
+        PedidoAjudaUpdateRequest dto = new PedidoAjudaUpdateRequest(StatusPedido.APROVADO, dentistaId);
         PedidoAjuda pedido = criarPedidoEntidade(pedidoId, StatusPedido.PENDENTE);
         Dentista coordenador = criarDentistaEntidade(dentistaId, "COORDENADOR");
 
@@ -209,7 +235,7 @@ class PedidoAjudaServiceTest {
     void deveProcessarPedidoComSucessoQuandoNovoStatusForRejeitado() {
         // Arrange
         long pedidoId = 11L;
-        AtualizarPedidoAjudaDTO dto = new AtualizarPedidoAjudaDTO(StatusPedido.REJEITADO, 0L);
+        PedidoAjudaUpdateRequest dto = new PedidoAjudaUpdateRequest(StatusPedido.REJEITADO, 0L);
         PedidoAjuda pedido = criarPedidoEntidade(pedidoId, StatusPedido.PENDENTE);
 
         when(repository.findById(pedidoId)).thenReturn(pedido);
@@ -228,7 +254,7 @@ class PedidoAjudaServiceTest {
     void deveLancarRegraNegocioExceptionAoProcessarPedidoQuandoPedidoJaEstiverRejeitado() {
         // Arrange
         long pedidoId = 12L;
-        AtualizarPedidoAjudaDTO dto = new AtualizarPedidoAjudaDTO(StatusPedido.APROVADO, 5L);
+        PedidoAjudaUpdateRequest dto = new PedidoAjudaUpdateRequest(StatusPedido.APROVADO, 5L);
         PedidoAjuda pedidoRejeitado = criarPedidoEntidade(pedidoId, StatusPedido.REJEITADO);
 
         when(repository.findById(pedidoId)).thenReturn(pedidoRejeitado);
@@ -246,8 +272,8 @@ class PedidoAjudaServiceTest {
     void deveLancarValidacaoExceptionAoProcessarPedidoQuandoStatusForInvalido() {
         // Arrange
         long pedidoId = 13L;
-        AtualizarPedidoAjudaDTO dtoPendente = new AtualizarPedidoAjudaDTO(StatusPedido.PENDENTE, 5L);
-        AtualizarPedidoAjudaDTO dtoNulo = new AtualizarPedidoAjudaDTO(null, 5L);
+        PedidoAjudaUpdateRequest dtoPendente = new PedidoAjudaUpdateRequest(StatusPedido.PENDENTE, 5L);
+        PedidoAjudaUpdateRequest dtoNulo = new PedidoAjudaUpdateRequest(null, 5L);
         PedidoAjuda pedido = criarPedidoEntidade(pedidoId, StatusPedido.PENDENTE);
 
         when(repository.findById(pedidoId)).thenReturn(pedido);
@@ -267,7 +293,7 @@ class PedidoAjudaServiceTest {
     void deveLancarNaoEncontradoExceptionAoProcessarPedidoInexistente() {
         // Arrange
         long pedidoIdInexistente = 99L;
-        AtualizarPedidoAjudaDTO dto = new AtualizarPedidoAjudaDTO(StatusPedido.APROVADO, 5L);
+        PedidoAjudaUpdateRequest dto = new PedidoAjudaUpdateRequest(StatusPedido.APROVADO, 5L);
         when(repository.findById(pedidoIdInexistente)).thenReturn(null);
 
         // Act & Assert
@@ -282,7 +308,7 @@ class PedidoAjudaServiceTest {
         // Arrange
         long pedidoId = 14L;
         long dentistaIdInexistente = 88L;
-        AtualizarPedidoAjudaDTO dto = new AtualizarPedidoAjudaDTO(StatusPedido.APROVADO, dentistaIdInexistente);
+        PedidoAjudaUpdateRequest dto = new PedidoAjudaUpdateRequest(StatusPedido.APROVADO, dentistaIdInexistente);
         PedidoAjuda pedido = criarPedidoEntidade(pedidoId, StatusPedido.PENDENTE);
 
         when(repository.findById(pedidoId)).thenReturn(pedido);
@@ -300,7 +326,7 @@ class PedidoAjudaServiceTest {
         // Arrange
         long pedidoId = 15L;
         long dentistaId = 7L;
-        AtualizarPedidoAjudaDTO dto = new AtualizarPedidoAjudaDTO(StatusPedido.APROVADO, dentistaId);
+        PedidoAjudaUpdateRequest dto = new PedidoAjudaUpdateRequest(StatusPedido.APROVADO, dentistaId);
         PedidoAjuda pedido = criarPedidoEntidade(pedidoId, StatusPedido.PENDENTE);
         Dentista voluntario = criarDentistaEntidade(dentistaId, "VOLUNTARIO");
 
@@ -317,7 +343,7 @@ class PedidoAjudaServiceTest {
     @DisplayName("Deve buscar pedido por CPF com sucesso")
     void deveBuscarPedidoPorCpfComSucesso() {
         // Arrange
-        String cpf = "12345678901";
+        String cpf = CPF_VALIDO;
         PedidoAjuda pedido = criarPedidoEntidade(1L, StatusPedido.PENDENTE);
         when(repository.buscarPorCpf(cpf)).thenReturn(pedido);
 
@@ -340,7 +366,7 @@ class PedidoAjudaServiceTest {
         // Act & Assert
         assertThatThrownBy(() -> pedidoAjudaService.buscarPorCpf(cpf))
                 .isInstanceOf(NaoEncontradoException.class)
-                .hasMessage("Pedido inválido!");
+                .hasMessage("Pedido de ajuda não encontrado.");
     }
 
     @Test

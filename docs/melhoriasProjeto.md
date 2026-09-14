@@ -105,7 +105,7 @@ Autenticação: POST /auth/login → JWT com role → @RolesAllowed nos endpoint
 
 **Validação de CPF apenas formal** — `ValidacaoService.validarCpf` verifica só `\d{11}`, sem calcular os dígitos verificadores. Aceita `00000000000` como válido.
 
-**`AtendimentoDTO` usa `Object` para campos tipados** — `beneficiario`, `dentista` e `dataFim` são `Object`, misturando strings e tipos complexos. Quebra type-safety e pode gerar problemas de serialização.
+**`AtendimentoResponse` usa `Object` para campos tipados** — `beneficiario`, `dentista` e `dataFim` são `Object`, misturando strings e tipos complexos. Quebra type-safety e pode gerar problemas de serialização.
 
 **`ColaboradorResource.buscarUnico` retorna a entidade `Colaborador` diretamente** — o campo `senha` (mesmo que hashado) fica exposto na resposta. `ColaboradorMapper` existe mas está completamente vazio.
 

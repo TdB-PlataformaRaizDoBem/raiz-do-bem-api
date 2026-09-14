@@ -1,7 +1,7 @@
 package br.com.raizdobem.api.resource;
 
-import br.com.raizdobem.api.dto.request.AtualizarBeneficiarioDTO;
-import br.com.raizdobem.api.dto.request.CriarBeneficiarioDTO;
+import br.com.raizdobem.api.dto.request.BeneficiarioUpdateRequest;
+import br.com.raizdobem.api.dto.request.BeneficiarioCreateRequest;
 import br.com.raizdobem.api.dto.response.BeneficiarioDTO;
 import br.com.raizdobem.api.dto.response.EnderecoDTO;
 import br.com.raizdobem.api.dto.response.PedidoAjudaResumidoDTO;
@@ -64,7 +64,7 @@ class BeneficiarioResourceTest {
     @DisplayName("Deve criar beneficiário com sucesso e retornar HTTP 201 Created")
     void deveCriarBeneficiarioRetornandoStatus201() {
         // Arrange
-        CriarBeneficiarioDTO request = new CriarBeneficiarioDTO(10L, 1L);
+        BeneficiarioCreateRequest request = new BeneficiarioCreateRequest(10L, 1L);
         BeneficiarioDTO responseDTO = criarDTO(1L, "12345678901");
         when(service.criarBeneficiario(request)).thenReturn(responseDTO);
 
@@ -140,7 +140,7 @@ class BeneficiarioResourceTest {
     void deveAtualizarBeneficiarioRetornandoStatus200() {
         // Arrange
         String cpf = "12345678901";
-        AtualizarBeneficiarioDTO dto = new AtualizarBeneficiarioDTO("11999998888", "novo@email.com", null);
+        BeneficiarioUpdateRequest dto = new BeneficiarioUpdateRequest("11999998888", "novo@email.com", null);
         BeneficiarioDTO atualizado = criarDTO(1L, cpf);
 
         when(service.atualizar(cpf, dto)).thenReturn(atualizado);

@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 public class PedidoAjudaMapper {
     public static PedidoAjudaDTO mapeamentoPedido(PedidoAjuda pedido){
         if(pedido == null){
-            throw new NaoEncontradoException("Pedido inválido!");
+            return null;
         }
 
         return new PedidoAjudaDTO(

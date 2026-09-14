@@ -74,3 +74,6 @@ hs_err_pid*
 application-local.properties
 !application-prod.properties
 !application-dev.properties
+
+# Docs
+prints_swagger

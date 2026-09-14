@@ -1,7 +1,7 @@
 package br.com.raizdobem.api.resource;
 
-import br.com.raizdobem.api.dto.request.AtualizarDentistaDTO;
-import br.com.raizdobem.api.dto.request.CriarDentistaDTO;
+import br.com.raizdobem.api.dto.request.DentistaUpdateRequest;
+import br.com.raizdobem.api.dto.request.DentistaCreateRequest;
 import br.com.raizdobem.api.dto.response.DentistaDTO;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.exception.RequisicaoInvalidaException;
@@ -34,7 +34,7 @@ public class DentistaResource {
     @POST
     @Operation(summary = "Endpoint para a criação de dentista.")
     @RolesAllowed({"ADMIN", "COLABORADOR"})
-    public Response criar(@Valid CriarDentistaDTO request){
+    public Response criar(@Valid DentistaCreateRequest request){
         DentistaDTO dentista = service.criarDentista(request);
         if(dentista == null){
             throw new RequisicaoInvalidaException("Dados de dentista inválidos.");
@@ -104,7 +104,7 @@ public class DentistaResource {
     @Path("/{cpf}")
     @Operation(summary = "Endpoint para a atualização de dentista.")
     @RolesAllowed({"ADMIN", "COLABORADOR"})
-    public Response atualizar(@PathParam("cpf") String cpf, @Valid @RequestBody AtualizarDentistaDTO request){
+    public Response atualizar(@PathParam("cpf") String cpf, @Valid @RequestBody DentistaUpdateRequest request){
         DentistaDTO dentista = service.atualizar(cpf, request);
         return Response.status(Response.Status.OK).entity(dentista).build();
     }

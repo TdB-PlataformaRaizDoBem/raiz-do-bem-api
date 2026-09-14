@@ -1,8 +1,8 @@
 package br.com.raizdobem.api.resource;
 
-import br.com.raizdobem.api.dto.request.AtualizarDentistaDTO;
-import br.com.raizdobem.api.dto.request.CriarDentistaDTO;
-import br.com.raizdobem.api.dto.request.EntradaEnderecoDTO;
+import br.com.raizdobem.api.dto.request.DentistaUpdateRequest;
+import br.com.raizdobem.api.dto.request.DentistaCreateRequest;
+import br.com.raizdobem.api.dto.request.EnderecoRequest;
 import br.com.raizdobem.api.dto.response.DentistaDTO;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.exception.RequisicaoInvalidaException;
@@ -57,9 +57,9 @@ class DentistaResourceTest {
     @DisplayName("Deve criar dentista com sucesso retornando HTTP 201 Created")
     void deveCriarDentistaRetornandoStatus201() {
         // Arrange
-        CriarDentistaDTO request = new CriarDentistaDTO(
+        DentistaCreateRequest request = new DentistaCreateRequest(
                 "123456", "12345678901", "Dra. Camila", "F", "camila@odonto.com",
-                "11988887777", "COORDENADOR", 1L, "true", new EntradaEnderecoDTO("01001000", "100")
+                "11988887777", "COORDENADOR", 1L, "true", new EnderecoRequest("01001000", "100")
         );
         DentistaDTO responseDTO = criarDTO(1L, "12345678901");
         when(service.criarDentista(request)).thenReturn(responseDTO);
@@ -76,7 +76,7 @@ class DentistaResourceTest {
     @DisplayName("Deve lançar RequisicaoInvalidaException quando serviço retornar nulo ao criar dentista")
     void deveLancarRequisicaoInvalidaExceptionQuandoRetornarNulo() {
         // Arrange
-        CriarDentistaDTO request = new CriarDentistaDTO(
+        DentistaCreateRequest request = new DentistaCreateRequest(
                 "123456", "12345678901", "Dra. Camila", "F", "camila@odonto.com",
                 "11988887777", "COORDENADOR", 1L, "true", null
         );
@@ -186,7 +186,7 @@ class DentistaResourceTest {
     void deveAtualizarDentistaRetornandoStatus200() {
         // Arrange
         String cpf = "12345678901";
-        AtualizarDentistaDTO dto = new AtualizarDentistaDTO("11988887777", "email@email.com", "VOLUNTARIO", 1L, "true", null);
+        DentistaUpdateRequest dto = new DentistaUpdateRequest("11988887777", "email@email.com", "VOLUNTARIO", 1L, "true", null);
         when(service.atualizar(cpf, dto)).thenReturn(criarDTO(1L, cpf));
 
         // Act

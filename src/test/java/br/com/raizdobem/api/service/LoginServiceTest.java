@@ -1,6 +1,6 @@
 package br.com.raizdobem.api.service;
 
-import br.com.raizdobem.api.dto.request.LoginDTO;
+import br.com.raizdobem.api.dto.request.LoginRequest;
 import br.com.raizdobem.api.entity.Colaborador;
 import br.com.raizdobem.api.exception.ValidacaoException;
 import br.com.raizdobem.api.repository.ColaboradorRepository;
@@ -32,7 +32,7 @@ class LoginServiceTest {
         // Arrange
         String email = "admin@raizdobem.org";
         String senha = "senhaCorreta123";
-        LoginDTO dto = new LoginDTO(email, senha);
+        LoginRequest dto = new LoginRequest(email, senha);
 
         Colaborador colaborador = new Colaborador();
         colaborador.setId(1L);
@@ -55,7 +55,7 @@ class LoginServiceTest {
     void deveLancarValidacaoExceptionQuandoEmailNaoExistir() {
         // Arrange
         String emailInexistente = "inexistente@raizdobem.org";
-        LoginDTO dto = new LoginDTO(emailInexistente, "qualquerSenha");
+        LoginRequest dto = new LoginRequest(emailInexistente, "qualquerSenha");
 
         when(colaboradorRepository.buscarPorEmail(emailInexistente)).thenReturn(null);
 
@@ -70,7 +70,7 @@ class LoginServiceTest {
     void deveLancarValidacaoExceptionQuandoSenhaForIncorreta() {
         // Arrange
         String email = "admin@raizdobem.org";
-        LoginDTO dto = new LoginDTO(email, "senhaErrada");
+        LoginRequest dto = new LoginRequest(email, "senhaErrada");
 
         Colaborador colaborador = new Colaborador();
         colaborador.setEmail(email);

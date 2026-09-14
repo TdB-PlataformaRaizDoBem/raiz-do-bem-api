@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 
-public record CriarDentistaDTO(
+public record DentistaCreateRequest(
         @NotBlank
                               @Pattern(regexp = "^(?i)[A-Z0-9-/ ]{3,10}$", message = "CRO deve ter entre 3 e 10 caracteres.")
                               String croDentista,
@@ -39,5 +39,5 @@ public record CriarDentistaDTO(
 
         @NotNull
                               @Valid
-                              EntradaEnderecoDTO endereco) {
+        EnderecoRequest endereco) {
 }

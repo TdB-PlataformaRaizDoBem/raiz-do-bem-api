@@ -1,7 +1,7 @@
 package br.com.raizdobem.api.resource;
 
-import br.com.raizdobem.api.dto.request.AtualizarColaboradorDTO;
-import br.com.raizdobem.api.dto.request.CriarColaboradorDTO;
+import br.com.raizdobem.api.dto.request.ColaboradorUpdateRequest;
+import br.com.raizdobem.api.dto.request.ColaboradorCreateRequest;
 import br.com.raizdobem.api.entity.Colaborador;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.service.ColaboradorService;
@@ -45,7 +45,7 @@ class ColaboradorResourceTest {
     @DisplayName("Deve criar colaborador com sucesso e retornar HTTP 201 Created")
     void deveCriarColaboradorComSucesso() {
         // Arrange
-        CriarColaboradorDTO request = new CriarColaboradorDTO(
+        ColaboradorCreateRequest request = new ColaboradorCreateRequest(
                 "12345678901",
                 "João Silva",
                 LocalDate.of(1990, 5, 20),
@@ -69,7 +69,7 @@ class ColaboradorResourceTest {
     @DisplayName("Deve lançar NaoEncontradoException quando criação de colaborador retornar nulo")
     void deveLancarNaoEncontradoExceptionQuandoColaboradorRetornadoForNulo() {
         // Arrange
-        CriarColaboradorDTO request = new CriarColaboradorDTO(
+        ColaboradorCreateRequest request = new ColaboradorCreateRequest(
                 "12345678901",
                 "João Silva",
                 LocalDate.of(1990, 5, 20),
@@ -121,7 +121,7 @@ class ColaboradorResourceTest {
     void deveAtualizarColaboradorRetornandoStatus200() {
         // Arrange
         String cpf = "12345678901";
-        AtualizarColaboradorDTO dto = new AtualizarColaboradorDTO("novoemail@raizdobem.org", "NovaSenha@123");
+        ColaboradorUpdateRequest dto = new ColaboradorUpdateRequest("novoemail@raizdobem.org", "NovaSenha@123");
 
         // Act
         Response response = resource.atualizar(cpf, dto);

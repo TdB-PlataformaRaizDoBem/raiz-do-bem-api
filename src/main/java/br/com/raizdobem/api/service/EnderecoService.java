@@ -3,7 +3,7 @@ package br.com.raizdobem.api.service;
 import br.com.raizdobem.api.client.ViaCepClient;
 import br.com.raizdobem.api.dto.request.EntradaEnderecoCompletoDTO;
 import br.com.raizdobem.api.dto.external.ViaCepDTO;
-import br.com.raizdobem.api.dto.request.EntradaEnderecoDTO;
+import br.com.raizdobem.api.dto.request.EnderecoRequest;
 import br.com.raizdobem.api.entity.TipoEndereco;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.exception.RegraNegocioException;
@@ -39,7 +39,7 @@ public class EnderecoService {
 
     @Transactional
     public Endereco criarComoSuporte(
-            EntradaEnderecoDTO dto,
+            EnderecoRequest dto,
             TipoEndereco tipoEndereco) {
 
         if(!validarCep(dto.cep())){
@@ -90,7 +90,7 @@ public class EnderecoService {
         return repository.excluir(id);
     }
 
-    public void entradaEndereco(Endereco endereco, EntradaEnderecoDTO dto, TipoEndereco tipoEndereco){
+    public void entradaEndereco(Endereco endereco, EnderecoRequest dto, TipoEndereco tipoEndereco){
         ViaCepDTO viaCep = client.buscarEndereco(dto.cep());
         if(viaCep == null){
              throw new RequisicaoInvalidaException("Requisição ViaCep inválida.");

@@ -1,6 +1,6 @@
 package br.com.raizdobem.api.util;
 
-import br.com.raizdobem.api.dto.response.AtendimentoDTO;
+import br.com.raizdobem.api.dto.response.AtendimentoResponse;
 import br.com.raizdobem.api.dto.response.DentistaDTO;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,7 +18,7 @@ class CsvUtilTest {
     @DisplayName("Deve gerar CSV de atendimentos com cabeçalho delimitado por pipe")
     void deveGerarCsvAtendimentos() {
         // Arrange
-        AtendimentoDTO a = new AtendimentoDTO(
+        AtendimentoResponse a = new AtendimentoResponse(
                 1L,
                 "PRONT-100",
                 "Beneficiário A",

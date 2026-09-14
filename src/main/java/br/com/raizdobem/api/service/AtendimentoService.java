@@ -1,8 +1,8 @@
 package br.com.raizdobem.api.service;
 
-import br.com.raizdobem.api.dto.request.AtualizarAtendimentoDTO;
-import br.com.raizdobem.api.dto.request.CriarAtendimentoDTO;
-import br.com.raizdobem.api.dto.response.AtendimentoDTO;
+import br.com.raizdobem.api.dto.request.AtendimentoUpdateRequest;
+import br.com.raizdobem.api.dto.request.AtendimentoCreateRequest;
+import br.com.raizdobem.api.dto.response.AtendimentoResponse;
 import br.com.raizdobem.api.dto.response.BeneficiarioDTO;
 import br.com.raizdobem.api.dto.response.DentistaDTO;
 import br.com.raizdobem.api.entity.Beneficiario;
@@ -42,7 +42,7 @@ public class AtendimentoService {
     AtendimentoMatchService atendimentoMatchService;
 
     @Transactional
-    public AtendimentoDTO criarAtendimento(CriarAtendimentoDTO dto){
+    public AtendimentoResponse criarAtendimento(AtendimentoCreateRequest dto){
         Beneficiario beneficiario = beneficiarioRepository.buscarPorCpf(dto.cpfBeneficiario());
         if(beneficiario == null)
             throw new NaoEncontradoException("Beneficiário não foi encontrado.");
@@ -65,18 +65,18 @@ public class AtendimentoService {
         return mapeamentoAtendimento(atendimento);
     }
 
-    public AtendimentoDTO buscarPorCpf(String cpf) {
+    public AtendimentoResponse buscarPorCpf(String cpf) {
         Atendimento atendimento = repository.buscarPeloCpf(cpf);
         return mapeamentoAtendimento(atendimento);
     }
 
-    public List<AtendimentoDTO> listarAtendimentos(){
+    public List<AtendimentoResponse> listarAtendimentos(){
         List<Atendimento> atendimentos = repository.listarTodos();
         return mapeamentoAtendimentos(atendimentos);
     }
 
     @Transactional
-    public void encerrarAtendimento(String cpf, AtualizarAtendimentoDTO dto){
+    public void encerrarAtendimento(String cpf, AtendimentoUpdateRequest dto){
         Atendimento atendimento = repository.buscarPeloCpf(cpf);
         if(atendimento == null)
             throw new NaoEncontradoException("Atendimento não encontrado");
@@ -102,9 +102,9 @@ public class AtendimentoService {
     }
 
     @Transactional
-    public List<AtendimentoDTO> listarParaExportacao() {
+    public List<AtendimentoResponse> listarParaExportacao() {
         return listarAtendimentos().stream()
-                .map(a -> new AtendimentoDTO(
+                .map(a -> new AtendimentoResponse(
                         a.id(),
                         a.prontuario(),
                         a.beneficiario() != null ? a.beneficiario() : "BENEFICIÁRIO NÃO ENCONTRADO",

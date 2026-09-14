@@ -1,11 +1,12 @@
 package br.com.raizdobem.api.resource;
 
-import br.com.raizdobem.api.dto.request.AtualizarPedidoAjudaDTO;
-import br.com.raizdobem.api.dto.request.CriarPedidoAjudaDTO;
+import br.com.raizdobem.api.dto.request.PedidoAjudaUpdateRequest;
+import br.com.raizdobem.api.dto.request.PedidoAjudaCreateRequest;
 import br.com.raizdobem.api.dto.response.PedidoAjudaDTO;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.exception.RequisicaoInvalidaException;
 import br.com.raizdobem.api.entity.PedidoAjuda;
+import br.com.raizdobem.api.mapper.PedidoAjudaMapper;
 import br.com.raizdobem.api.service.PedidoAjudaService;
 import io.vertx.core.cli.annotations.Hidden;
 import jakarta.annotation.security.PermitAll;
@@ -55,19 +56,19 @@ public class PedidoAjudaResource {
     @POST
     @Operation(summary = "Endpoint de criação de um pedido de ajuda.")
     @PermitAll
-    public Response criar(@Valid CriarPedidoAjudaDTO request){
+    public Response criar(@Valid PedidoAjudaCreateRequest request){
         PedidoAjuda pedidoAjuda = service.criar(request);
         if(pedidoAjuda == null){
             throw new RequisicaoInvalidaException("Não foi possível criar o pedido de ajuda. Dados inválidos.");
         }
-        return Response.status(Response.Status.CREATED).entity(pedidoAjuda).build();
+        return Response.status(Response.Status.CREATED).entity(PedidoAjudaMapper.mapeamentoPedido(pedidoAjuda)).build();
     }
 
     @PUT
     @Operation(summary = "Endpoint de processamento de um pedido de ajuda.")
     @Path("/{id}")
     @RolesAllowed({"ADMIN", "COLABORADOR"})
-    public Response atualizar(@PathParam("id") long id, @RequestBody AtualizarPedidoAjudaDTO dto){
+    public Response atualizar(@PathParam("id") long id, @RequestBody PedidoAjudaUpdateRequest dto){
         PedidoAjudaDTO pedido = service.processarPedido(id, dto);
         return Response.ok(pedido).build();
     }

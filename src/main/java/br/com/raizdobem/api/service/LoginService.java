@@ -1,6 +1,6 @@
 package br.com.raizdobem.api.service;
 
-import br.com.raizdobem.api.dto.request.LoginDTO;
+import br.com.raizdobem.api.dto.request.LoginRequest;
 import br.com.raizdobem.api.entity.Colaborador;
 import br.com.raizdobem.api.exception.ValidacaoException;
 import br.com.raizdobem.api.repository.ColaboradorRepository;
@@ -17,7 +17,7 @@ public class LoginService {
     @Inject
     ColaboradorRepository colaboradorRepository;
 
-    public String login(LoginDTO login){
+    public String login(LoginRequest login){
         Colaborador colaborador = colaboradorRepository.buscarPorEmail(login.email());
         if(colaborador == null || !BcryptUtil.matches(login.senha(), colaborador.getSenha())){
             throw new ValidacaoException("Email ou senha inválido(s).");

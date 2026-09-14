@@ -1,8 +1,8 @@
 package br.com.raizdobem.api.service;
 
-import br.com.raizdobem.api.dto.request.AtualizarAtendimentoDTO;
-import br.com.raizdobem.api.dto.request.CriarAtendimentoDTO;
-import br.com.raizdobem.api.dto.response.AtendimentoDTO;
+import br.com.raizdobem.api.dto.request.AtendimentoUpdateRequest;
+import br.com.raizdobem.api.dto.request.AtendimentoCreateRequest;
+import br.com.raizdobem.api.dto.response.AtendimentoResponse;
 import br.com.raizdobem.api.dto.response.DentistaDTO;
 import br.com.raizdobem.api.entity.Atendimento;
 import br.com.raizdobem.api.entity.Beneficiario;
@@ -123,7 +123,7 @@ class AtendimentoServiceTest {
     void deveCriarAtendimentoComSucessoQuandoDadosForemValidos() {
         // Arrange
         String cpf = "12345678901";
-        CriarAtendimentoDTO dto = new CriarAtendimentoDTO("PRONT-001", cpf);
+        AtendimentoCreateRequest dto = new AtendimentoCreateRequest("PRONT-001", cpf);
         Beneficiario beneficiario = criarBeneficiario();
         Dentista dentista = criarDentista();
         DentistaDTO dentistaDTO = criarDentistaDTO();
@@ -133,7 +133,7 @@ class AtendimentoServiceTest {
         when(dentistaService.buscarEntidadePorId(dentistaDTO.id())).thenReturn(dentista);
 
         // Act
-        AtendimentoDTO resultado = atendimentoService.criarAtendimento(dto);
+        AtendimentoResponse resultado = atendimentoService.criarAtendimento(dto);
 
         // Assert
         assertThat(resultado).isNotNull();
@@ -149,7 +149,7 @@ class AtendimentoServiceTest {
     void deveLancarNaoEncontradoExceptionAoCriarAtendimentoQuandoBeneficiarioNaoExistir() {
         // Arrange
         String cpf = "00000000000";
-        CriarAtendimentoDTO dto = new CriarAtendimentoDTO("PRONT-001", cpf);
+        AtendimentoCreateRequest dto = new AtendimentoCreateRequest("PRONT-001", cpf);
         when(beneficiarioRepository.buscarPorCpf(cpf)).thenReturn(null);
 
         // Act & Assert
@@ -166,7 +166,7 @@ class AtendimentoServiceTest {
     void deveLancarNaoEncontradoExceptionAoCriarAtendimentoQuandoDentistaNaoExistir() {
         // Arrange
         String cpf = "12345678901";
-        CriarAtendimentoDTO dto = new CriarAtendimentoDTO("PRONT-001", cpf);
+        AtendimentoCreateRequest dto = new AtendimentoCreateRequest("PRONT-001", cpf);
         Beneficiario beneficiario = criarBeneficiario();
         DentistaDTO dentistaDTO = criarDentistaDTO();
 
@@ -197,7 +197,7 @@ class AtendimentoServiceTest {
         when(repository.buscarPeloCpf(cpf)).thenReturn(atendimento);
 
         // Act
-        AtendimentoDTO resultado = atendimentoService.buscarPorCpf(cpf);
+        AtendimentoResponse resultado = atendimentoService.buscarPorCpf(cpf);
 
         // Assert
         assertThat(resultado).isNotNull();
@@ -218,7 +218,7 @@ class AtendimentoServiceTest {
         when(repository.listarTodos()).thenReturn(List.of(a));
 
         // Act
-        List<AtendimentoDTO> lista = atendimentoService.listarAtendimentos();
+        List<AtendimentoResponse> lista = atendimentoService.listarAtendimentos();
 
         // Assert
         assertThat(lista).hasSize(1);
@@ -229,7 +229,7 @@ class AtendimentoServiceTest {
     void deveEncerrarAtendimentoComSucessoQuandoDadosForemValidos() {
         // Arrange
         String cpf = "12345678901";
-        AtualizarAtendimentoDTO dto = new AtualizarAtendimentoDTO("PRONT-FINAL", 3L);
+        AtendimentoUpdateRequest dto = new AtendimentoUpdateRequest("PRONT-FINAL", 3L);
         Atendimento atendimento = new Atendimento();
         atendimento.setId(1L);
         atendimento.setBeneficiario(criarBeneficiario());
@@ -252,7 +252,7 @@ class AtendimentoServiceTest {
     void deveLancarNaoEncontradoExceptionAoEncerrarAtendimentoInexistente() {
         // Arrange
         String cpf = "00000000000";
-        AtualizarAtendimentoDTO dto = new AtualizarAtendimentoDTO("PRONT", 3L);
+        AtendimentoUpdateRequest dto = new AtendimentoUpdateRequest("PRONT", 3L);
         when(repository.buscarPeloCpf(cpf)).thenReturn(null);
 
         // Act & Assert
@@ -268,7 +268,7 @@ class AtendimentoServiceTest {
     void deveLancarNaoEncontradoExceptionAoEncerrarComProntuarioNulo() {
         // Arrange
         String cpf = "12345678901";
-        AtualizarAtendimentoDTO dto = new AtualizarAtendimentoDTO(null, 3L);
+        AtendimentoUpdateRequest dto = new AtendimentoUpdateRequest(null, 3L);
         Atendimento atendimento = new Atendimento();
         when(repository.buscarPeloCpf(cpf)).thenReturn(atendimento);
 
@@ -283,7 +283,7 @@ class AtendimentoServiceTest {
     void deveLancarNaoEncontradoExceptionAoEncerrarComIdColaboradorNulo() {
         // Arrange
         String cpf = "12345678901";
-        AtualizarAtendimentoDTO dto = new AtualizarAtendimentoDTO("PRONT", null);
+        AtendimentoUpdateRequest dto = new AtendimentoUpdateRequest("PRONT", null);
         Atendimento atendimento = new Atendimento();
         when(repository.buscarPeloCpf(cpf)).thenReturn(atendimento);
 
@@ -298,7 +298,7 @@ class AtendimentoServiceTest {
     void deveLancarNaoEncontradoExceptionAoEncerrarQuandoColaboradorNaoExistir() {
         // Arrange
         String cpf = "12345678901";
-        AtualizarAtendimentoDTO dto = new AtualizarAtendimentoDTO("PRONT", 99L);
+        AtendimentoUpdateRequest dto = new AtendimentoUpdateRequest("PRONT", 99L);
         Atendimento atendimento = new Atendimento();
         when(repository.buscarPeloCpf(cpf)).thenReturn(atendimento);
         when(colaboradorService.buscarPorId(99L)).thenReturn(null);
@@ -338,7 +338,7 @@ class AtendimentoServiceTest {
         when(repository.listarTodos()).thenReturn(List.of(a));
 
         // Act
-        List<AtendimentoDTO> exportacao = atendimentoService.listarParaExportacao();
+        List<AtendimentoResponse> exportacao = atendimentoService.listarParaExportacao();
 
         // Assert
         assertThat(exportacao).hasSize(1);

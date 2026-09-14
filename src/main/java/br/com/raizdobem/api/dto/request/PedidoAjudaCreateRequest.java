@@ -10,31 +10,31 @@ import jakarta.validation.constraints.Pattern;
 import java.time.LocalDate;
 
 
-public record CriarPedidoAjudaDTO(@NotBlank @Pattern(regexp = "^\\d{11}$",
+public record PedidoAjudaCreateRequest(@NotBlank @Pattern(regexp = "^\\d{11}$",
                                             message = "CPF deve conter 11 números.")
                                   String cpf,
 
-                                  @NotBlank
+                                       @NotBlank
                                   String nome,
 
-                                  @NotNull
+                                       @NotNull
                                   LocalDate dataNascimento,
 
-                                  @NotBlank
+                                       @NotBlank
                                   String sexo,
 
-                                  @NotBlank
+                                       @NotBlank
                                   String telefone,
 
-                                  @NotBlank
+                                       @NotBlank
                                   @Email
                                   String email,
 
-                                  @NotBlank
+                                       @NotBlank
                                   String descricaoProblema,
 
-                                  @NotNull
+                                       @NotNull
                                   @Valid
-                                  EntradaEnderecoDTO endereco) {
+                                       EnderecoRequest endereco) {
 
 }

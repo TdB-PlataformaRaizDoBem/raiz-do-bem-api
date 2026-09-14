@@ -1,6 +1,6 @@
 package br.com.raizdobem.api.repository;
 
-import br.com.raizdobem.api.dto.request.AtualizarPedidoAjudaDTO;
+import br.com.raizdobem.api.dto.request.PedidoAjudaUpdateRequest;
 import br.com.raizdobem.api.entity.PedidoAjuda;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -30,8 +30,9 @@ public class PedidoAjudaRepository implements PanacheRepository<PedidoAjuda> {
         return list("dataPedido", dataPedido);
     }
 
-    public void atualizar(String cpf, AtualizarPedidoAjudaDTO request){
-        PedidoAjuda pedido = find("cpf", cpf).firstResult();
+    public void atualizar(String cpf, PedidoAjudaUpdateRequest request){
+        find("cpf", cpf).firstResult();
+//        update("statusPedido = ?1, idDentista = ?2 where cpf = ?3", request.statusPedido(), request.idDentista(), cpf);
     }
 
     public boolean excluir(Long id) {

@@ -1,17 +1,17 @@
 package br.com.raizdobem.api.mapper;
 
-import br.com.raizdobem.api.dto.response.AtendimentoDTO;
+import br.com.raizdobem.api.dto.response.AtendimentoResponse;
 import br.com.raizdobem.api.entity.Atendimento;
 
 import java.util.List;
 
 public class AtendimentoMapper {
-    public static AtendimentoDTO mapeamentoAtendimento(Atendimento atendimento){
+    public static AtendimentoResponse mapeamentoAtendimento(Atendimento atendimento){
         if(atendimento == null){
             return null;
         }
 
-        return new AtendimentoDTO(
+        return new AtendimentoResponse(
                 atendimento.getId(),
                 atendimento.getProntuario(),
                 atendimento.getBeneficiario() != null ? atendimento.getBeneficiario().getNomeCompleto() : "N/A",
@@ -28,7 +28,7 @@ public class AtendimentoMapper {
         );
     }
 
-    public static List<AtendimentoDTO> mapeamentoAtendimentos(List<Atendimento> atendimentos){
+    public static List<AtendimentoResponse> mapeamentoAtendimentos(List<Atendimento> atendimentos){
         if(atendimentos == null)
             return null;
 

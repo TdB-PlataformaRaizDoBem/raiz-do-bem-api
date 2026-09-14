@@ -1,7 +1,7 @@
 package br.com.raizdobem.api.service;
 
-import br.com.raizdobem.api.dto.request.AtualizarBeneficiarioDTO;
-import br.com.raizdobem.api.dto.request.CriarBeneficiarioDTO;
+import br.com.raizdobem.api.dto.request.BeneficiarioUpdateRequest;
+import br.com.raizdobem.api.dto.request.BeneficiarioCreateRequest;
 import br.com.raizdobem.api.dto.response.BeneficiarioDTO;
 import br.com.raizdobem.api.entity.*;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
@@ -9,12 +9,12 @@ import br.com.raizdobem.api.exception.RequisicaoInvalidaException;
 import br.com.raizdobem.api.exception.ValidacaoException;
 import br.com.raizdobem.api.mapper.BeneficiarioMapper;
 import br.com.raizdobem.api.repository.BeneficiarioRepository;
+import br.com.raizdobem.api.util.CpfValidatorUtil;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static br.com.raizdobem.api.mapper.BeneficiarioMapper.mapeamentoBeneficiario;
 import static br.com.raizdobem.api.mapper.BeneficiarioMapper.mapeamentoBeneficiarios;
@@ -34,7 +34,7 @@ public class BeneficiarioService {
     EnderecoService enderecoService;
 
     @Transactional
-    public BeneficiarioDTO criarBeneficiario(CriarBeneficiarioDTO dto) {
+    public BeneficiarioDTO criarBeneficiario(BeneficiarioCreateRequest dto) {
         Beneficiario beneficiario = new Beneficiario();
         if(dto == null)
             throw new RequisicaoInvalidaException("Inserção de beneficiário inválida.");
@@ -66,7 +66,7 @@ public class BeneficiarioService {
     }
 
     public BeneficiarioDTO buscarPorCpf(String cpf) {
-        if(!ValidacaoService.validarCpf(cpf))
+        if(!CpfValidatorUtil.cpfValido(cpf))
             throw new ValidacaoException("CPF inválido.");
 
         Beneficiario beneficiario = repository.buscarPorCpf(cpf);
@@ -97,7 +97,7 @@ public class BeneficiarioService {
     }
 
     @Transactional
-    public BeneficiarioDTO atualizar(String cpf, AtualizarBeneficiarioDTO request) {
+    public BeneficiarioDTO atualizar(String cpf, BeneficiarioUpdateRequest request) {
         Beneficiario beneficiario = repository.atualizar(cpf, request);
         if(beneficiario == null)
             throw new NaoEncontradoException("Beneficiário não encontrado, CPF inválido.");
@@ -111,7 +111,7 @@ public class BeneficiarioService {
 
     @Transactional
     public boolean excluir(String cpf) {
-        if(!ValidacaoService.validarCpf(cpf)){
+        if(!CpfValidatorUtil.cpfValido(cpf)){
             throw new NaoEncontradoException("CPF inválido.");
         }
         long exclusao = repository.excluir(cpf);
@@ -119,18 +119,6 @@ public class BeneficiarioService {
     }
 
     public List<BeneficiarioDTO> listarParaExportacao(){
-        return listarTodos().stream()
-                .map(b -> new BeneficiarioDTO(
-                        b.id(),
-                        b.cpf(),
-                        b.nomeCompleto(),
-                        b.dataNascimento(),
-                        b.telefone(),
-                        b.email(),
-                        b.pedido(),
-                        b.programaSocial(),
-                        b.endereco()
-                ))
-                .collect(Collectors.toList());
+        return listarTodos();
     }
 }

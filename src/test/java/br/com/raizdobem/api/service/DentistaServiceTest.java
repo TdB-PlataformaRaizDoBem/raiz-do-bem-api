@@ -1,8 +1,8 @@
 package br.com.raizdobem.api.service;
 
-import br.com.raizdobem.api.dto.request.AtualizarDentistaDTO;
-import br.com.raizdobem.api.dto.request.CriarDentistaDTO;
-import br.com.raizdobem.api.dto.request.EntradaEnderecoDTO;
+import br.com.raizdobem.api.dto.request.DentistaUpdateRequest;
+import br.com.raizdobem.api.dto.request.DentistaCreateRequest;
+import br.com.raizdobem.api.dto.request.EnderecoRequest;
 import br.com.raizdobem.api.dto.response.DentistaDTO;
 import br.com.raizdobem.api.entity.*;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
@@ -29,6 +29,8 @@ import static org.mockito.Mockito.*;
 @DisplayName("Testes Unitários - DentistaService")
 class DentistaServiceTest {
 
+    private static final String CPF_VALIDO = "52998224725";
+
     @Mock
     private DentistaRepository repository;
 
@@ -44,8 +46,8 @@ class DentistaServiceTest {
     @InjectMocks
     private DentistaService dentistaService;
 
-    private EntradaEnderecoDTO criarEntradaEnderecoDTO() {
-        return new EntradaEnderecoDTO("01310100", "1000");
+    private EnderecoRequest criarEntradaEnderecoDTO() {
+        return new EnderecoRequest("01310100", "1000");
     }
 
     private Endereco criarEndereco() {
@@ -96,10 +98,9 @@ class DentistaServiceTest {
     @DisplayName("Deve criar dentista com sucesso quando dados forem válidos")
     void deveCriarDentistaComSucessoQuandoDadosForemValidos() {
         // Arrange
-        String cpfValido = "12345678901";
-        CriarDentistaDTO dto = new CriarDentistaDTO(
+        DentistaCreateRequest dto = new DentistaCreateRequest(
                 "123456",
-                cpfValido,
+                CPF_VALIDO,
                 "Dr. Marcos Vinicius",
                 "M",
                 "marcos@odonto.com",
@@ -116,8 +117,7 @@ class DentistaServiceTest {
         Endereco endereco = criarEndereco();
 
         when(especialidadeRepository.buscarPorId(1L)).thenReturn(esp);
-        when(programaRepository.buscarPorId(1)).thenReturn(p1);
-        when(programaRepository.buscarPorId(2)).thenReturn(p2);
+        when(programaRepository.listarTodos()).thenReturn(List.of(p1, p2));
         when(enderecoService.criarComoSuporte(dto.endereco(), TipoEndereco.PROFISSIONAL)).thenReturn(endereco);
 
         // Act
@@ -136,7 +136,7 @@ class DentistaServiceTest {
     @DisplayName("Deve lançar ValidacaoException ao criar dentista com CPF inválido")
     void deveLancarValidacaoExceptionAoCriarDentistaComCpfInvalido() {
         // Arrange
-        CriarDentistaDTO dto = new CriarDentistaDTO(
+        DentistaCreateRequest dto = new DentistaCreateRequest(
                 "123456",
                 "12345",
                 "Dr. Marcos",
@@ -161,10 +161,9 @@ class DentistaServiceTest {
     @DisplayName("Deve lançar NaoEncontradoException quando especialidade informada não for encontrada")
     void deveLancarNaoEncontradoExceptionQuandoEspecialidadeNaoExistir() {
         // Arrange
-        String cpfValido = "12345678901";
-        CriarDentistaDTO dto = new CriarDentistaDTO(
+        DentistaCreateRequest dto = new DentistaCreateRequest(
                 "123456",
-                cpfValido,
+                CPF_VALIDO,
                 "Dr. Marcos",
                 "M",
                 "marcos@email.com",
@@ -190,10 +189,9 @@ class DentistaServiceTest {
     @DisplayName("Deve lançar NaoEncontradoException quando endereço do dentista for nulo")
     void deveLancarNaoEncontradoExceptionQuandoEnderecoForNulo() {
         // Arrange
-        String cpfValido = "12345678901";
-        CriarDentistaDTO dto = new CriarDentistaDTO(
+        DentistaCreateRequest dto = new DentistaCreateRequest(
                 "123456",
-                cpfValido,
+                CPF_VALIDO,
                 "Dr. Marcos",
                 "M",
                 "marcos@email.com",
@@ -205,8 +203,7 @@ class DentistaServiceTest {
         );
 
         when(especialidadeRepository.buscarPorId(1L)).thenReturn(criarEspecialidade(1L, "Endodontia"));
-        when(programaRepository.buscarPorId(1)).thenReturn(criarPrograma(1L, "P1"));
-        when(programaRepository.buscarPorId(2)).thenReturn(criarPrograma(2L, "P2"));
+        when(programaRepository.listarTodos()).thenReturn(List.of(criarPrograma(1L, "P1"), criarPrograma(2L, "P2")));
         when(enderecoService.criarComoSuporte(dto.endereco(), TipoEndereco.PROFISSIONAL)).thenReturn(null);
 
         // Act & Assert
@@ -222,7 +219,7 @@ class DentistaServiceTest {
     void deveBuscarDentistaPorIdComSucesso() {
         // Arrange
         long id = 10L;
-        Dentista dentista = criarDentista(id, "12345678901");
+        Dentista dentista = criarDentista(id, CPF_VALIDO);
         when(repository.findById(id)).thenReturn(dentista);
 
         // Act
@@ -250,7 +247,7 @@ class DentistaServiceTest {
     @DisplayName("Deve exibir dentista por CPF com sucesso")
     void deveExibirDentistaPorCpfComSucesso() {
         // Arrange
-        String cpf = "12345678901";
+        String cpf = CPF_VALIDO;
         Dentista dentista = criarDentista(1L, cpf);
         when(repository.buscarPorCpf(cpf)).thenReturn(dentista);
 
@@ -279,7 +276,7 @@ class DentistaServiceTest {
     @DisplayName("Deve listar todos os dentistas")
     void deveListarTodosOsDentistas() {
         // Arrange
-        Dentista d = criarDentista(1L, "12345678901");
+        Dentista d = criarDentista(1L, CPF_VALIDO);
         when(repository.listarTodos()).thenReturn(List.of(d));
 
         // Act
@@ -293,7 +290,7 @@ class DentistaServiceTest {
     @DisplayName("Deve listar apenas dentistas disponíveis")
     void deveListarDentistasDisponiveis() {
         // Arrange
-        Dentista d = criarDentista(1L, "12345678901");
+        Dentista d = criarDentista(1L, CPF_VALIDO);
         when(repository.listarDisponiveis()).thenReturn(List.of(d));
 
         // Act
@@ -307,7 +304,7 @@ class DentistaServiceTest {
     @DisplayName("Deve listar dentistas por cidade")
     void deveListarDentistasPorCidade() {
         // Arrange
-        Dentista d = criarDentista(1L, "12345678901");
+        Dentista d = criarDentista(1L, CPF_VALIDO);
         when(repository.listarPorCidade("São Paulo")).thenReturn(List.of(d));
 
         // Act
@@ -321,12 +318,12 @@ class DentistaServiceTest {
     @DisplayName("Deve atualizar dentista e atualizar endereço residencial")
     void deveAtualizarDentistaComSucesso() {
         // Arrange
-        String cpf = "12345678901";
-        EntradaEnderecoDTO novoEndereco = new EntradaEnderecoDTO("01001000", "500");
-        AtualizarDentistaDTO request = new AtualizarDentistaDTO("11911112222", "novo@email.com", "VOLUNTARIO", 1L, "false", novoEndereco);
+        String cpf = CPF_VALIDO;
+        EnderecoRequest novoEndereco = new EnderecoRequest("01001000", "500");
+        DentistaUpdateRequest request = new DentistaUpdateRequest("11911112222", "novo@email.com", "VOLUNTARIO", 1L, "false", novoEndereco);
         Dentista dentista = criarDentista(1L, cpf);
 
-        when(repository.atualizar(cpf, request)).thenReturn(dentista);
+        when(repository.buscarPorCpf(cpf)).thenReturn(dentista);
 
         // Act
         DentistaDTO resultado = dentistaService.atualizar(cpf, request);
@@ -350,8 +347,8 @@ class DentistaServiceTest {
     void deveLancarNaoEncontradoExceptionAoAtualizarDentistaInexistente() {
         // Arrange
         String cpf = "00000000000";
-        AtualizarDentistaDTO request = new AtualizarDentistaDTO("11911112222", "novo@email.com", "VOLUNTARIO", 1L, "true", null);
-        when(repository.atualizar(cpf, request)).thenReturn(null);
+        DentistaUpdateRequest request = new DentistaUpdateRequest("11911112222", "novo@email.com", "VOLUNTARIO", 1L, "true", null);
+        when(repository.buscarPorCpf(cpf)).thenReturn(null);
 
         // Act & Assert
         assertThatThrownBy(() -> dentistaService.atualizar(cpf, request))
@@ -365,7 +362,7 @@ class DentistaServiceTest {
     @DisplayName("Deve excluir dentista por CPF")
     void deveExcluirDentistaPorCpf() {
         // Arrange
-        String cpf = "12345678901";
+        String cpf = CPF_VALIDO;
         when(repository.excluir(cpf)).thenReturn(1L);
 
         // Act
@@ -380,7 +377,7 @@ class DentistaServiceTest {
     @DisplayName("Deve listar dentistas para exportação")
     void deveListarDentistasParaExportacao() {
         // Arrange
-        Dentista d = criarDentista(1L, "12345678901");
+        Dentista d = criarDentista(1L, CPF_VALIDO);
         when(repository.listarTodos()).thenReturn(List.of(d));
 
         // Act

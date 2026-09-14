@@ -1,7 +1,7 @@
 package br.com.raizdobem.api.service;
 
-import br.com.raizdobem.api.dto.request.AtualizarColaboradorDTO;
-import br.com.raizdobem.api.dto.request.CriarColaboradorDTO;
+import br.com.raizdobem.api.dto.request.ColaboradorUpdateRequest;
+import br.com.raizdobem.api.dto.request.ColaboradorCreateRequest;
 import br.com.raizdobem.api.entity.Colaborador;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.exception.ValidacaoException;
@@ -28,14 +28,16 @@ import static org.mockito.Mockito.*;
 @DisplayName("Testes Unitários - ColaboradorService")
 class ColaboradorServiceTest {
 
+    private static final String CPF_VALIDO = "52998224725";
+
     @Mock
     private ColaboradorRepository repository;
 
     @InjectMocks
     private ColaboradorService colaboradorService;
 
-    private CriarColaboradorDTO criarColaboradorDTO(String cpf, String nome, LocalDate dataNasc, LocalDate dataContratacao) {
-        return new CriarColaboradorDTO(
+    private ColaboradorCreateRequest criarColaboradorDTO(String cpf, String nome, LocalDate dataNasc, LocalDate dataContratacao) {
+        return new ColaboradorCreateRequest(
                 cpf,
                 nome,
                 dataNasc,
@@ -63,22 +65,21 @@ class ColaboradorServiceTest {
     @DisplayName("Deve criar colaborador com sucesso e hashear a senha quando dados forem válidos")
     void deveCriarColaboradorComSucessoQuandoDadosForemValidos() {
         // Arrange
-        String cpf = "12345678901";
-        CriarColaboradorDTO dto = criarColaboradorDTO(
-                cpf,
+        ColaboradorCreateRequest dto = criarColaboradorDTO(
+                CPF_VALIDO,
                 "Ana Paula Administradora",
                 LocalDate.of(1990, 5, 10),
                 LocalDate.of(2020, 1, 15)
         );
 
-        when(repository.buscarPorCpf(cpf)).thenReturn(null);
+        when(repository.buscarPorCpf(CPF_VALIDO)).thenReturn(null);
 
         // Act
         Colaborador resultado = colaboradorService.criarColaborador(dto);
 
         // Assert
         assertThat(resultado).isNotNull();
-        assertThat(resultado.getCpf()).isEqualTo(cpf);
+        assertThat(resultado.getCpf()).isEqualTo(CPF_VALIDO);
         assertThat(resultado.getNomeCompleto()).isEqualTo("Ana Paula Administradora");
         assertThat(BcryptUtil.matches("senha123", resultado.getSenha())).isTrue();
 
@@ -89,7 +90,7 @@ class ColaboradorServiceTest {
     @DisplayName("Deve lançar ValidacaoException ao criar colaborador com CPF inválido")
     void deveLancarValidacaoExceptionAoCriarColaboradorComCpfInvalido() {
         // Arrange
-        CriarColaboradorDTO dto = criarColaboradorDTO(
+        ColaboradorCreateRequest dto = criarColaboradorDTO(
                 "1234",
                 "Nome",
                 LocalDate.of(1990, 1, 1),
@@ -99,7 +100,7 @@ class ColaboradorServiceTest {
         // Act & Assert
         assertThatThrownBy(() -> colaboradorService.criarColaborador(dto))
                 .isInstanceOf(ValidacaoException.class)
-                .hasMessage("CPF inserido é inválido");
+                .hasMessage("Cpf inválido");
 
         verifyNoInteractions(repository);
     }
@@ -108,15 +109,14 @@ class ColaboradorServiceTest {
     @DisplayName("Deve lançar ValidacaoException ao criar colaborador com CPF já cadastrado")
     void deveLancarValidacaoExceptionAoCriarColaboradorComCpfDuplicado() {
         // Arrange
-        String cpf = "12345678901";
-        CriarColaboradorDTO dto = criarColaboradorDTO(
-                cpf,
+        ColaboradorCreateRequest dto = criarColaboradorDTO(
+                CPF_VALIDO,
                 "Nome",
                 LocalDate.of(1990, 1, 1),
                 LocalDate.of(2020, 1, 1)
         );
 
-        when(repository.buscarPorCpf(cpf)).thenReturn(new Colaborador());
+        when(repository.buscarPorCpf(CPF_VALIDO)).thenReturn(new Colaborador());
 
         // Act & Assert
         assertThatThrownBy(() -> colaboradorService.criarColaborador(dto))
@@ -130,11 +130,10 @@ class ColaboradorServiceTest {
     @DisplayName("Deve lançar NaoEncontradoException ao criar colaborador com nome nulo ou em branco")
     void deveLancarNaoEncontradoExceptionAoCriarComNomeInvalido() {
         // Arrange
-        String cpf = "12345678901";
-        CriarColaboradorDTO dtoNulo = criarColaboradorDTO(cpf, null, LocalDate.of(1990, 1, 1), LocalDate.of(2020, 1, 1));
-        CriarColaboradorDTO dtoEmBranco = criarColaboradorDTO(cpf, "   ", LocalDate.of(1990, 1, 1), LocalDate.of(2020, 1, 1));
+        ColaboradorCreateRequest dtoNulo = criarColaboradorDTO(CPF_VALIDO, null, LocalDate.of(1990, 1, 1), LocalDate.of(2020, 1, 1));
+        ColaboradorCreateRequest dtoEmBranco = criarColaboradorDTO(CPF_VALIDO, "   ", LocalDate.of(1990, 1, 1), LocalDate.of(2020, 1, 1));
 
-        when(repository.buscarPorCpf(cpf)).thenReturn(null);
+        when(repository.buscarPorCpf(CPF_VALIDO)).thenReturn(null);
 
         // Act & Assert
         assertThatThrownBy(() -> colaboradorService.criarColaborador(dtoNulo))
@@ -150,11 +149,10 @@ class ColaboradorServiceTest {
     @DisplayName("Deve lançar NaoEncontradoException ao criar colaborador com data de nascimento futura ou nula")
     void deveLancarNaoEncontradoExceptionAoCriarComDataNascimentoInvalida() {
         // Arrange
-        String cpf = "12345678901";
-        CriarColaboradorDTO dtoFuturo = criarColaboradorDTO(cpf, "Nome", LocalDate.now().plusDays(1), LocalDate.now());
-        CriarColaboradorDTO dtoNulo = criarColaboradorDTO(cpf, "Nome", null, LocalDate.now());
+        ColaboradorCreateRequest dtoFuturo = criarColaboradorDTO(CPF_VALIDO, "Nome", LocalDate.now().plusDays(1), LocalDate.now());
+        ColaboradorCreateRequest dtoNulo = criarColaboradorDTO(CPF_VALIDO, "Nome", null, LocalDate.now());
 
-        when(repository.buscarPorCpf(cpf)).thenReturn(null);
+        when(repository.buscarPorCpf(CPF_VALIDO)).thenReturn(null);
 
         // Act & Assert
         assertThatThrownBy(() -> colaboradorService.criarColaborador(dtoFuturo))
@@ -170,11 +168,10 @@ class ColaboradorServiceTest {
     @DisplayName("Deve lançar NaoEncontradoException ao criar colaborador com data de contratação futura ou nula")
     void deveLancarNaoEncontradoExceptionAoCriarComDataContratacaoInvalida() {
         // Arrange
-        String cpf = "12345678901";
-        CriarColaboradorDTO dtoFuturo = criarColaboradorDTO(cpf, "Nome", LocalDate.of(1990, 1, 1), LocalDate.now().plusDays(1));
-        CriarColaboradorDTO dtoNulo = criarColaboradorDTO(cpf, "Nome", LocalDate.of(1990, 1, 1), null);
+        ColaboradorCreateRequest dtoFuturo = criarColaboradorDTO(CPF_VALIDO, "Nome", LocalDate.of(1990, 1, 1), LocalDate.now().plusDays(1));
+        ColaboradorCreateRequest dtoNulo = criarColaboradorDTO(CPF_VALIDO, "Nome", LocalDate.of(1990, 1, 1), null);
 
-        when(repository.buscarPorCpf(cpf)).thenReturn(null);
+        when(repository.buscarPorCpf(CPF_VALIDO)).thenReturn(null);
 
         // Act & Assert
         assertThatThrownBy(() -> colaboradorService.criarColaborador(dtoFuturo))
@@ -190,9 +187,9 @@ class ColaboradorServiceTest {
     @DisplayName("Deve atualizar colaborador com sucesso com novo email e nova senha hasheada")
     void deveAtualizarColaboradorComNovoEmailESenha() {
         // Arrange
-        String cpf = "12345678901";
+        String cpf = CPF_VALIDO;
         Colaborador colaborador = criarColaboradorEntidade(1L, cpf);
-        AtualizarColaboradorDTO dto = new AtualizarColaboradorDTO("novo@raizdobem.org", "novaSenha456");
+        ColaboradorUpdateRequest dto = new ColaboradorUpdateRequest("novo@raizdobem.org", "novaSenha456");
 
         when(repository.buscarPorCpf(cpf)).thenReturn(colaborador);
 
@@ -200,10 +197,10 @@ class ColaboradorServiceTest {
         colaboradorService.atualizarColaborador(cpf, dto);
 
         // Assert
-        ArgumentCaptor<AtualizarColaboradorDTO> captor = ArgumentCaptor.forClass(AtualizarColaboradorDTO.class);
+        ArgumentCaptor<ColaboradorUpdateRequest> captor = ArgumentCaptor.forClass(ColaboradorUpdateRequest.class);
         verify(repository, times(1)).atualizar(eq(cpf), captor.capture());
 
-        AtualizarColaboradorDTO dtoEnviado = captor.getValue();
+        ColaboradorUpdateRequest dtoEnviado = captor.getValue();
         assertThat(dtoEnviado.email()).isEqualTo("novo@raizdobem.org");
         assertThat(BcryptUtil.matches("novaSenha456", dtoEnviado.senha())).isTrue();
     }
@@ -212,9 +209,9 @@ class ColaboradorServiceTest {
     @DisplayName("Deve manter email e senha antigos quando campos informados na atualização forem nulos ou vazios")
     void deveManterEmailESenhaAntigosQuandoCamposForemVazios() {
         // Arrange
-        String cpf = "12345678901";
+        String cpf = CPF_VALIDO;
         Colaborador colaborador = criarColaboradorEntidade(1L, cpf);
-        AtualizarColaboradorDTO dto = new AtualizarColaboradorDTO("", "  ");
+        ColaboradorUpdateRequest dto = new ColaboradorUpdateRequest("", "  ");
 
         when(repository.buscarPorCpf(cpf)).thenReturn(colaborador);
 
@@ -222,10 +219,10 @@ class ColaboradorServiceTest {
         colaboradorService.atualizarColaborador(cpf, dto);
 
         // Assert
-        ArgumentCaptor<AtualizarColaboradorDTO> captor = ArgumentCaptor.forClass(AtualizarColaboradorDTO.class);
+        ArgumentCaptor<ColaboradorUpdateRequest> captor = ArgumentCaptor.forClass(ColaboradorUpdateRequest.class);
         verify(repository, times(1)).atualizar(eq(cpf), captor.capture());
 
-        AtualizarColaboradorDTO dtoEnviado = captor.getValue();
+        ColaboradorUpdateRequest dtoEnviado = captor.getValue();
         assertThat(dtoEnviado.email()).isEqualTo(colaborador.getEmail());
         assertThat(dtoEnviado.senha()).isEqualTo(colaborador.getSenha());
     }
@@ -235,7 +232,7 @@ class ColaboradorServiceTest {
     void deveLancarNaoEncontradoExceptionAoAtualizarColaboradorInexistente() {
         // Arrange
         String cpf = "00000000000";
-        AtualizarColaboradorDTO dto = new AtualizarColaboradorDTO("email@email.com", "senha");
+        ColaboradorUpdateRequest dto = new ColaboradorUpdateRequest("email@email.com", "senha");
         when(repository.buscarPorCpf(cpf)).thenReturn(null);
 
         // Act & Assert
@@ -263,7 +260,7 @@ class ColaboradorServiceTest {
     @DisplayName("Deve exibir colaborador por CPF")
     void deveExibirColaboradorPorCpf() {
         // Arrange
-        String cpf = "12345678901";
+        String cpf = CPF_VALIDO;
         Colaborador c = criarColaboradorEntidade(1L, cpf);
         when(repository.buscarPorCpf(cpf)).thenReturn(c);
 
@@ -280,7 +277,7 @@ class ColaboradorServiceTest {
     void deveBuscarColaboradorPorId() {
         // Arrange
         long id = 5L;
-        Colaborador c = criarColaboradorEntidade(id, "12345678901");
+        Colaborador c = criarColaboradorEntidade(id, CPF_VALIDO);
         when(repository.buscarPorId(id)).thenReturn(c);
 
         // Act
@@ -295,7 +292,7 @@ class ColaboradorServiceTest {
     @DisplayName("Deve excluir colaborador por CPF")
     void deveExcluirColaboradorPorCpf() {
         // Arrange
-        String cpf = "12345678901";
+        String cpf = CPF_VALIDO;
         when(repository.excluir(cpf)).thenReturn(1L);
 
         // Act

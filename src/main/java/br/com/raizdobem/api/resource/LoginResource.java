@@ -1,6 +1,6 @@
 package br.com.raizdobem.api.resource;
 
-import br.com.raizdobem.api.dto.request.LoginDTO;
+import br.com.raizdobem.api.dto.request.LoginRequest;
 import br.com.raizdobem.api.service.LoginService;
 import jakarta.annotation.security.PermitAll;
 import jakarta.enterprise.context.RequestScoped;
@@ -30,9 +30,9 @@ public class LoginResource {
     @Path("/login")
     @PermitAll
     @Operation(summary = "Login de colaborador", description = "Realiza o login do usuário e retorna um token JWT para autenticação.")
-    public Response login(LoginDTO loginDTO) {
+    public Response login(LoginRequest loginRequest) {
         return Response.ok(Map.of(
-                "token", service.login(loginDTO), "tipo", "BearerToken"
+                "token", service.login(loginRequest), "tipo", "BearerToken"
         )).build();
     }
 }
