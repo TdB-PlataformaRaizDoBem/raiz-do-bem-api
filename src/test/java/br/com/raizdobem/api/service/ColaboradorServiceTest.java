@@ -2,6 +2,7 @@ package br.com.raizdobem.api.service;
 
 import br.com.raizdobem.api.dto.request.ColaboradorUpdateRequest;
 import br.com.raizdobem.api.dto.request.ColaboradorCreateRequest;
+import br.com.raizdobem.api.dto.response.ColaboradorResponse;
 import br.com.raizdobem.api.entity.Colaborador;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.exception.ValidacaoException;
@@ -247,13 +248,18 @@ class ColaboradorServiceTest {
     @DisplayName("Deve listar todos os colaboradores")
     void deveListarTodosOsColaboradores() {
         // Arrange
-        when(repository.listarTodos()).thenReturn(List.of(new Colaborador(), new Colaborador()));
+        Colaborador c1 = criarColaboradorEntidade(1L, CPF_VALIDO);
+        Colaborador c2 = criarColaboradorEntidade(2L, "12345678909");
+        when(repository.listarTodos()).thenReturn(List.of(c1, c2));
 
         // Act
-        List<Colaborador> lista = colaboradorService.listarTodos();
+        List<ColaboradorResponse> lista = colaboradorService.listarTodos();
 
         // Assert
         assertThat(lista).hasSize(2);
+        assertThat(lista.get(0).cpf()).isEqualTo(CPF_VALIDO);
+        assertThat(lista.get(0).nomeCompleto()).isEqualTo(c1.getNomeCompleto());
+        assertThat(lista.get(1).cpf()).isEqualTo("12345678909");
     }
 
     @Test
@@ -265,11 +271,25 @@ class ColaboradorServiceTest {
         when(repository.buscarPorCpf(cpf)).thenReturn(c);
 
         // Act
-        Colaborador resultado = colaboradorService.exibirColaborador(cpf);
+        ColaboradorResponse resultado = colaboradorService.exibirColaborador(cpf);
 
         // Assert
         assertThat(resultado).isNotNull();
-        assertThat(resultado.getCpf()).isEqualTo(cpf);
+        assertThat(resultado.cpf()).isEqualTo(cpf);
+        assertThat(resultado.nomeCompleto()).isEqualTo(c.getNomeCompleto());
+    }
+
+    @Test
+    @DisplayName("Deve lançar NaoEncontradoException ao exibir colaborador por CPF inexistente")
+    void deveLancarNaoEncontradoExceptionAoExibirColaboradorInexistente() {
+        // Arrange
+        String cpf = "00000000000";
+        when(repository.buscarPorCpf(cpf)).thenReturn(null);
+
+        // Act & Assert
+        assertThatThrownBy(() -> colaboradorService.exibirColaborador(cpf))
+                .isInstanceOf(NaoEncontradoException.class)
+                .hasMessage("Colaborador não foi encontrado!");
     }
 
     @Test

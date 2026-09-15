@@ -41,16 +41,15 @@ public class ColaboradorResource {
     @Operation(summary = "Endpoint de listagem de todos os colaboradores.")
     @RolesAllowed({"ADMIN", "COLABORADOR"})
     public Response listarTodos(){
-        List<Colaborador> colaboradores = service.listarTodos();
-        return Response.ok(colaboradores).build();
+        return Response.ok(service.listarTodos()).build();
     }
 
     @GET
     @Path("/{cpf}")
     @Operation(summary = "Endpoint que exibe um colaborador único usando o CPF.")
     @RolesAllowed({"ADMIN", "COLABORADOR"})
-    public Colaborador buscarUnico(@PathParam("cpf") String cpf){
-        return service.exibirColaborador(cpf);
+    public Response buscarColaborador(@PathParam("cpf") String cpf){
+        return Response.ok(service.exibirColaborador(cpf)).build();
     }
 
     @PUT

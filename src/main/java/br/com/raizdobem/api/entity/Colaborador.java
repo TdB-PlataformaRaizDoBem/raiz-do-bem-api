@@ -30,6 +30,5 @@ public class Colaborador {
 
     private String senha;
 
-
     private String role = "COLABORADOR";
 }

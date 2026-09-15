@@ -2,9 +2,11 @@ package br.com.raizdobem.api.service;
 
 import br.com.raizdobem.api.dto.request.ColaboradorUpdateRequest;
 import br.com.raizdobem.api.dto.request.ColaboradorCreateRequest;
+import br.com.raizdobem.api.dto.response.ColaboradorResponse;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.exception.ValidacaoException;
 import br.com.raizdobem.api.entity.Colaborador;
+import br.com.raizdobem.api.mapper.ColaboradorMapper;
 import br.com.raizdobem.api.repository.ColaboradorRepository;
 import br.com.raizdobem.api.util.CpfValidatorUtil;
 import io.quarkus.elytron.security.common.BcryptUtil;
@@ -54,11 +56,14 @@ public class ColaboradorService {
         return colaborador;
     }
 
-    public List<Colaborador> listarTodos() {
-        return repository.listarTodos();
+    public List<ColaboradorResponse> listarTodos() {
+        return ColaboradorMapper.mapeamentoParaResponse(repository.listarTodos());
     }
-    public Colaborador exibirColaborador(String cpf) {
-        return repository.buscarPorCpf(cpf);
+    public ColaboradorResponse exibirColaborador(String cpf) {
+        Colaborador colaborador = repository.buscarPorCpf(cpf);
+        if(colaborador == null)
+            throw new NaoEncontradoException("Colaborador não foi encontrado!");
+        return ColaboradorMapper.mapeamentoParaResponse(colaborador);
     }
 
     public Colaborador buscarPorId(Long id){

@@ -2,6 +2,7 @@ package br.com.raizdobem.api.resource;
 
 import br.com.raizdobem.api.dto.request.ColaboradorUpdateRequest;
 import br.com.raizdobem.api.dto.request.ColaboradorCreateRequest;
+import br.com.raizdobem.api.dto.response.ColaboradorResponse;
 import br.com.raizdobem.api.entity.Colaborador;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.service.ColaboradorService;
@@ -39,6 +40,18 @@ class ColaboradorResourceTest {
         c.setDataNascimento(LocalDate.of(1990, 5, 20));
         c.setDataContratacao(LocalDate.now());
         return c;
+    }
+
+    private ColaboradorResponse criarColaboradorResponse(Long id, String cpf) {
+        return new ColaboradorResponse(
+                id,
+                cpf,
+                "João Silva",
+                LocalDate.of(1990, 5, 20),
+                LocalDate.now(),
+                "joao@raizdobem.org",
+                "COLABORADOR"
+        );
     }
 
     @Test
@@ -90,30 +103,45 @@ class ColaboradorResourceTest {
     @DisplayName("Deve listar todos os colaboradores retornando HTTP 200")
     void deveListarTodosRetornandoStatus200() {
         // Arrange
-        when(service.listarTodos()).thenReturn(List.of(criarColaborador(1L, "12345678901")));
+        ColaboradorResponse responseDTO = criarColaboradorResponse(1L, "12345678901");
+        when(service.listarTodos()).thenReturn(List.of(responseDTO));
 
         // Act
         Response response = resource.listarTodos();
 
         // Assert
         assertThat(response.getStatus()).isEqualTo(200);
-        assertThat(response.getEntity()).isNotNull();
+        assertThat(response.getEntity()).isEqualTo(List.of(responseDTO));
     }
 
     @Test
-    @DisplayName("Deve buscar colaborador único por CPF")
+    @DisplayName("Deve buscar colaborador único por CPF retornando HTTP 200")
     void deveBuscarUnicoPorCpf() {
         // Arrange
         String cpf = "12345678901";
-        Colaborador colaborador = criarColaborador(1L, cpf);
-        when(service.exibirColaborador(cpf)).thenReturn(colaborador);
+        ColaboradorResponse responseDTO = criarColaboradorResponse(1L, cpf);
+        when(service.exibirColaborador(cpf)).thenReturn(responseDTO);
 
         // Act
-        Colaborador resultado = resource.buscarUnico(cpf);
+        Response resultado = resource.buscarColaborador(cpf);
 
         // Assert
         assertThat(resultado).isNotNull();
-        assertThat(resultado.getCpf()).isEqualTo(cpf);
+        assertThat(resultado.getStatus()).isEqualTo(200);
+        assertThat(resultado.getEntity()).isEqualTo(responseDTO);
+    }
+
+    @Test
+    @DisplayName("Deve lançar NaoEncontradoException ao buscar colaborador com CPF inexistente")
+    void deveLancarNaoEncontradoExceptionAoBuscarColaboradorInexistente() {
+        // Arrange
+        String cpf = "00000000000";
+        when(service.exibirColaborador(cpf)).thenThrow(new NaoEncontradoException("Colaborador não foi encontrado!"));
+
+        // Act & Assert
+        assertThatThrownBy(() -> resource.buscarColaborador(cpf))
+                .isInstanceOf(NaoEncontradoException.class)
+                .hasMessage("Colaborador não foi encontrado!");
     }
 
     @Test

@@ -76,4 +76,4 @@ application-local.properties
 !application-dev.properties
 
 # Docs
-prints_swagger
+prints_swagger/
