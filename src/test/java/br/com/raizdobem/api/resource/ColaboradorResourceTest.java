@@ -3,7 +3,6 @@ package br.com.raizdobem.api.resource;
 import br.com.raizdobem.api.dto.request.ColaboradorUpdateRequest;
 import br.com.raizdobem.api.dto.request.ColaboradorCreateRequest;
 import br.com.raizdobem.api.dto.response.ColaboradorResponse;
-import br.com.raizdobem.api.entity.Colaborador;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.service.ColaboradorService;
 import jakarta.ws.rs.core.Response;
@@ -31,17 +30,6 @@ class ColaboradorResourceTest {
     @InjectMocks
     private ColaboradorResource resource;
 
-    private Colaborador criarColaborador(Long id, String cpf) {
-        Colaborador c = new Colaborador();
-        c.setId(id);
-        c.setNomeCompleto("João Silva");
-        c.setCpf(cpf);
-        c.setEmail("joao@raizdobem.org");
-        c.setDataNascimento(LocalDate.of(1990, 5, 20));
-        c.setDataContratacao(LocalDate.now());
-        return c;
-    }
-
     private ColaboradorResponse criarColaboradorResponse(Long id, String cpf) {
         return new ColaboradorResponse(
                 id,
@@ -67,11 +55,11 @@ class ColaboradorResourceTest {
                 "Senha@123",
                 "COLABORADOR"
         );
-        Colaborador colaborador = criarColaborador(1L, "12345678901");
+        ColaboradorResponse colaborador = criarColaboradorResponse(1L, "12345678901");
         when(service.criarColaborador(request)).thenReturn(colaborador);
 
         // Act
-        Response response = resource.criar(request);
+        Response response = resource.criarColaborador(request);
 
         // Assert
         assertThat(response.getStatus()).isEqualTo(201);
@@ -94,7 +82,7 @@ class ColaboradorResourceTest {
         when(service.criarColaborador(request)).thenReturn(null);
 
         // Act & Assert
-        assertThatThrownBy(() -> resource.criar(request))
+        assertThatThrownBy(() -> resource.criarColaborador(request))
                 .isInstanceOf(NaoEncontradoException.class)
                 .hasMessage("Dados de colaborador inválidos.");
     }

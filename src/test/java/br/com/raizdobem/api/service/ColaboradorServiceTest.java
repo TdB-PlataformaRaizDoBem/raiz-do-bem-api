@@ -76,15 +76,19 @@ class ColaboradorServiceTest {
         when(repository.buscarPorCpf(CPF_VALIDO)).thenReturn(null);
 
         // Act
-        Colaborador resultado = colaboradorService.criarColaborador(dto);
+        ColaboradorResponse resultado = colaboradorService.criarColaborador(dto);
 
         // Assert
         assertThat(resultado).isNotNull();
-        assertThat(resultado.getCpf()).isEqualTo(CPF_VALIDO);
-        assertThat(resultado.getNomeCompleto()).isEqualTo("Ana Paula Administradora");
-        assertThat(BcryptUtil.matches("senha123", resultado.getSenha())).isTrue();
+        assertThat(resultado.cpf()).isEqualTo(CPF_VALIDO);
+        assertThat(resultado.nomeCompleto()).isEqualTo("Ana Paula Administradora");
+        assertThat(resultado.email()).isEqualTo("admin@raizdobem.org");
+        assertThat(resultado.role()).isEqualTo("ADMIN");
 
-        verify(repository, times(1)).criar(any(Colaborador.class));
+        ArgumentCaptor<Colaborador> captor = ArgumentCaptor.forClass(Colaborador.class);
+        verify(repository, times(1)).criar(captor.capture());
+        Colaborador salvo = captor.getValue();
+        assertThat(BcryptUtil.matches("senha123", salvo.getSenha())).isTrue();
     }
 
     @Test

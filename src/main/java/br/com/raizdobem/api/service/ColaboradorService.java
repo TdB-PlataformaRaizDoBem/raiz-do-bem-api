@@ -23,7 +23,7 @@ public class ColaboradorService {
     ColaboradorRepository repository;
 
     @Transactional
-    public Colaborador criarColaborador(ColaboradorCreateRequest dto) {
+    public ColaboradorResponse criarColaborador(ColaboradorCreateRequest dto) {
         if(!CpfValidatorUtil.cpfValido(dto.cpf())){
             throw new ValidacaoException("Cpf inválido");
         }
@@ -53,7 +53,8 @@ public class ColaboradorService {
         colaborador.setRole(dto.role());
 
         repository.criar(colaborador);
-        return colaborador;
+
+        return ColaboradorMapper.mapeamentoParaResponse(colaborador);
     }
 
     public List<ColaboradorResponse> listarTodos() {

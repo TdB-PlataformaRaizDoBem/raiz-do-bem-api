@@ -2,8 +2,8 @@ package br.com.raizdobem.api.resource;
 
 import br.com.raizdobem.api.dto.request.ColaboradorUpdateRequest;
 import br.com.raizdobem.api.dto.request.ColaboradorCreateRequest;
+import br.com.raizdobem.api.dto.response.ColaboradorResponse;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
-import br.com.raizdobem.api.entity.Colaborador;
 import br.com.raizdobem.api.service.ColaboradorService;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.RequestScoped;
@@ -29,8 +29,8 @@ public class ColaboradorResource {
     @POST
     @Operation(summary = "Endpoint de criação de um colaborador da ONG.")
     @RolesAllowed("ADMIN")
-    public Response criar(@Valid ColaboradorCreateRequest request){
-        Colaborador colaborador = service.criarColaborador(request);
+    public Response criarColaborador(@Valid ColaboradorCreateRequest request){
+        ColaboradorResponse colaborador = service.criarColaborador(request);
         if(colaborador == null){
             throw new NaoEncontradoException("Dados de colaborador inválidos.");
         }
