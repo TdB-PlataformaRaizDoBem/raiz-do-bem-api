@@ -83,7 +83,7 @@ Autenticação: POST /auth/login → JWT com role → @RolesAllowed nos endpoint
 
 **DTOs como Java Records** — imutabilidade e concisão na camada de transporte, com Bean Validation diretamente nas anotações.
 
-**Tratamento centralizado de erros** — `ExceptionsMapperGlobal` captura todas as exceções customizadas e retorna `ErroDTO` padronizado. Hierarquia bem definida: `NaoEncontradoException (404)`, `ValidacaoException (422)`, `RegraNegocioException (409)`, `RequisicaoInvalidaException (400)`.
+**Tratamento centralizado de erros** — `ExceptionsMapperGlobal` captura todas as exceções customizadas e retorna `ErroResponse` padronizado. Hierarquia bem definida: `NaoEncontradoException (404)`, `ValidacaoException (422)`, `RegraNegocioException (409)`, `RequisicaoInvalidaException (400)`.
 
 **Segurança bem estruturada** — JWT com RSA, bcrypt nas senhas, roles granulares por endpoint, chaves externas via variáveis de ambiente.
 

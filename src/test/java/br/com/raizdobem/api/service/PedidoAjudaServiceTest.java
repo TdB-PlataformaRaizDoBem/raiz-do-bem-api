@@ -3,7 +3,7 @@ package br.com.raizdobem.api.service;
 import br.com.raizdobem.api.dto.request.PedidoAjudaUpdateRequest;
 import br.com.raizdobem.api.dto.request.PedidoAjudaCreateRequest;
 import br.com.raizdobem.api.dto.request.EnderecoRequest;
-import br.com.raizdobem.api.dto.response.PedidoAjudaDTO;
+import br.com.raizdobem.api.dto.response.PedidoAjudaResponse;
 import br.com.raizdobem.api.entity.*;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.exception.RegraNegocioException;
@@ -106,13 +106,12 @@ class PedidoAjudaServiceTest {
         when(enderecoService.criarComoSuporte(dto.endereco(), TipoEndereco.RESIDENCIAL)).thenReturn(endereco);
 
         // Act
-        PedidoAjuda resultado = pedidoAjudaService.criar(dto);
+        PedidoAjudaResponse resultado = pedidoAjudaService.criar(dto);
 
         // Assert
         assertThat(resultado).isNotNull();
-        assertThat(resultado.getStatus()).isEqualTo(StatusPedido.PENDENTE);
-        assertThat(resultado.getSexo()).isEqualTo(Sexo.F);
-        assertThat(resultado.getEndereco()).isEqualTo(endereco);
+        assertThat(resultado.status()).isEqualTo(StatusPedido.PENDENTE);
+        assertThat(resultado.endereco()).contains("Praça da Sé");
         verify(repository, times(1)).criar(any(PedidoAjuda.class));
     }
 
@@ -126,12 +125,11 @@ class PedidoAjudaServiceTest {
         when(enderecoService.criarComoSuporte(dto.endereco(), TipoEndereco.RESIDENCIAL)).thenReturn(endereco);
 
         // Act
-        PedidoAjuda resultado = pedidoAjudaService.criar(dto);
+        PedidoAjudaResponse resultado = pedidoAjudaService.criar(dto);
 
         // Assert
         assertThat(resultado).isNotNull();
-        assertThat(resultado.getStatus()).isEqualTo(StatusPedido.PENDENTE);
-        assertThat(resultado.getSexo()).isEqualTo(Sexo.M);
+        assertThat(resultado.status()).isEqualTo(StatusPedido.PENDENTE);
         verify(repository, times(1)).criar(any(PedidoAjuda.class));
     }
 
@@ -145,11 +143,11 @@ class PedidoAjudaServiceTest {
         when(enderecoService.criarComoSuporte(dto.endereco(), TipoEndereco.RESIDENCIAL)).thenReturn(endereco);
 
         // Act
-        PedidoAjuda resultado = pedidoAjudaService.criar(dto);
+        PedidoAjudaResponse resultado = pedidoAjudaService.criar(dto);
 
         // Assert
         assertThat(resultado).isNotNull();
-        assertThat(resultado.getStatus()).isEqualTo(StatusPedido.REJEITADO);
+        assertThat(resultado.status()).isEqualTo(StatusPedido.REJEITADO);
         verify(repository, times(1)).criar(any(PedidoAjuda.class));
     }
 
@@ -221,7 +219,7 @@ class PedidoAjudaServiceTest {
         when(dentistaService.buscarEntidadePorId(dentistaId)).thenReturn(coordenador);
 
         // Act
-        PedidoAjudaDTO resultado = pedidoAjudaService.processarPedido(pedidoId, dto);
+        PedidoAjudaResponse resultado = pedidoAjudaService.processarPedido(pedidoId, dto);
 
         // Assert
         assertThat(resultado).isNotNull();
@@ -241,7 +239,7 @@ class PedidoAjudaServiceTest {
         when(repository.findById(pedidoId)).thenReturn(pedido);
 
         // Act
-        PedidoAjudaDTO resultado = pedidoAjudaService.processarPedido(pedidoId, dto);
+        PedidoAjudaResponse resultado = pedidoAjudaService.processarPedido(pedidoId, dto);
 
         // Assert
         assertThat(resultado).isNotNull();
@@ -348,7 +346,7 @@ class PedidoAjudaServiceTest {
         when(repository.buscarPorCpf(cpf)).thenReturn(pedido);
 
         // Act
-        PedidoAjudaDTO resultado = pedidoAjudaService.buscarPorCpf(cpf);
+        PedidoAjudaResponse resultado = pedidoAjudaService.buscarPorCpf(cpf);
 
         // Assert
         assertThat(resultado).isNotNull();
@@ -378,7 +376,7 @@ class PedidoAjudaServiceTest {
         when(repository.listarTodos()).thenReturn(List.of(p1, p2));
 
         // Act
-        List<PedidoAjudaDTO> resultado = pedidoAjudaService.listarTodos();
+        List<PedidoAjudaResponse> resultado = pedidoAjudaService.listarTodos();
 
         // Assert
         assertThat(resultado).hasSize(2);
@@ -395,7 +393,7 @@ class PedidoAjudaServiceTest {
         when(repository.listarPorData(hoje)).thenReturn(List.of(p1));
 
         // Act
-        List<PedidoAjudaDTO> resultado = pedidoAjudaService.listarPorData(hoje);
+        List<PedidoAjudaResponse> resultado = pedidoAjudaService.listarPorData(hoje);
 
         // Assert
         assertThat(resultado).hasSize(1);

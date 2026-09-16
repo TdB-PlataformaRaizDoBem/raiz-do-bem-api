@@ -16,7 +16,6 @@ import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
-import java.util.List;
 
 @RequestScoped
 @Path("/colaborador")
@@ -49,7 +48,7 @@ public class ColaboradorResource {
     @Operation(summary = "Endpoint que exibe um colaborador único usando o CPF.")
     @RolesAllowed({"ADMIN", "COLABORADOR"})
     public Response buscarColaborador(@PathParam("cpf") String cpf){
-        return Response.ok(service.exibirColaborador(cpf)).build();
+        return Response.ok(service.exibirColaboradorPorCpf(cpf)).build();
     }
 
     @PUT

@@ -35,4 +35,9 @@ public class Atendimento {
     @JoinColumn(name = "id_colaborador")
     private Colaborador colaborador;
 
+    public Atendimento(String prontuario, String cpfBeneficiario) {
+        this.prontuario = prontuario;
+        this.beneficiario = new Beneficiario();
+        this.beneficiario.setCpf(cpfBeneficiario);
+    }
 }

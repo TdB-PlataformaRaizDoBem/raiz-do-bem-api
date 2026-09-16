@@ -268,14 +268,14 @@ class ColaboradorServiceTest {
 
     @Test
     @DisplayName("Deve exibir colaborador por CPF")
-    void deveExibirColaboradorPorCpf() {
+    void deveExibirColaboradorPorCpfPorCpf() {
         // Arrange
         String cpf = CPF_VALIDO;
         Colaborador c = criarColaboradorEntidade(1L, cpf);
         when(repository.buscarPorCpf(cpf)).thenReturn(c);
 
         // Act
-        ColaboradorResponse resultado = colaboradorService.exibirColaborador(cpf);
+        ColaboradorResponse resultado = colaboradorService.exibirColaboradorPorCpf(cpf);
 
         // Assert
         assertThat(resultado).isNotNull();
@@ -285,13 +285,13 @@ class ColaboradorServiceTest {
 
     @Test
     @DisplayName("Deve lançar NaoEncontradoException ao exibir colaborador por CPF inexistente")
-    void deveLancarNaoEncontradoExceptionAoExibirColaboradorInexistente() {
+    void deveLancarNaoEncontradoExceptionAoExibirColaboradorPorCpfInexistente() {
         // Arrange
         String cpf = "00000000000";
         when(repository.buscarPorCpf(cpf)).thenReturn(null);
 
         // Act & Assert
-        assertThatThrownBy(() -> colaboradorService.exibirColaborador(cpf))
+        assertThatThrownBy(() -> colaboradorService.exibirColaboradorPorCpf(cpf))
                 .isInstanceOf(NaoEncontradoException.class)
                 .hasMessage("Colaborador não foi encontrado!");
     }

@@ -1,11 +1,12 @@
 package br.com.raizdobem.api.mapper;
 
+import br.com.raizdobem.api.dto.request.AtendimentoCreateRequest;
 import br.com.raizdobem.api.dto.response.AtendimentoResponse;
 import br.com.raizdobem.api.entity.Atendimento;
 
 import java.util.List;
 
-public class AtendimentoMapper {
+public final class AtendimentoMapper {
     public static AtendimentoResponse mapeamentoAtendimento(Atendimento atendimento){
         if(atendimento == null){
             return null;
@@ -32,8 +33,10 @@ public class AtendimentoMapper {
         if(atendimentos == null)
             return null;
 
-        return atendimentos.stream()
-                .map(AtendimentoMapper :: mapeamentoAtendimento)
-                .toList();
+        return atendimentos.stream().map(AtendimentoMapper::mapeamentoAtendimento).toList();
+    }
+
+    public static Atendimento mapeamentoParaEntidade(AtendimentoCreateRequest request){
+        return new Atendimento(request.prontuario(), request.cpfBeneficiario());
     }
 }

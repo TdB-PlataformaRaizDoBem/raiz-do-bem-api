@@ -2,8 +2,8 @@ package br.com.raizdobem.api.resource;
 
 import br.com.raizdobem.api.dto.request.BeneficiarioUpdateRequest;
 import br.com.raizdobem.api.dto.request.BeneficiarioCreateRequest;
-import br.com.raizdobem.api.dto.response.BeneficiarioDTO;
-import br.com.raizdobem.api.dto.response.EnderecoDTO;
+import br.com.raizdobem.api.dto.response.BeneficiarioResponse;
+import br.com.raizdobem.api.dto.response.EnderecoResponse;
 import br.com.raizdobem.api.dto.response.PedidoAjudaResumidoDTO;
 import br.com.raizdobem.api.exception.RequisicaoInvalidaException;
 import br.com.raizdobem.api.service.BeneficiarioService;
@@ -32,8 +32,8 @@ class BeneficiarioResourceTest {
     @InjectMocks
     private BeneficiarioResource resource;
 
-    private BeneficiarioDTO criarDTO(Long id, String cpf) {
-        return new BeneficiarioDTO(
+    private BeneficiarioResponse criarDTO(Long id, String cpf) {
+        return new BeneficiarioResponse(
                 id,
                 cpf,
                 "Maria Joana Silva",
@@ -42,7 +42,7 @@ class BeneficiarioResourceTest {
                 "maria@email.com",
                 new PedidoAjudaResumidoDTO(1L, "Dra. Dentista"),
                 "Sorriso Criança",
-                new EnderecoDTO(1L, "Praça da Sé", "01001000", "100", "Sé", "São Paulo", "SP", "RESIDENCIAL")
+                new EnderecoResponse(1L, "Praça da Sé", "01001000", "100", "Sé", "São Paulo", "SP", "RESIDENCIAL")
         );
     }
 
@@ -65,7 +65,7 @@ class BeneficiarioResourceTest {
     void deveCriarBeneficiarioRetornandoStatus201() {
         // Arrange
         BeneficiarioCreateRequest request = new BeneficiarioCreateRequest(10L, 1L);
-        BeneficiarioDTO responseDTO = criarDTO(1L, "12345678901");
+        BeneficiarioResponse responseDTO = criarDTO(1L, "12345678901");
         when(service.criarBeneficiario(request)).thenReturn(responseDTO);
 
         // Act
@@ -81,7 +81,7 @@ class BeneficiarioResourceTest {
     void deveBuscarPorCpfRetornandoStatus200() {
         // Arrange
         String cpf = "12345678901";
-        BeneficiarioDTO dto = criarDTO(1L, cpf);
+        BeneficiarioResponse dto = criarDTO(1L, cpf);
         when(service.buscarPorCpf(cpf)).thenReturn(dto);
 
         // Act
@@ -124,7 +124,7 @@ class BeneficiarioResourceTest {
     @DisplayName("Deve exportar beneficiários em formato CSV com headers corretos")
     void deveExportarCsvComSucesso() {
         // Arrange
-        when(service.listarParaExportacao()).thenReturn(List.of(criarDTO(1L, "12345678901")));
+        when(service.listarTodos()).thenReturn(List.of(criarDTO(1L, "12345678901")));
 
         // Act
         Response response = resource.exportarCsv();
@@ -141,7 +141,7 @@ class BeneficiarioResourceTest {
         // Arrange
         String cpf = "12345678901";
         BeneficiarioUpdateRequest dto = new BeneficiarioUpdateRequest("11999998888", "novo@email.com", null);
-        BeneficiarioDTO atualizado = criarDTO(1L, cpf);
+        BeneficiarioResponse atualizado = criarDTO(1L, cpf);
 
         when(service.atualizar(cpf, dto)).thenReturn(atualizado);
 

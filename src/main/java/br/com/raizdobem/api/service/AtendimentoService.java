@@ -3,13 +3,14 @@ package br.com.raizdobem.api.service;
 import br.com.raizdobem.api.dto.request.AtendimentoUpdateRequest;
 import br.com.raizdobem.api.dto.request.AtendimentoCreateRequest;
 import br.com.raizdobem.api.dto.response.AtendimentoResponse;
-import br.com.raizdobem.api.dto.response.BeneficiarioDTO;
-import br.com.raizdobem.api.dto.response.DentistaDTO;
+import br.com.raizdobem.api.dto.response.BeneficiarioResponse;
+import br.com.raizdobem.api.dto.response.DentistaResponse;
 import br.com.raizdobem.api.entity.Beneficiario;
 import br.com.raizdobem.api.entity.Colaborador;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.entity.Atendimento;
 import br.com.raizdobem.api.entity.Dentista;
+import br.com.raizdobem.api.mapper.AtendimentoMapper;
 import br.com.raizdobem.api.mapper.BeneficiarioMapper;
 import br.com.raizdobem.api.repository.AtendimentoRepository;
 import br.com.raizdobem.api.repository.BeneficiarioRepository;
@@ -47,17 +48,15 @@ public class AtendimentoService {
         if(beneficiario == null)
             throw new NaoEncontradoException("Beneficiário não foi encontrado.");
 
-        BeneficiarioDTO beneficiarioDTO = BeneficiarioMapper.mapeamentoBeneficiario(beneficiario);
+        BeneficiarioResponse beneficiarioResponse = BeneficiarioMapper.mapeamentoBeneficiario(beneficiario);
 
-        DentistaDTO dentistaDTO = atendimentoMatchService.melhorMatchDentista(beneficiarioDTO);
-        Dentista dentista = dentistaService.buscarEntidadePorId(dentistaDTO.id());
+        DentistaResponse dentistaResponse = atendimentoMatchService.melhorMatchDentista(beneficiarioResponse);
+        Dentista dentista = dentistaService.buscarEntidadePorId(dentistaResponse.id());
         if(dentista == null)
             throw new NaoEncontradoException("Dentista não foi encontrado.");
 
-        Atendimento atendimento = new Atendimento();
+        Atendimento atendimento = AtendimentoMapper.mapeamentoParaEntidade(dto);
 
-        atendimento.setProntuario(dto.prontuario());
-        atendimento.setDataInicial(LocalDate.now());
         atendimento.setBeneficiario(beneficiario);
         atendimento.setDentista(dentista);
 
@@ -101,20 +100,4 @@ public class AtendimentoService {
         return repository.excluir(id);
     }
 
-    @Transactional
-    public List<AtendimentoResponse> listarParaExportacao() {
-        return listarAtendimentos().stream()
-                .map(a -> new AtendimentoResponse(
-                        a.id(),
-                        a.prontuario(),
-                        a.beneficiario() != null ? a.beneficiario() : "BENEFICIÁRIO NÃO ENCONTRADO",
-                        a.dentista() != null ? a.dentista() : "DENTISTA NÃO ENCONTRADO",
-                        a.contatoDentista(),
-                        a.emailDentista(),
-                        a.enderecoDentista(),
-                        a.dataInicial(),
-                        a.dataFim() != null ? a.dataFim() : "NAO FINALIZADO"
-                ))
-                .collect(Collectors.toList());
-    }
 }

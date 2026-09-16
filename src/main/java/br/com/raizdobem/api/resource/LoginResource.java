@@ -31,8 +31,7 @@ public class LoginResource {
     @PermitAll
     @Operation(summary = "Login de colaborador", description = "Realiza o login do usuário e retorna um token JWT para autenticação.")
     public Response login(LoginRequest loginRequest) {
-        return Response.ok(Map.of(
-                "token", service.login(loginRequest), "tipo", "BearerToken"
+        return Response.ok(Map.of("token", service.login(loginRequest), "tipo", "BearerToken"
         )).build();
     }
 }

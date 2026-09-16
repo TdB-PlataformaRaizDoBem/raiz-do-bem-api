@@ -1,7 +1,8 @@
 package br.com.raizdobem.api.resource;
 
 import br.com.raizdobem.api.dto.external.ViaCepDTO;
-import br.com.raizdobem.api.dto.request.EntradaEnderecoCompletoDTO;
+import br.com.raizdobem.api.dto.request.EnderecoCompletoRequest;
+import br.com.raizdobem.api.dto.response.EnderecoResponse;
 import br.com.raizdobem.api.entity.Endereco;
 import br.com.raizdobem.api.entity.TipoEndereco;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
@@ -43,11 +44,24 @@ class EnderecoResourceTest {
         return e;
     }
 
+    private EnderecoResponse criarEnderecoResponse(Long id) {
+        return new EnderecoResponse(
+                id,
+                "Praça da Sé",
+                "01001000",
+                "100",
+                "Sé",
+                "São Paulo",
+                "SP",
+                "RESIDENCIAL"
+        );
+    }
+
     @Test
     @DisplayName("Deve criar endereço com sucesso e retornar HTTP 201 Created")
     void deveCriarEnderecoComSucesso() {
         // Arrange
-        EntradaEnderecoCompletoDTO request = new EntradaEnderecoCompletoDTO("01001000", "100", "RESIDENCIAL");
+        EnderecoCompletoRequest request = new EnderecoCompletoRequest("01001000", "100", "RESIDENCIAL");
         Endereco endereco = criarEndereco(1L);
         when(service.criar(request)).thenReturn(endereco);
 
@@ -63,7 +77,7 @@ class EnderecoResourceTest {
     @DisplayName("Deve lançar NaoEncontradoException ao criar com tipo de endereço nulo")
     void deveLancarNaoEncontradoExceptionQuandoTipoEnderecoForNulo() {
         // Arrange
-        EntradaEnderecoCompletoDTO request = new EntradaEnderecoCompletoDTO("01001000", "100", "INVALIDO");
+        EnderecoCompletoRequest request = new EnderecoCompletoRequest("01001000", "100", "INVALIDO");
         Endereco endereco = new Endereco();
         endereco.setTipoEndereco(null);
         when(service.criar(request)).thenReturn(endereco);
@@ -78,7 +92,7 @@ class EnderecoResourceTest {
     @DisplayName("Deve lançar NaoEncontradoException ao criar quando CEP for vazio")
     void deveLancarNaoEncontradoExceptionQuandoCepForVazio() {
         // Arrange
-        EntradaEnderecoCompletoDTO request = new EntradaEnderecoCompletoDTO("", "100", "RESIDENCIAL");
+        EnderecoCompletoRequest request = new EnderecoCompletoRequest("", "100", "RESIDENCIAL");
         Endereco endereco = new Endereco();
         endereco.setTipoEndereco(TipoEndereco.RESIDENCIAL);
         when(service.criar(request)).thenReturn(endereco);
@@ -93,7 +107,7 @@ class EnderecoResourceTest {
     @DisplayName("Deve listar todos os endereços retornando HTTP 200")
     void deveListarTodosRetornandoStatus200() {
         // Arrange
-        when(service.listarTodos()).thenReturn(List.of(criarEndereco(1L)));
+        when(service.listarTodos()).thenReturn(List.of(criarEnderecoResponse(1L)));
 
         // Act
         Response response = resource.listarTodos();
@@ -107,7 +121,7 @@ class EnderecoResourceTest {
     @DisplayName("Deve listar endereços por cidade retornando HTTP 200")
     void deveListarPorCidadeRetornandoStatus200() {
         // Arrange
-        when(service.listarPorCidades("Campinas")).thenReturn(List.of(criarEndereco(1L)));
+        when(service.listarPorCidades("Campinas")).thenReturn(List.of(criarEnderecoResponse(1L)));
 
         // Act
         Response response = resource.listarPorCidade("Campinas");
@@ -133,7 +147,7 @@ class EnderecoResourceTest {
     @DisplayName("Deve buscar endereço por ID retornando HTTP 200")
     void deveBuscarPorIdRetornandoStatus200() {
         // Arrange
-        Endereco endereco = criarEndereco(10L);
+        EnderecoResponse endereco = criarEnderecoResponse(10L);
         when(service.buscaPorId(10L)).thenReturn(endereco);
 
         // Act
@@ -178,7 +192,7 @@ class EnderecoResourceTest {
     void deveAtualizarEnderecoRetornandoStatus200() {
         // Arrange
         long id = 1L;
-        EntradaEnderecoCompletoDTO request = new EntradaEnderecoCompletoDTO("01001000", "200", "RESIDENCIAL");
+        EnderecoCompletoRequest request = new EnderecoCompletoRequest("01001000", "200", "RESIDENCIAL");
         Endereco atualizado = criarEndereco(id);
         atualizado.setNumero("200");
         when(service.atualizarEndereco(id, request)).thenReturn(atualizado);

@@ -1,19 +1,19 @@
 package br.com.raizdobem.api.mapper;
 
-import br.com.raizdobem.api.dto.response.BeneficiarioDTO;
-import br.com.raizdobem.api.dto.response.EnderecoDTO;
+import br.com.raizdobem.api.dto.response.BeneficiarioResponse;
+import br.com.raizdobem.api.dto.response.EnderecoResponse;
 import br.com.raizdobem.api.dto.response.PedidoAjudaResumidoDTO;
 import br.com.raizdobem.api.entity.Beneficiario;
 
 import java.util.List;
 
 public final class BeneficiarioMapper {
-    public static BeneficiarioDTO mapeamentoBeneficiario(Beneficiario beneficiario) {
+    public static BeneficiarioResponse mapeamentoBeneficiario(Beneficiario beneficiario) {
         if (beneficiario == null) {
             return null;
         }
 
-        return new BeneficiarioDTO(
+        return new BeneficiarioResponse(
                 beneficiario.getId(),
                 beneficiario.getCpf(),
                 beneficiario.getNomeCompleto(),
@@ -25,7 +25,7 @@ public final class BeneficiarioMapper {
                         beneficiario.getPedido().getDentista() != null ? beneficiario.getPedido().getDentista().getNomeCompleto() : null
                 ) : null,
                 beneficiario.getProgramaSocial() != null ? beneficiario.getProgramaSocial().getPrograma() : "N/A",
-                beneficiario.getEndereco() != null ? new EnderecoDTO(
+                beneficiario.getEndereco() != null ? new EnderecoResponse(
                         beneficiario.getEndereco().getId(),
                         beneficiario.getEndereco().getLogradouro(),
                         beneficiario.getEndereco().getCep(),
@@ -38,12 +38,10 @@ public final class BeneficiarioMapper {
         );
     }
 
-    public static List<BeneficiarioDTO> mapeamentoBeneficiarios(List<Beneficiario> beneficiarios){
+    public static List<BeneficiarioResponse> mapeamentoBeneficiarios(List<Beneficiario> beneficiarios){
         if(beneficiarios == null)
             return null;
 
-        return beneficiarios.stream()
-                .map(BeneficiarioMapper ::mapeamentoBeneficiario)
-                .toList();
+        return beneficiarios.stream().map(BeneficiarioMapper::mapeamentoBeneficiario).toList();
     }
 }

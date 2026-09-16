@@ -3,7 +3,7 @@ package br.com.raizdobem.api.service;
 import br.com.raizdobem.api.dto.request.BeneficiarioUpdateRequest;
 import br.com.raizdobem.api.dto.request.BeneficiarioCreateRequest;
 import br.com.raizdobem.api.dto.request.EnderecoRequest;
-import br.com.raizdobem.api.dto.response.BeneficiarioDTO;
+import br.com.raizdobem.api.dto.response.BeneficiarioResponse;
 import br.com.raizdobem.api.entity.*;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.exception.RequisicaoInvalidaException;
@@ -104,7 +104,7 @@ class BeneficiarioServiceTest {
         when(programaService.buscarPorId(1L)).thenReturn(programaSocial);
 
         // Act
-        BeneficiarioDTO resultado = beneficiarioService.criarBeneficiario(dto);
+        BeneficiarioResponse resultado = beneficiarioService.criarBeneficiario(dto);
 
         // Assert
         assertThat(resultado).isNotNull();
@@ -185,7 +185,7 @@ class BeneficiarioServiceTest {
         when(repository.buscarPorCpf(cpf)).thenReturn(beneficiario);
 
         // Act
-        BeneficiarioDTO resultado = beneficiarioService.buscarPorCpf(cpf);
+        BeneficiarioResponse resultado = beneficiarioService.buscarPorCpf(cpf);
 
         // Assert
         assertThat(resultado).isNotNull();
@@ -229,7 +229,7 @@ class BeneficiarioServiceTest {
         when(repository.buscarPorId(id)).thenReturn(beneficiario);
 
         // Act
-        BeneficiarioDTO resultado = beneficiarioService.buscarPorId(id);
+        BeneficiarioResponse resultado = beneficiarioService.buscarPorId(id);
 
         // Assert
         assertThat(resultado).isNotNull();
@@ -258,7 +258,7 @@ class BeneficiarioServiceTest {
         when(repository.listarTodos()).thenReturn(List.of(b1, b2));
 
         // Act
-        List<BeneficiarioDTO> lista = beneficiarioService.listarTodos();
+        List<BeneficiarioResponse> lista = beneficiarioService.listarTodos();
 
         // Assert
         assertThat(lista).hasSize(2);
@@ -272,7 +272,7 @@ class BeneficiarioServiceTest {
         when(repository.listarPorCidade("São Paulo")).thenReturn(List.of(b));
 
         // Act
-        List<BeneficiarioDTO> lista = beneficiarioService.listarPorCidade("São Paulo");
+        List<BeneficiarioResponse> lista = beneficiarioService.listarPorCidade("São Paulo");
 
         // Assert
         assertThat(lista).hasSize(1);
@@ -286,7 +286,7 @@ class BeneficiarioServiceTest {
         when(repository.listarPorPrograma(1L)).thenReturn(List.of(b));
 
         // Act
-        List<BeneficiarioDTO> lista = beneficiarioService.listarPorPrograma(1L);
+        List<BeneficiarioResponse> lista = beneficiarioService.listarPorPrograma(1L);
 
         // Assert
         assertThat(lista).hasSize(1);
@@ -304,7 +304,7 @@ class BeneficiarioServiceTest {
         when(repository.atualizar(cpf, request)).thenReturn(beneficiario);
 
         // Act
-        BeneficiarioDTO resultado = beneficiarioService.atualizar(cpf, request);
+        BeneficiarioResponse resultado = beneficiarioService.atualizar(cpf, request);
 
         // Assert
         assertThat(resultado).isNotNull();
@@ -360,20 +360,5 @@ class BeneficiarioServiceTest {
                 .hasMessage("CPF inválido.");
 
         verifyNoInteractions(repository);
-    }
-
-    @Test
-    @DisplayName("Deve listar beneficiários para exportação")
-    void deveListarParaExportacao() {
-        // Arrange
-        Beneficiario b = criarBeneficiario(1L);
-        when(repository.listarTodos()).thenReturn(List.of(b));
-
-        // Act
-        List<BeneficiarioDTO> exportacao = beneficiarioService.listarParaExportacao();
-
-        // Assert
-        assertThat(exportacao).hasSize(1);
-        assertThat(exportacao.getFirst().id()).isEqualTo(1L);
     }
 }

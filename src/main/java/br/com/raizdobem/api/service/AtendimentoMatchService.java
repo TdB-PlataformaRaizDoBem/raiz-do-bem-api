@@ -1,8 +1,8 @@
 package br.com.raizdobem.api.service;
 
-import br.com.raizdobem.api.dto.response.BeneficiarioDTO;
-import br.com.raizdobem.api.dto.response.DentistaDTO;
-import br.com.raizdobem.api.dto.response.EnderecoDTO;
+import br.com.raizdobem.api.dto.response.BeneficiarioResponse;
+import br.com.raizdobem.api.dto.response.DentistaResponse;
+import br.com.raizdobem.api.dto.response.EnderecoResponse;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.exception.ValidacaoException;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -18,17 +18,17 @@ public class AtendimentoMatchService {
     @Inject
     GoogleMapsService googleMapsService;
 
-    public DentistaDTO melhorMatchDentista(BeneficiarioDTO beneficiarioDTO){
-        List<DentistaDTO> dentistas = dentistaService.listarDisponiveis();
+    public DentistaResponse melhorMatchDentista(BeneficiarioResponse beneficiarioResponse){
+        List<DentistaResponse> dentistas = dentistaService.listarDisponiveis();
 
         if(dentistas.isEmpty())
             throw new NaoEncontradoException("Nenhum dentista disponível para vincular ao atendimento.");
 
-        String enderecoBeneficiario = montarEndereco(beneficiarioDTO.endereco());
+        String enderecoBeneficiario = montarEndereco(beneficiarioResponse.endereco());
         return googleMapsService.calcularDistanciaProximidade(enderecoBeneficiario, dentistas);
     }
 
-    public static String montarEndereco(EnderecoDTO dto){
+    public static String montarEndereco(EnderecoResponse dto){
         if (dto == null)
             throw new ValidacaoException("Endereço do beneficiário é obrigatório para calcular a proximidade com os dentistas.");
 

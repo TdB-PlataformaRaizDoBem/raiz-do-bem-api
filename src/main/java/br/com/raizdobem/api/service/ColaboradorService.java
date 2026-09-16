@@ -60,7 +60,8 @@ public class ColaboradorService {
     public List<ColaboradorResponse> listarTodos() {
         return ColaboradorMapper.mapeamentoParaResponse(repository.listarTodos());
     }
-    public ColaboradorResponse exibirColaborador(String cpf) {
+
+    public ColaboradorResponse exibirColaboradorPorCpf(String cpf) {
         Colaborador colaborador = repository.buscarPorCpf(cpf);
         if(colaborador == null)
             throw new NaoEncontradoException("Colaborador não foi encontrado!");

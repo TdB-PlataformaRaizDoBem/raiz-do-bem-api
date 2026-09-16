@@ -9,12 +9,12 @@ import java.util.stream.Collectors;
 
 public class CsvUtil {
     private static final String formatacaoUtf8 = "\uFEFF";
-    public static String gerarCsvDentistas(List<DentistaDTO> dentistas){
+    public static String gerarCsvDentistas(List<DentistaResponse> dentistas){
         StringBuilder csv = new StringBuilder();
         csv.append(formatacaoUtf8);
         csv.append("ID,CRO,CPF,Nome Completo,Sexo,Email,Telefone,Categoria,Disponível,Especialidade,ProgramasSociais,Logradouro,Cidade,Estado\n");
 
-        for(DentistaDTO dentista : dentistas){
+        for(DentistaResponse dentista : dentistas){
             csv.append(dentista.id()).append(",");
             csv.append(dentista.croDentista()).append(",");
             csv.append(dentista.cpf()).append(",");
@@ -53,12 +53,12 @@ public class CsvUtil {
         return csv.toString();
     }
 
-    public static String gerarCsvBeneficiarios(List<BeneficiarioDTO> beneficiarios){
+    public static String gerarCsvBeneficiarios(List<BeneficiarioResponse> beneficiarios){
         StringBuilder csv = new StringBuilder();
         csv.append(formatacaoUtf8);
         csv.append("ID,CPF,Nome Completo,Data de Nascimento,Telefone,Email,IdPedidoAjuda,ProgramaSocial,Logradouro,Número,Cidade,Estado\n");
 
-        for(BeneficiarioDTO b : beneficiarios){
+        for(BeneficiarioResponse b : beneficiarios){
             csv.append(b.id()).append(",");
             csv.append(b.cpf()).append(",");
             csv.append(b.nomeCompleto()).append(",");

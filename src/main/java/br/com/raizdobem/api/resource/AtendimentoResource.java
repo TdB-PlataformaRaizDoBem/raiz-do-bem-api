@@ -36,8 +36,7 @@ public class AtendimentoResource {
     @Operation(summary = "Endpoint de listagem dos atendimentos.")
     @RolesAllowed({"ADMIN", "COLABORADOR"})
     public Response listarTodos(){
-        List<AtendimentoResponse> pedidos = service.listarAtendimentos();
-        return Response.ok(pedidos).build();
+        return Response.ok(service.listarAtendimentos()).build();
     }
 
     @POST
@@ -68,9 +67,7 @@ public class AtendimentoResource {
     @Operation(summary = "Endpoint para exportar todos os atendimentos em um arquivo csv.")
     @RolesAllowed("ADMIN")
     public Response exportarCsv(){
-        List<AtendimentoResponse> lista = service.listarParaExportacao();
-
-        String csv = CsvUtil.gerarCsvAtendimentos(lista);
+        String csv = CsvUtil.gerarCsvAtendimentos(service.listarAtendimentos());
 
         String nomeArquivo = CsvUtil.gerarNomeArquivo("Atendimentos");
 

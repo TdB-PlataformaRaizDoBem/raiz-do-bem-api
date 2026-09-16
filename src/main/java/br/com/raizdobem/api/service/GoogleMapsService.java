@@ -4,7 +4,7 @@ import br.com.raizdobem.api.dto.external.GoogleMapsEnderecoDTO;
 import br.com.raizdobem.api.dto.external.GoogleMapsRequestDTO;
 import br.com.raizdobem.api.dto.external.GoogleMapsResponseDTO;
 import br.com.raizdobem.api.dto.external.PontoParadaDTO;
-import br.com.raizdobem.api.dto.response.DentistaDTO;
+import br.com.raizdobem.api.dto.response.DentistaResponse;
 import br.com.raizdobem.api.client.GoogleMapsClient;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -24,7 +24,7 @@ public class GoogleMapsService {
     @RestClient
     GoogleMapsClient googleMapsClient;
 
-    public DentistaDTO calcularDistanciaProximidade(String enderecoBeneficiario, List<DentistaDTO> dentistas) {
+    public DentistaResponse calcularDistanciaProximidade(String enderecoBeneficiario, List<DentistaResponse> dentistas) {
 
         GoogleMapsEnderecoDTO origem = new GoogleMapsEnderecoDTO(
                 new PontoParadaDTO(enderecoBeneficiario));

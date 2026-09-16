@@ -3,12 +3,10 @@ package br.com.raizdobem.api.resource;
 import br.com.raizdobem.api.dto.request.PedidoAjudaUpdateRequest;
 import br.com.raizdobem.api.dto.request.PedidoAjudaCreateRequest;
 import br.com.raizdobem.api.dto.request.EnderecoRequest;
-import br.com.raizdobem.api.dto.response.PedidoAjudaDTO;
-import br.com.raizdobem.api.entity.PedidoAjuda;
+import br.com.raizdobem.api.dto.response.PedidoAjudaResponse;
 import br.com.raizdobem.api.entity.StatusPedido;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.exception.RequisicaoInvalidaException;
-import br.com.raizdobem.api.mapper.PedidoAjudaMapper;
 import br.com.raizdobem.api.service.PedidoAjudaService;
 import jakarta.ws.rs.core.Response;
 import org.junit.jupiter.api.DisplayName;
@@ -36,8 +34,8 @@ class PedidoAjudaResourceTest {
     @InjectMocks
     private PedidoAjudaResource resource;
 
-    private PedidoAjudaDTO criarPedidoDTO(Long id) {
-        return new PedidoAjudaDTO(
+    private PedidoAjudaResponse criarPedidoDTO(Long id) {
+        return new PedidoAjudaResponse(
                 id,
                 "12345678901",
                 "Carlos Souza",
@@ -56,7 +54,7 @@ class PedidoAjudaResourceTest {
     @DisplayName("Deve listar todos os pedidos de ajuda e retornar HTTP 200")
     void deveListarTodosRetornandoStatus200() {
         // Arrange
-        PedidoAjudaDTO dto = criarPedidoDTO(1L);
+        PedidoAjudaResponse dto = criarPedidoDTO(1L);
         when(service.listarTodos()).thenReturn(List.of(dto));
 
         // Act
@@ -73,7 +71,7 @@ class PedidoAjudaResourceTest {
         // Arrange
         String dataStr = "2026-03-10";
         LocalDate data = LocalDate.parse(dataStr);
-        PedidoAjudaDTO dto = criarPedidoDTO(1L);
+        PedidoAjudaResponse dto = criarPedidoDTO(1L);
         when(service.listarPorData(data)).thenReturn(List.of(dto));
 
         // Act
@@ -111,17 +109,16 @@ class PedidoAjudaResourceTest {
                 "Urgência",
                 new EnderecoRequest("01001000", "10")
         );
-        PedidoAjuda pedido = new PedidoAjuda();
-        pedido.setId(1L);
+        PedidoAjudaResponse responseEsperada = criarPedidoDTO(1L);
 
-        when(service.criar(request)).thenReturn(pedido);
+        when(service.criar(request)).thenReturn(responseEsperada);
 
         // Act
         Response response = resource.criar(request);
 
         // Assert
         assertThat(response.getStatus()).isEqualTo(201);
-        assertThat(response.getEntity()).isEqualTo(PedidoAjudaMapper.mapeamentoPedido(pedido));
+        assertThat(response.getEntity()).isEqualTo(responseEsperada);
     }
 
     @Test
@@ -145,7 +142,7 @@ class PedidoAjudaResourceTest {
         // Arrange
         long id = 1L;
         PedidoAjudaUpdateRequest dto = new PedidoAjudaUpdateRequest(StatusPedido.APROVADO, 5L);
-        PedidoAjudaDTO pedidoAtualizado = criarPedidoDTO(id);
+        PedidoAjudaResponse pedidoAtualizado = criarPedidoDTO(id);
 
         when(service.processarPedido(id, dto)).thenReturn(pedidoAtualizado);
 

@@ -1,6 +1,6 @@
 package br.com.raizdobem.api.mapper;
 
-import br.com.raizdobem.api.dto.response.PedidoAjudaDTO;
+import br.com.raizdobem.api.dto.response.PedidoAjudaResponse;
 import br.com.raizdobem.api.entity.Dentista;
 import br.com.raizdobem.api.entity.Endereco;
 import br.com.raizdobem.api.entity.PedidoAjuda;
@@ -51,7 +51,7 @@ class PedidoAjudaMapperTest {
     @DisplayName("Deve retornar null quando pedido fornecido for null")
     void deveRetornarNullQuandoPedidoForNull() {
         // Act
-        PedidoAjudaDTO resultado = PedidoAjudaMapper.mapeamentoPedido(null);
+        PedidoAjudaResponse resultado = PedidoAjudaMapper.mapeamentoPedido(null);
 
         // Assert
         assertThat(resultado).isNull();
@@ -64,7 +64,7 @@ class PedidoAjudaMapperTest {
         PedidoAjuda pedido = criarPedido(1L, true, true);
 
         // Act
-        PedidoAjudaDTO dto = PedidoAjudaMapper.mapeamentoPedido(pedido);
+        PedidoAjudaResponse dto = PedidoAjudaMapper.mapeamentoPedido(pedido);
 
         // Assert
         assertThat(dto).isNotNull();
@@ -83,7 +83,7 @@ class PedidoAjudaMapperTest {
         PedidoAjuda pedido = criarPedido(2L, false, false);
 
         // Act
-        PedidoAjudaDTO dto = PedidoAjudaMapper.mapeamentoPedido(pedido);
+        PedidoAjudaResponse dto = PedidoAjudaMapper.mapeamentoPedido(pedido);
 
         // Assert
         assertThat(dto).isNotNull();
@@ -96,7 +96,7 @@ class PedidoAjudaMapperTest {
     @DisplayName("Deve retornar null ao mapear lista quando a lista for nula")
     void deveRetornarNullAoMapearListaNula() {
         // Act
-        List<PedidoAjudaDTO> resultado = PedidoAjudaMapper.mapeamentoListaPedidos(null);
+        List<PedidoAjudaResponse> resultado = PedidoAjudaMapper.mapeamentoListaPedidos(null);
 
         // Assert
         assertThat(resultado).isNull();
@@ -111,7 +111,7 @@ class PedidoAjudaMapperTest {
         List<PedidoAjuda> lista = List.of(p1, p2);
 
         // Act
-        List<PedidoAjudaDTO> dtos = PedidoAjudaMapper.mapeamentoListaPedidos(lista);
+        List<PedidoAjudaResponse> dtos = PedidoAjudaMapper.mapeamentoListaPedidos(lista);
 
         // Assert
         assertThat(dtos).isNotNull().hasSize(2);

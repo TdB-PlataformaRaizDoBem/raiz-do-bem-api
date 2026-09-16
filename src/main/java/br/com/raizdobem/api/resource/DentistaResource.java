@@ -2,7 +2,7 @@ package br.com.raizdobem.api.resource;
 
 import br.com.raizdobem.api.dto.request.DentistaUpdateRequest;
 import br.com.raizdobem.api.dto.request.DentistaCreateRequest;
-import br.com.raizdobem.api.dto.response.DentistaDTO;
+import br.com.raizdobem.api.dto.response.DentistaResponse;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.exception.RequisicaoInvalidaException;
 import br.com.raizdobem.api.service.DentistaService;
@@ -35,7 +35,7 @@ public class DentistaResource {
     @Operation(summary = "Endpoint para a criação de dentista.")
     @RolesAllowed({"ADMIN", "COLABORADOR"})
     public Response criar(@Valid DentistaCreateRequest request){
-        DentistaDTO dentista = service.criarDentista(request);
+        DentistaResponse dentista = service.criarDentista(request);
         if(dentista == null){
             throw new RequisicaoInvalidaException("Dados de dentista inválidos.");
         }
@@ -46,7 +46,7 @@ public class DentistaResource {
     @Operation(summary = "Endpoint para a listagem de todos os dentistas.")
     @RolesAllowed({"ADMIN", "COLABORADOR"})
     public Response listarTodos(){
-        List<DentistaDTO> dentistas = service.listarTodos();
+        List<DentistaResponse> dentistas = service.listarTodos();
         return Response.ok().entity(dentistas).build();
     }
 
@@ -55,7 +55,7 @@ public class DentistaResource {
     @Operation(summary = "Endpoint de listagem dos dentistas disponíveis.")
     @RolesAllowed({"ADMIN", "COLABORADOR"})
     public Response listarDisponiveis() {
-        List<DentistaDTO> dentistas = service.listarDisponiveis();
+        List<DentistaResponse> dentistas = service.listarDisponiveis();
         if(dentistas == null)
             throw new NaoEncontradoException("Lista de dentistas disponíveis vazia.");
         return Response.ok().entity(dentistas).build();
@@ -66,7 +66,7 @@ public class DentistaResource {
     @Operation(summary = "Endpoint de exibição de um único dentista usando o CPF.")
     @RolesAllowed({"ADMIN", "COLABORADOR"})
     public Response exibirDentista(@PathParam("cpf") String cpf){
-        DentistaDTO dentista = service.exibirDentista(cpf);
+        DentistaResponse dentista = service.exibirDentista(cpf);
         return Response.ok().entity(dentista).build();
     }
 
@@ -75,7 +75,7 @@ public class DentistaResource {
     @Operation(summary = "Endpoint de listagem de todos os dentistas de uma cidade específica.")
     @RolesAllowed({"ADMIN", "COLABORADOR"})
     public Response listarTodos(@PathParam("cidade") String cidade){
-        List<DentistaDTO> dentistas = service.listarPorCidades(cidade);
+        List<DentistaResponse> dentistas = service.listarPorCidades(cidade);
         if(dentistas == null || dentistas.isEmpty())
             throw new NaoEncontradoException("Lista de dentistas não foi encontrada.");
         return Response.status(200).entity(dentistas).build();
@@ -87,9 +87,7 @@ public class DentistaResource {
     @Operation(summary = "Endpoint de exportação de todos os dentistas em arquivo csv.")
     @RolesAllowed({"ADMIN", "COLABORADOR"})
     public Response exportarCsv(){
-        List<DentistaDTO> lista = service.listarParaExportacao();
-
-        String csv = CsvUtil.gerarCsvDentistas(lista);
+        String csv = CsvUtil.gerarCsvDentistas(service.listarTodos());
         String nomeArquivo = CsvUtil.gerarNomeArquivo("Dentistas");
 
         byte [] csvBytes = csv.getBytes(StandardCharsets.UTF_8);
@@ -105,7 +103,7 @@ public class DentistaResource {
     @Operation(summary = "Endpoint para a atualização de dentista.")
     @RolesAllowed({"ADMIN", "COLABORADOR"})
     public Response atualizar(@PathParam("cpf") String cpf, @Valid @RequestBody DentistaUpdateRequest request){
-        DentistaDTO dentista = service.atualizar(cpf, request);
+        DentistaResponse dentista = service.atualizar(cpf, request);
         return Response.status(Response.Status.OK).entity(dentista).build();
     }
 

@@ -3,7 +3,7 @@ package br.com.raizdobem.api.resource;
 import br.com.raizdobem.api.dto.request.DentistaUpdateRequest;
 import br.com.raizdobem.api.dto.request.DentistaCreateRequest;
 import br.com.raizdobem.api.dto.request.EnderecoRequest;
-import br.com.raizdobem.api.dto.response.DentistaDTO;
+import br.com.raizdobem.api.dto.response.DentistaResponse;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.exception.RequisicaoInvalidaException;
 import br.com.raizdobem.api.service.DentistaService;
@@ -32,8 +32,8 @@ class DentistaResourceTest {
     @InjectMocks
     private DentistaResource resource;
 
-    private DentistaDTO criarDTO(Long id, String cpf) {
-        return new DentistaDTO(
+    private DentistaResponse criarDTO(Long id, String cpf) {
+        return new DentistaResponse(
                 id,
                 "123456",
                 cpf,
@@ -61,7 +61,7 @@ class DentistaResourceTest {
                 "123456", "12345678901", "Dra. Camila", "F", "camila@odonto.com",
                 "11988887777", "COORDENADOR", 1L, "true", new EnderecoRequest("01001000", "100")
         );
-        DentistaDTO responseDTO = criarDTO(1L, "12345678901");
+        DentistaResponse responseDTO = criarDTO(1L, "12345678901");
         when(service.criarDentista(request)).thenReturn(responseDTO);
 
         // Act
@@ -171,7 +171,7 @@ class DentistaResourceTest {
     @DisplayName("Deve exportar dentistas em arquivo CSV")
     void deveExportarCsvDentistas() {
         // Arrange
-        when(service.listarParaExportacao()).thenReturn(List.of(criarDTO(1L, "12345678901")));
+        when(service.listarTodos()).thenReturn(List.of(criarDTO(1L, "12345678901")));
 
         // Act
         Response response = resource.exportarCsv();

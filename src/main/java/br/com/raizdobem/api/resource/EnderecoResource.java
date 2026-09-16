@@ -1,7 +1,8 @@
 package br.com.raizdobem.api.resource;
 
 import br.com.raizdobem.api.dto.external.ViaCepDTO;
-import br.com.raizdobem.api.dto.request.EntradaEnderecoCompletoDTO;
+import br.com.raizdobem.api.dto.request.EnderecoCompletoRequest;
+import br.com.raizdobem.api.dto.response.EnderecoResponse;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.entity.Endereco;
 import br.com.raizdobem.api.service.EnderecoService;
@@ -28,7 +29,7 @@ public class EnderecoResource {
     @POST
     @Operation(summary = "Endpoint de criação de endereço.")
     @RolesAllowed({"ADMIN", "COLABORADOR"})
-    public Response criar(EntradaEnderecoCompletoDTO request){
+    public Response criar(EnderecoCompletoRequest request){
         Endereco endereco = service.criar(request);
         if(endereco.getTipoEndereco() == null){
             throw new NaoEncontradoException("Tipo de endereço inválido.");
@@ -43,8 +44,7 @@ public class EnderecoResource {
     @Operation(summary = "Endpoint de listagem de todos os endereços.")
     @RolesAllowed({"ADMIN", "COLABORADOR"})
     public Response listarTodos(){
-        List<Endereco> enderecos = service.listarTodos();
-        return Response.ok(enderecos).build();
+        return Response.ok(service.listarTodos()).build();
     }
 
     @GET
@@ -52,7 +52,7 @@ public class EnderecoResource {
     @Path("/{cidade}")
     @RolesAllowed({"ADMIN", "COLABORADOR"})
     public Response listarPorCidade(@PathParam("cidade") String cidade){
-        List<Endereco> enderecos = service.listarPorCidades(cidade);
+        List<EnderecoResponse> enderecos = service.listarPorCidades(cidade);
         if(enderecos == null || enderecos.isEmpty()){
             throw new NaoEncontradoException("Nenhum pedido de ajuda encontrado.");
         }
@@ -64,8 +64,7 @@ public class EnderecoResource {
     @Path("/id/{id}")
     @RolesAllowed({"ADMIN", "COLABORADOR"})
     public Response buscarEndereco(@PathParam("id") Long id){
-        Endereco endereco = service.buscaPorId(id);
-        return Response.ok(endereco).build();
+        return Response.ok(service.buscaPorId(id)).build();
     }
 
     @GET
@@ -84,7 +83,7 @@ public class EnderecoResource {
     @Operation(summary = "Endpoint de atualização de endereço.")
     @Path("/{id}")
     @RolesAllowed({"ADMIN", "COLABORADOR"})
-    public Response atualizar(@PathParam("id") Long id, @RequestBody EntradaEnderecoCompletoDTO request){
+    public Response atualizar(@PathParam("id") Long id, @RequestBody EnderecoCompletoRequest request){
         Endereco endereco = service.atualizarEndereco(id, request);
         return Response.ok().entity(endereco).build();
     }

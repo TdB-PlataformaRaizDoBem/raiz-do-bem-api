@@ -2,7 +2,7 @@ package br.com.raizdobem.api.resource;
 
 import br.com.raizdobem.api.dto.request.BeneficiarioUpdateRequest;
 import br.com.raizdobem.api.dto.request.BeneficiarioCreateRequest;
-import br.com.raizdobem.api.dto.response.BeneficiarioDTO;
+import br.com.raizdobem.api.dto.response.BeneficiarioResponse;
 import br.com.raizdobem.api.exception.RequisicaoInvalidaException;
 import br.com.raizdobem.api.service.BeneficiarioService;
 import br.com.raizdobem.api.util.CsvUtil;
@@ -34,7 +34,7 @@ public class BeneficiarioResource {
     @Operation(summary = "Endpoint de listagem dos beneficiários cadastrados.")
     @RolesAllowed({"ADMIN", "COLABORADOR"})
     public Response listarTodos(){
-        List<BeneficiarioDTO> beneficiarios = service.listarTodos();
+        List<BeneficiarioResponse> beneficiarios = service.listarTodos();
         return Response.ok(beneficiarios).build();
     }
 
@@ -42,7 +42,7 @@ public class BeneficiarioResource {
     @Operation(summary = "Endpoint para a criação de beneficiário, de um pedido de ajuda aprovado.")
     @RolesAllowed({"ADMIN", "COLABORADOR"})
     public Response criar(@Valid BeneficiarioCreateRequest request){
-        BeneficiarioDTO beneficiario = service.criarBeneficiario(request);
+        BeneficiarioResponse beneficiario = service.criarBeneficiario(request);
         return Response.status(Response.Status.CREATED).entity(beneficiario).build();
     }
 
@@ -51,7 +51,7 @@ public class BeneficiarioResource {
     @Operation(summary = "Endpoint para encontrar um beneficiário específico.")
     @RolesAllowed({"ADMIN", "COLABORADOR"})
     public Response buscarPorCpf(@PathParam("cpf") String cpf){
-        BeneficiarioDTO beneficiario = service.buscarPorCpf(cpf);
+        BeneficiarioResponse beneficiario = service.buscarPorCpf(cpf);
         return Response.ok(beneficiario).build();
     }
 
@@ -60,7 +60,7 @@ public class BeneficiarioResource {
     @Operation(summary = "Endpoint para listar beneficiários por cidade.")
     @RolesAllowed({"ADMIN", "COLABORADOR"})
     public Response listarPorCidade(@PathParam("cidade") String cidade) {
-        List<BeneficiarioDTO> beneficiarios = service.listarPorCidade(cidade);
+        List<BeneficiarioResponse> beneficiarios = service.listarPorCidade(cidade);
         return Response.ok(beneficiarios).build();
     }
 
@@ -69,7 +69,7 @@ public class BeneficiarioResource {
     @Operation(summary = "Endpoint para listar beneficiários por programa social.")
     @RolesAllowed({"ADMIN", "COLABORADOR"})
     public Response listarPorPrograma(@PathParam("idProgramaSocial") long idProgramaSocial) {
-        List<BeneficiarioDTO> beneficiarios = service.listarPorPrograma(idProgramaSocial);
+        List<BeneficiarioResponse> beneficiarios = service.listarPorPrograma(idProgramaSocial);
         return Response.ok(beneficiarios).build();
     }
 
@@ -79,9 +79,7 @@ public class BeneficiarioResource {
     @Operation(summary = "Endpoint para exportar todos os atendimentos em um arquivo csv.")
     @RolesAllowed("ADMIN")
     public Response exportarCsv(){
-        List<BeneficiarioDTO> listaBeneficiarios = service.listarParaExportacao();
-
-        String csv = CsvUtil.gerarCsvBeneficiarios(listaBeneficiarios);
+        String csv = CsvUtil.gerarCsvBeneficiarios(service.listarTodos());
 
         String nomeArquivo = CsvUtil.gerarNomeArquivo("Beneficiarios");
 
@@ -98,7 +96,7 @@ public class BeneficiarioResource {
     @Operation(summary = "Endpoint de atualização de informações de beneficiário.")
     @RolesAllowed({"ADMIN", "COLABORADOR"})
     public Response atualizar(@PathParam("cpf") String cpf, @Valid @RequestBody BeneficiarioUpdateRequest dto){
-        BeneficiarioDTO beneficiario = service.atualizar(cpf, dto);
+        BeneficiarioResponse beneficiario = service.atualizar(cpf, dto);
         return Response.ok().entity(beneficiario).build();
     }
 

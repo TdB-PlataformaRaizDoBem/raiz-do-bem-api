@@ -2,7 +2,7 @@ package br.com.raizdobem.api.service;
 
 import br.com.raizdobem.api.dto.request.BeneficiarioUpdateRequest;
 import br.com.raizdobem.api.dto.request.BeneficiarioCreateRequest;
-import br.com.raizdobem.api.dto.response.BeneficiarioDTO;
+import br.com.raizdobem.api.dto.response.BeneficiarioResponse;
 import br.com.raizdobem.api.entity.*;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.exception.RequisicaoInvalidaException;
@@ -10,6 +10,7 @@ import br.com.raizdobem.api.exception.ValidacaoException;
 import br.com.raizdobem.api.mapper.BeneficiarioMapper;
 import br.com.raizdobem.api.repository.BeneficiarioRepository;
 import br.com.raizdobem.api.util.CpfValidatorUtil;
+import io.quarkus.cache.CacheResult;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -34,7 +35,7 @@ public class BeneficiarioService {
     EnderecoService enderecoService;
 
     @Transactional
-    public BeneficiarioDTO criarBeneficiario(BeneficiarioCreateRequest dto) {
+    public BeneficiarioResponse criarBeneficiario(BeneficiarioCreateRequest dto) {
         Beneficiario beneficiario = new Beneficiario();
         if(dto == null)
             throw new RequisicaoInvalidaException("Inserção de beneficiário inválida.");
@@ -65,7 +66,7 @@ public class BeneficiarioService {
         return mapeamentoBeneficiario(beneficiario);
     }
 
-    public BeneficiarioDTO buscarPorCpf(String cpf) {
+    public BeneficiarioResponse buscarPorCpf(String cpf) {
         if(!CpfValidatorUtil.cpfValido(cpf))
             throw new ValidacaoException("CPF inválido.");
 
@@ -75,29 +76,30 @@ public class BeneficiarioService {
         return mapeamentoBeneficiario(beneficiario);
     }
 
-    public BeneficiarioDTO buscarPorId(Long id) {
+    public BeneficiarioResponse buscarPorId(Long id) {
         Beneficiario beneficiario = repository.buscarPorId(id);
         if(beneficiario == null)
             throw new NaoEncontradoException("Beneficiário não encontrado.");
         return mapeamentoBeneficiario(beneficiario);
     }
 
-    public List<BeneficiarioDTO> listarTodos() {
+    @CacheResult(cacheName = "beneficiarios")
+    public List<BeneficiarioResponse> listarTodos() {
         return BeneficiarioMapper.mapeamentoBeneficiarios(repository.listarTodos());
     }
 
-    public List<BeneficiarioDTO> listarPorCidade(String cidade) {
+    public List<BeneficiarioResponse> listarPorCidade(String cidade) {
         List <Beneficiario> beneficiarios = repository.listarPorCidade(cidade);
         return mapeamentoBeneficiarios(beneficiarios);
     }
 
-    public List<BeneficiarioDTO> listarPorPrograma(long idProgramaSocial) {
+    public List<BeneficiarioResponse> listarPorPrograma(long idProgramaSocial) {
         List <Beneficiario> beneficiarios = repository.listarPorPrograma(idProgramaSocial);
         return mapeamentoBeneficiarios(beneficiarios);
     }
 
     @Transactional
-    public BeneficiarioDTO atualizar(String cpf, BeneficiarioUpdateRequest request) {
+    public BeneficiarioResponse atualizar(String cpf, BeneficiarioUpdateRequest request) {
         Beneficiario beneficiario = repository.atualizar(cpf, request);
         if(beneficiario == null)
             throw new NaoEncontradoException("Beneficiário não encontrado, CPF inválido.");
@@ -116,9 +118,5 @@ public class BeneficiarioService {
         }
         long exclusao = repository.excluir(cpf);
         return exclusao > 0;
-    }
-
-    public List<BeneficiarioDTO> listarParaExportacao(){
-        return listarTodos();
     }
 }

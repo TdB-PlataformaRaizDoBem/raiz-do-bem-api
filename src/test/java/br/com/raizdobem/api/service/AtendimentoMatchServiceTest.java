@@ -1,8 +1,8 @@
 package br.com.raizdobem.api.service;
 
-import br.com.raizdobem.api.dto.response.BeneficiarioDTO;
-import br.com.raizdobem.api.dto.response.DentistaDTO;
-import br.com.raizdobem.api.dto.response.EnderecoDTO;
+import br.com.raizdobem.api.dto.response.BeneficiarioResponse;
+import br.com.raizdobem.api.dto.response.DentistaResponse;
+import br.com.raizdobem.api.dto.response.EnderecoResponse;
 import br.com.raizdobem.api.dto.response.PedidoAjudaResumidoDTO;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.exception.ValidacaoException;
@@ -35,8 +35,8 @@ class AtendimentoMatchServiceTest {
     @InjectMocks
     private AtendimentoMatchService atendimentoMatchService;
 
-    private EnderecoDTO criarEnderecoDTO(String numero) {
-        return new EnderecoDTO(
+    private EnderecoResponse criarEnderecoDTO(String numero) {
+        return new EnderecoResponse(
                 1L,
                 "Praça da Sé",
                 "01001000",
@@ -48,8 +48,8 @@ class AtendimentoMatchServiceTest {
         );
     }
 
-    private BeneficiarioDTO criarBeneficiarioDTO(EnderecoDTO endereco) {
-        return new BeneficiarioDTO(
+    private BeneficiarioResponse criarBeneficiarioDTO(EnderecoResponse endereco) {
+        return new BeneficiarioResponse(
                 10L,
                 "12345678901",
                 "Joãozinho Silva",
@@ -62,8 +62,8 @@ class AtendimentoMatchServiceTest {
         );
     }
 
-    private DentistaDTO criarDentistaDTO(Long id, String nome) {
-        return new DentistaDTO(
+    private DentistaResponse criarDentistaDTO(Long id, String nome) {
+        return new DentistaResponse(
                 id,
                 "123456",
                 "98765432100",
@@ -87,10 +87,10 @@ class AtendimentoMatchServiceTest {
     @DisplayName("Deve retornar o dentista mais próximo quando houver dentistas disponíveis e endereço completo")
     void deveRetornarMelhorMatchQuandoHouverDentistasDisponiveis() {
         // Arrange
-        EnderecoDTO endereco = criarEnderecoDTO("100");
-        BeneficiarioDTO beneficiario = criarBeneficiarioDTO(endereco);
-        DentistaDTO dentistaEsperado = criarDentistaDTO(1L, "Dra. Ana Costa");
-        List<DentistaDTO> dentistasDisponiveis = List.of(dentistaEsperado);
+        EnderecoResponse endereco = criarEnderecoDTO("100");
+        BeneficiarioResponse beneficiario = criarBeneficiarioDTO(endereco);
+        DentistaResponse dentistaEsperado = criarDentistaDTO(1L, "Dra. Ana Costa");
+        List<DentistaResponse> dentistasDisponiveis = List.of(dentistaEsperado);
 
         when(dentistaService.listarDisponiveis()).thenReturn(dentistasDisponiveis);
         when(googleMapsService.calcularDistanciaProximidade(
@@ -99,7 +99,7 @@ class AtendimentoMatchServiceTest {
         )).thenReturn(dentistaEsperado);
 
         // Act
-        DentistaDTO resultado = atendimentoMatchService.melhorMatchDentista(beneficiario);
+        DentistaResponse resultado = atendimentoMatchService.melhorMatchDentista(beneficiario);
 
         // Assert
         assertThat(resultado).isNotNull();
@@ -117,10 +117,10 @@ class AtendimentoMatchServiceTest {
     @DisplayName("Deve formatar endereço sem número quando o número for nulo")
     void deveFormatarEnderecoSemNumeroQuandoNumeroForNulo() {
         // Arrange
-        EnderecoDTO enderecoSemNumero = criarEnderecoDTO(null);
-        BeneficiarioDTO beneficiario = criarBeneficiarioDTO(enderecoSemNumero);
-        DentistaDTO dentista = criarDentistaDTO(2L, "Dr. Carlos Eduardo");
-        List<DentistaDTO> dentistas = List.of(dentista);
+        EnderecoResponse enderecoSemNumero = criarEnderecoDTO(null);
+        BeneficiarioResponse beneficiario = criarBeneficiarioDTO(enderecoSemNumero);
+        DentistaResponse dentista = criarDentistaDTO(2L, "Dr. Carlos Eduardo");
+        List<DentistaResponse> dentistas = List.of(dentista);
 
         when(dentistaService.listarDisponiveis()).thenReturn(dentistas);
         when(googleMapsService.calcularDistanciaProximidade(
@@ -129,7 +129,7 @@ class AtendimentoMatchServiceTest {
         )).thenReturn(dentista);
 
         // Act
-        DentistaDTO resultado = atendimentoMatchService.melhorMatchDentista(beneficiario);
+        DentistaResponse resultado = atendimentoMatchService.melhorMatchDentista(beneficiario);
 
         // Assert
         assertThat(resultado).isNotNull();
@@ -143,7 +143,7 @@ class AtendimentoMatchServiceTest {
     @DisplayName("Deve lançar NaoEncontradoException quando não houver nenhum dentista disponível")
     void deveLancarNaoEncontradoExceptionQuandoNaoHouverDentistasDisponiveis() {
         // Arrange
-        BeneficiarioDTO beneficiario = criarBeneficiarioDTO(criarEnderecoDTO("50"));
+        BeneficiarioResponse beneficiario = criarBeneficiarioDTO(criarEnderecoDTO("50"));
         when(dentistaService.listarDisponiveis()).thenReturn(Collections.emptyList());
 
         // Act & Assert
@@ -159,8 +159,8 @@ class AtendimentoMatchServiceTest {
     @DisplayName("Deve lançar ValidacaoException quando o endereço do beneficiário for nulo")
     void deveLancarValidacaoExceptionQuandoEnderecoDoBeneficiarioForNulo() {
         // Arrange
-        BeneficiarioDTO beneficiarioSemEndereco = criarBeneficiarioDTO(null);
-        List<DentistaDTO> dentistas = List.of(criarDentistaDTO(3L, "Dr. Roberto"));
+        BeneficiarioResponse beneficiarioSemEndereco = criarBeneficiarioDTO(null);
+        List<DentistaResponse> dentistas = List.of(criarDentistaDTO(3L, "Dr. Roberto"));
         when(dentistaService.listarDisponiveis()).thenReturn(dentistas);
 
         // Act & Assert
@@ -176,8 +176,8 @@ class AtendimentoMatchServiceTest {
     @DisplayName("Deve montar endereço corretamente com o método estático quando dados forem válidos")
     void deveMontarEnderecoCorretamenteViaMetodoEstatico() {
         // Arrange
-        EnderecoDTO comNumero = criarEnderecoDTO("42");
-        EnderecoDTO semNumero = criarEnderecoDTO(null);
+        EnderecoResponse comNumero = criarEnderecoDTO("42");
+        EnderecoResponse semNumero = criarEnderecoDTO(null);
 
         // Act & Assert
         assertThat(AtendimentoMatchService.montarEndereco(comNumero))

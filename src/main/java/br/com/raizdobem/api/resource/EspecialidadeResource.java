@@ -12,8 +12,6 @@ import jakarta.ws.rs.core.Response;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
-import java.util.List;
-
 @RequestScoped
 @Path("/especialidades")
 @Tag(name = "Especialidades", description = "Disponibiliza visualização das especialidades gerais dos dentistas.")
@@ -26,8 +24,7 @@ public class EspecialidadeResource {
     @Operation(summary = "Lista todas as especialidades que podem ser atribuídas a um dentista.")
     @PermitAll
     public Response listarTodas(){
-        List<Especialidade> especialidades = service.listarEspecialidades();
-        return Response.ok(especialidades).build();
+        return Response.ok(service.listarEspecialidades()).build();
     }
 
     @GET
@@ -37,8 +34,7 @@ public class EspecialidadeResource {
     public Response buscarPorId(@PathParam("id") Long id) {
         Especialidade especialidade = service.buscarPorId(id);
         if(especialidade == null)
-            throw new NaoEncontradoException("Especialidade não encontrada");
+            throw new NaoEncontradoException("Especialidade com id " + id  + " não encontrada!");
         return Response.ok().entity(especialidade).build();
     }
-
 }

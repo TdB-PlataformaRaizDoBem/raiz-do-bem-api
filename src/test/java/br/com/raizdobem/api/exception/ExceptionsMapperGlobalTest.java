@@ -1,6 +1,6 @@
 package br.com.raizdobem.api.exception;
 
-import br.com.raizdobem.api.dto.response.ErroDTO;
+import br.com.raizdobem.api.dto.response.ErroResponse;
 import jakarta.ws.rs.core.Response;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,7 +23,7 @@ class ExceptionsMapperGlobalTest {
 
         // Assert
         assertThat(response.getStatus()).isEqualTo(404);
-        ErroDTO erro = (ErroDTO) response.getEntity();
+        ErroResponse erro = (ErroResponse) response.getEntity();
         assertThat(erro.statusCode()).isEqualTo(404);
         assertThat(erro.mensagem()).isEqualTo("Recurso não encontrado");
         assertThat(erro.timestamp()).isNotNull();
@@ -40,7 +40,7 @@ class ExceptionsMapperGlobalTest {
 
         // Assert
         assertThat(response.getStatus()).isEqualTo(422);
-        ErroDTO erro = (ErroDTO) response.getEntity();
+        ErroResponse erro = (ErroResponse) response.getEntity();
         assertThat(erro.statusCode()).isEqualTo(422);
         assertThat(erro.mensagem()).isEqualTo("Campo inválido");
     }
@@ -56,7 +56,7 @@ class ExceptionsMapperGlobalTest {
 
         // Assert
         assertThat(response.getStatus()).isEqualTo(409);
-        ErroDTO erro = (ErroDTO) response.getEntity();
+        ErroResponse erro = (ErroResponse) response.getEntity();
         assertThat(erro.statusCode()).isEqualTo(409);
         assertThat(erro.mensagem()).isEqualTo("Regra violada");
     }
@@ -72,7 +72,7 @@ class ExceptionsMapperGlobalTest {
 
         // Assert
         assertThat(response.getStatus()).isEqualTo(400);
-        ErroDTO erro = (ErroDTO) response.getEntity();
+        ErroResponse erro = (ErroResponse) response.getEntity();
         assertThat(erro.statusCode()).isEqualTo(400);
         assertThat(erro.mensagem()).isEqualTo("Requisição malformada");
     }
@@ -88,7 +88,7 @@ class ExceptionsMapperGlobalTest {
 
         // Assert
         assertThat(response.getStatus()).isEqualTo(500);
-        ErroDTO erro = (ErroDTO) response.getEntity();
+        ErroResponse erro = (ErroResponse) response.getEntity();
         assertThat(erro.statusCode()).isEqualTo(500);
         assertThat(erro.mensagem()).isEqualTo("Erro interno do servidor.");
     }

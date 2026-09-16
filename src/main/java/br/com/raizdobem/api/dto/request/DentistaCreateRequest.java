@@ -8,36 +8,35 @@ import jakarta.validation.constraints.Pattern;
 
 public record DentistaCreateRequest(
         @NotBlank
-                              @Pattern(regexp = "^(?i)[A-Z0-9-/ ]{3,10}$", message = "CRO deve ter entre 3 e 10 caracteres.")
-                              String croDentista,
+        @Pattern(regexp = "^(?i)[A-Z0-9-/ ]{3,10}$", message = "CRO deve ter entre 3 e 10 caracteres.")
+        String croDentista,
 
         @NotBlank
-                              @Pattern(regexp = "^\\d{11}$",
-                                        message = "CPF deve conter 11 números.")
-                              String cpf,
+        @Pattern(regexp = "^\\d{11}$", message = "CPF deve conter 11 números.")
+        String cpf,
 
         @NotBlank
-                              String nomeCompleto,
+        String nomeCompleto,
 
         @NotBlank
-                              String sexo,
+        String sexo,
 
         @NotBlank
-                              @Email
-                              String email,
+        @Email
+        String email,
 
         @NotBlank
-                              String telefone,
+        String telefone,
 
         @NotBlank
-                              String categoria,
+        String categoria,
 
         Long idEspecialidade,
 
-                              @NotBlank
-                              String disponivel,
+        @NotBlank
+        String disponivel,
 
         @NotNull
-                              @Valid
+        @Valid
         EnderecoRequest endereco) {
 }

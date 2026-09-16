@@ -1,16 +1,20 @@
 package br.com.raizdobem.api.service;
 
 import br.com.raizdobem.api.client.ViaCepClient;
-import br.com.raizdobem.api.dto.request.EntradaEnderecoCompletoDTO;
+import br.com.raizdobem.api.dto.request.EnderecoCompletoRequest;
 import br.com.raizdobem.api.dto.external.ViaCepDTO;
 import br.com.raizdobem.api.dto.request.EnderecoRequest;
+import br.com.raizdobem.api.dto.response.EnderecoResponse;
 import br.com.raizdobem.api.entity.TipoEndereco;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.exception.RegraNegocioException;
 import br.com.raizdobem.api.entity.Endereco;
 import br.com.raizdobem.api.exception.RequisicaoInvalidaException;
+import br.com.raizdobem.api.mapper.EnderecoMapper;
 import br.com.raizdobem.api.repository.EnderecoRepository;
 import java.util.List;
+
+import io.quarkus.cache.CacheResult;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -26,7 +30,7 @@ public class EnderecoService {
     ViaCepClient client;
 
     @Transactional
-    public Endereco criar(EntradaEnderecoCompletoDTO dto) {
+    public Endereco criar(EnderecoCompletoRequest dto) {
         if(!validarCep(dto.cep())){
             throw new RegraNegocioException("CEP inválido! Insira 8 dígitos!");
         }
@@ -53,16 +57,17 @@ public class EnderecoService {
         return endereco;
     }
 
-    public Endereco buscaPorId(Long id){
-        return repository.buscarPeloId(id);
+    public EnderecoResponse buscaPorId(Long id){
+        return EnderecoMapper.mapeamentoParaResponse(repository.buscarPeloId(id));
     }
 
-    public List<Endereco> listarTodos() {
-        return repository.listarTodos();
+    @CacheResult(cacheName = "enderecos")
+    public List<EnderecoResponse> listarTodos() {
+        return EnderecoMapper.mapeamentoParaResponse(repository.listarTodos());
     }
 
-    public List<Endereco> listarPorCidades(String cidade) {
-        return repository.listarPorCidade(cidade);
+    public List<EnderecoResponse> listarPorCidades(String cidade) {
+        return EnderecoMapper.mapeamentoParaResponse(repository.listarPorCidade(cidade));
     }
 
     public ViaCepDTO buscarEndereco(String cep) {
@@ -74,8 +79,8 @@ public class EnderecoService {
     }
 
     @Transactional
-    public Endereco atualizarEndereco(Long id, EntradaEnderecoCompletoDTO dto) {
-        Endereco endereco = buscaPorId(id);
+    public Endereco atualizarEndereco(Long id, EnderecoCompletoRequest dto) {
+        Endereco endereco = repository.buscarPeloId(id);
         if(endereco == null)
             throw new NaoEncontradoException("Endereço não encontrado.");
 
@@ -108,7 +113,7 @@ public class EnderecoService {
         }
     }
 
-    public void entradaEnderecoCompleto(Endereco endereco, EntradaEnderecoCompletoDTO dto){
+    public void entradaEnderecoCompleto(Endereco endereco, EnderecoCompletoRequest dto){
         ViaCepDTO viaCep = client.buscarEndereco(dto.cep());
         if(viaCep == null){
             throw new RequisicaoInvalidaException("Requisição ViaCep inválida.");

@@ -2,11 +2,12 @@ package br.com.raizdobem.api.service;
 
 import br.com.raizdobem.api.dto.request.PedidoAjudaUpdateRequest;
 import br.com.raizdobem.api.dto.request.PedidoAjudaCreateRequest;
-import br.com.raizdobem.api.dto.response.PedidoAjudaDTO;
+import br.com.raizdobem.api.dto.response.PedidoAjudaResponse;
 import br.com.raizdobem.api.entity.*;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.exception.RegraNegocioException;
 import br.com.raizdobem.api.exception.ValidacaoException;
+import br.com.raizdobem.api.mapper.PedidoAjudaMapper;
 import br.com.raizdobem.api.repository.PedidoAjudaRepository;
 import br.com.raizdobem.api.util.CpfValidatorUtil;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -32,7 +33,7 @@ public class PedidoAjudaService {
     @Inject
     DentistaService dentistaService;
 
-    public PedidoAjuda criar(PedidoAjudaCreateRequest dto) {
+    public PedidoAjudaResponse criar(PedidoAjudaCreateRequest dto) {
         if(!CpfValidatorUtil.cpfValido(dto.cpf())){
             throw new ValidacaoException("Cpf inválido");
         }
@@ -64,15 +65,16 @@ public class PedidoAjudaService {
         pedidoAjuda.setEndereco(endereco);
 
         repository.criar(pedidoAjuda);
-        return pedidoAjuda;
+
+        return PedidoAjudaMapper.mapeamentoPedido(pedidoAjuda);
     }
 
-    public List<PedidoAjudaDTO> listarTodos() {
+    public List<PedidoAjudaResponse> listarTodos() {
         List<PedidoAjuda> pedidos = repository.listarTodos();
         return mapeamentoListaPedidos(pedidos);
     }
 
-    public PedidoAjudaDTO buscarPorCpf(String cpf) {
+    public PedidoAjudaResponse buscarPorCpf(String cpf) {
         PedidoAjuda pedido = repository.buscarPorCpf(cpf);
         if (pedido == null) {
             throw new NaoEncontradoException("Pedido de ajuda não encontrado.");
@@ -84,12 +86,12 @@ public class PedidoAjudaService {
         return repository.findById(id);
     }
 
-    public List<PedidoAjudaDTO> listarPorData(LocalDate dataPedido) {
+    public List<PedidoAjudaResponse> listarPorData(LocalDate dataPedido) {
         List<PedidoAjuda> pedidos = repository.listarPorData(dataPedido);
         return mapeamentoListaPedidos(pedidos);
     }
 
-    public PedidoAjudaDTO processarPedido(long id, PedidoAjudaUpdateRequest dto){
+    public PedidoAjudaResponse processarPedido(long id, PedidoAjudaUpdateRequest dto){
         PedidoAjuda pedido = repository.findById(id);
         if(pedido == null)
             throw new NaoEncontradoException("Pedido de ajuda não encontrado.");

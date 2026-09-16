@@ -72,6 +72,6 @@ class ProgramaSocialResourceTest {
         // Act & Assert
         assertThatThrownBy(() -> resource.buscarPorId(idInexistente))
                 .isInstanceOf(NaoEncontradoException.class)
-                .hasMessage("Programa social não encontrado.");
+                .hasMessage("Programa social com id " + idInexistente + " não encontrado.");
     }
 }

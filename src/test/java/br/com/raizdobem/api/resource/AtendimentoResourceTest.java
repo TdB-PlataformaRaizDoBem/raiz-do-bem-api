@@ -63,7 +63,7 @@ class AtendimentoResourceTest {
     @DisplayName("Deve criar atendimento com sucesso retornando HTTP 201 Created com Location")
     void deveCriarAtendimentoRetornandoStatus201() {
         // Arrange
-        AtendimentoCreateRequest request = new AtendimentoCreateRequest("PRONT-001", "12345678901");
+        AtendimentoCreateRequest request = new AtendimentoCreateRequest("PRONT-001", "12345678901", LocalDate.now());
         AtendimentoResponse responseDTO = criarAtendimentoDTO(5L);
         when(service.criarAtendimento(request)).thenReturn(responseDTO);
 
@@ -80,7 +80,7 @@ class AtendimentoResourceTest {
     @DisplayName("Deve lançar RequisicaoInvalidaException quando serviço retornar nulo ao criar atendimento")
     void deveLancarRequisicaoInvalidaExceptionQuandoCriacaoRetornarNulo() {
         // Arrange
-        AtendimentoCreateRequest request = new AtendimentoCreateRequest("PRONT-001", "12345678901");
+        AtendimentoCreateRequest request = new AtendimentoCreateRequest("PRONT-001", "12345678901", LocalDate.now());
         when(service.criarAtendimento(request)).thenReturn(null);
 
         // Act & Assert
@@ -122,7 +122,7 @@ class AtendimentoResourceTest {
     @DisplayName("Deve exportar lista de atendimentos em CSV com cabeçalhos apropriados")
     void deveExportarCsvAtendimentos() {
         // Arrange
-        when(service.listarParaExportacao()).thenReturn(List.of(criarAtendimentoDTO(1L)));
+        when(service.listarAtendimentos()).thenReturn(List.of(criarAtendimentoDTO(1L)));
 
         // Act
         Response response = resource.exportarCsv();

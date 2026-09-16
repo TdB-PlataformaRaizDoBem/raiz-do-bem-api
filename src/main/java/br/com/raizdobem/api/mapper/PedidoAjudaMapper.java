@@ -1,19 +1,18 @@
 package br.com.raizdobem.api.mapper;
 
-import br.com.raizdobem.api.dto.response.PedidoAjudaDTO;
+import br.com.raizdobem.api.dto.response.PedidoAjudaResponse;
 import br.com.raizdobem.api.entity.PedidoAjuda;
-import br.com.raizdobem.api.exception.NaoEncontradoException;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class PedidoAjudaMapper {
-    public static PedidoAjudaDTO mapeamentoPedido(PedidoAjuda pedido){
+public final class PedidoAjudaMapper {
+    public static PedidoAjudaResponse mapeamentoPedido(PedidoAjuda pedido){
         if(pedido == null){
             return null;
         }
 
-        return new PedidoAjudaDTO(
+        return new PedidoAjudaResponse(
                 pedido.getId(),
                 pedido.getCpf(),
                 pedido.getNomeCompleto(),
@@ -29,13 +28,11 @@ public class PedidoAjudaMapper {
         );
     }
 
-    public static List<PedidoAjudaDTO> mapeamentoListaPedidos(List<PedidoAjuda> pedidos){
+    public static List<PedidoAjudaResponse> mapeamentoListaPedidos(List<PedidoAjuda> pedidos){
         if (pedidos == null) {
             return null;
         }
 
-        return pedidos.stream()
-                .map(PedidoAjudaMapper ::mapeamentoPedido)
-                .collect(Collectors.toList());
+        return pedidos.stream().map(PedidoAjudaMapper ::mapeamentoPedido).collect(Collectors.toList());
     }
 }

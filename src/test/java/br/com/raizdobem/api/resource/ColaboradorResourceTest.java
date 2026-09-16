@@ -108,7 +108,7 @@ class ColaboradorResourceTest {
         // Arrange
         String cpf = "12345678901";
         ColaboradorResponse responseDTO = criarColaboradorResponse(1L, cpf);
-        when(service.exibirColaborador(cpf)).thenReturn(responseDTO);
+        when(service.exibirColaboradorPorCpf(cpf)).thenReturn(responseDTO);
 
         // Act
         Response resultado = resource.buscarColaborador(cpf);
@@ -124,7 +124,7 @@ class ColaboradorResourceTest {
     void deveLancarNaoEncontradoExceptionAoBuscarColaboradorInexistente() {
         // Arrange
         String cpf = "00000000000";
-        when(service.exibirColaborador(cpf)).thenThrow(new NaoEncontradoException("Colaborador não foi encontrado!"));
+        when(service.exibirColaboradorPorCpf(cpf)).thenThrow(new NaoEncontradoException("Colaborador não foi encontrado!"));
 
         // Act & Assert
         assertThatThrownBy(() -> resource.buscarColaborador(cpf))

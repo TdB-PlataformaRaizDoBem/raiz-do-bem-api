@@ -1,7 +1,7 @@
 package br.com.raizdobem.api.util;
 
 import br.com.raizdobem.api.dto.response.AtendimentoResponse;
-import br.com.raizdobem.api.dto.response.DentistaDTO;
+import br.com.raizdobem.api.dto.response.DentistaResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -43,7 +43,7 @@ class CsvUtilTest {
     @DisplayName("Deve gerar CSV de dentistas com formato correto")
     void deveGerarCsvDentistas() {
         // Arrange
-        DentistaDTO d = new DentistaDTO(
+        DentistaResponse d = new DentistaResponse(
                 1L,
                 "12345",
                 "12345678901",

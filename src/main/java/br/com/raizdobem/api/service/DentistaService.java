@@ -2,7 +2,7 @@ package br.com.raizdobem.api.service;
 
 import br.com.raizdobem.api.dto.request.DentistaUpdateRequest;
 import br.com.raizdobem.api.dto.request.DentistaCreateRequest;
-import br.com.raizdobem.api.dto.response.DentistaDTO;
+import br.com.raizdobem.api.dto.response.DentistaResponse;
 import br.com.raizdobem.api.entity.*;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.exception.ValidacaoException;
@@ -11,13 +11,14 @@ import br.com.raizdobem.api.repository.DentistaRepository;
 import br.com.raizdobem.api.repository.EspecialidadeRepository;
 import br.com.raizdobem.api.repository.ProgramaRepository;
 import br.com.raizdobem.api.util.CpfValidatorUtil;
+import io.quarkus.cache.CacheResult;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import java.util.List;
 
-import static br.com.raizdobem.api.mapper.DentistaMapper.mapeamentoDentista;
-import static br.com.raizdobem.api.mapper.DentistaMapper.mapeamentoListaDTO;
+import static br.com.raizdobem.api.mapper.DentistaMapper.mapeamentoParaResponse;
+import static br.com.raizdobem.api.mapper.DentistaMapper.mapeamentoParaResponse;
 
 @ApplicationScoped
 public class DentistaService {
@@ -34,7 +35,7 @@ public class DentistaService {
     ProgramaRepository programaRepository;
 
     @Transactional
-    public DentistaDTO criarDentista(DentistaCreateRequest dto){
+    public DentistaResponse criarDentista(DentistaCreateRequest dto){
         if(!CpfValidatorUtil.cpfValido(dto.cpf())){
             throw new ValidacaoException("CPF inserido é inválido");
         }
@@ -65,44 +66,46 @@ public class DentistaService {
         dentista.setEndereco(endereco);
 
         repository.criar(dentista);
-        return mapeamentoDentista(dentista);
+        return mapeamentoParaResponse(dentista);
     }
 
-    public List<DentistaDTO> listarTodos() {
+    @CacheResult(cacheName = "dentistas")
+    public List<DentistaResponse> listarTodos() {
         List<Dentista> dentistas = repository.listarTodos();
-        return mapeamentoListaDTO(dentistas);
+        return DentistaMapper.mapeamentoParaResponse(dentistas);
     }
 
-    public List<DentistaDTO> listarDisponiveis() {
+//    @CacheResult(cacheName = "dentistas-disponiveis")
+    public List<DentistaResponse> listarDisponiveis() {
         List<Dentista> dentistas = repository.listarDisponiveis();
-        return mapeamentoListaDTO(dentistas);
+        return DentistaMapper.mapeamentoParaResponse(dentistas);
     }
 
-    public DentistaDTO buscarPorId(Long id) {
+    public DentistaResponse buscarPorId(Long id) {
         Dentista dentista = repository.findById(id);
         if(dentista == null)
             throw new NaoEncontradoException("Dentista não encontrado.");
-        return mapeamentoDentista(dentista);
+        return mapeamentoParaResponse(dentista);
     }
 
     public Dentista buscarEntidadePorId(Long id) {
         return repository.findById(id);
     }
 
-    public DentistaDTO exibirDentista(String cpf) {
+    public DentistaResponse exibirDentista(String cpf) {
         Dentista dentista = repository.buscarPorCpf(cpf);
         if(dentista == null)
             throw new NaoEncontradoException("Dentista não encontrado.");
-        return mapeamentoDentista(dentista);
+        return mapeamentoParaResponse(dentista);
     }
 
-    public List<DentistaDTO> listarPorCidades(String cidade) {
+    public List<DentistaResponse> listarPorCidades(String cidade) {
         List<Dentista> dentistas = repository.listarPorCidade(cidade);
-        return mapeamentoListaDTO(dentistas);
+        return DentistaMapper.mapeamentoParaResponse(dentistas);
     }
 
     @Transactional
-    public DentistaDTO atualizar(String cpf, DentistaUpdateRequest request) {
+    public DentistaResponse atualizar(String cpf, DentistaUpdateRequest request) {
         Dentista dentista = repository.buscarPorCpf(cpf);
         if(dentista == null)
             throw new NaoEncontradoException("Dentista não encontrado.");
@@ -113,18 +116,11 @@ public class DentistaService {
         dentista.setDisponivel(request.disponivel());
 
         enderecoService.entradaEndereco(dentista.getEndereco(), request.endereco(), TipoEndereco.RESIDENCIAL);
-        return mapeamentoDentista(dentista);
+        return mapeamentoParaResponse(dentista);
     }
 
     @Transactional
     public long excluir(String cpf) {
         return repository.excluir(cpf);
-    }
-
-    public List<DentistaDTO> listarParaExportacao() {
-        List<Dentista> dentistas = repository.listarTodos();
-        return dentistas.stream()
-                .map(DentistaMapper::mapeamentoDentista)
-                .toList();
     }
 }

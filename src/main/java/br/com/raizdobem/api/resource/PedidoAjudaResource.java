@@ -2,7 +2,7 @@ package br.com.raizdobem.api.resource;
 
 import br.com.raizdobem.api.dto.request.PedidoAjudaUpdateRequest;
 import br.com.raizdobem.api.dto.request.PedidoAjudaCreateRequest;
-import br.com.raizdobem.api.dto.response.PedidoAjudaDTO;
+import br.com.raizdobem.api.dto.response.PedidoAjudaResponse;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.exception.RequisicaoInvalidaException;
 import br.com.raizdobem.api.entity.PedidoAjuda;
@@ -37,8 +37,7 @@ public class PedidoAjudaResource {
     @Operation(summary = "Endpoint de listagem de todos os pedidos de ajuda registrados.")
     @RolesAllowed({"ADMIN", "COLABORADOR"})
     public Response listarTodos(){
-        List<PedidoAjudaDTO> pedidos = service.listarTodos();
-        return Response.ok(pedidos).build();
+        return Response.ok(service.listarTodos()).build();
     }
 
     @GET
@@ -46,7 +45,7 @@ public class PedidoAjudaResource {
     @Path("/data/{data}")
     @RolesAllowed({"ADMIN", "COLABORADOR"})
     public Response listarPorData(@PathParam("data") String data) {
-        List<PedidoAjudaDTO> pedidos = service.listarPorData(LocalDate.parse(data));
+        List<PedidoAjudaResponse> pedidos = service.listarPorData(LocalDate.parse(data));
         if(pedidos == null || pedidos.isEmpty()){
             throw new NaoEncontradoException("Nenhum pedido de ajuda encontrado.");
         }
@@ -57,11 +56,11 @@ public class PedidoAjudaResource {
     @Operation(summary = "Endpoint de criação de um pedido de ajuda.")
     @PermitAll
     public Response criar(@Valid PedidoAjudaCreateRequest request){
-        PedidoAjuda pedidoAjuda = service.criar(request);
+        PedidoAjudaResponse pedidoAjuda = service.criar(request);
         if(pedidoAjuda == null){
             throw new RequisicaoInvalidaException("Não foi possível criar o pedido de ajuda. Dados inválidos.");
         }
-        return Response.status(Response.Status.CREATED).entity(PedidoAjudaMapper.mapeamentoPedido(pedidoAjuda)).build();
+        return Response.status(Response.Status.CREATED).entity(pedidoAjuda).build();
     }
 
     @PUT
@@ -69,8 +68,7 @@ public class PedidoAjudaResource {
     @Path("/{id}")
     @RolesAllowed({"ADMIN", "COLABORADOR"})
     public Response atualizar(@PathParam("id") long id, @RequestBody PedidoAjudaUpdateRequest dto){
-        PedidoAjudaDTO pedido = service.processarPedido(id, dto);
-        return Response.ok(pedido).build();
+        return Response.ok(service.processarPedido(id, dto)).build();
     }
 
     @DELETE

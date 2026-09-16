@@ -72,6 +72,6 @@ class EspecialidadeResourceTest {
         // Act & Assert
         assertThatThrownBy(() -> resource.buscarPorId(idInexistente))
                 .isInstanceOf(NaoEncontradoException.class)
-                .hasMessage("Especialidade não encontrada");
+                .hasMessage("Especialidade com id " + idInexistente + " não encontrada!");
     }
 }

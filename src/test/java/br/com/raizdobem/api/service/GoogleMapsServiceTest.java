@@ -3,7 +3,7 @@ package br.com.raizdobem.api.service;
 import br.com.raizdobem.api.client.GoogleMapsClient;
 import br.com.raizdobem.api.dto.external.GoogleMapsRequestDTO;
 import br.com.raizdobem.api.dto.external.GoogleMapsResponseDTO;
-import br.com.raizdobem.api.dto.response.DentistaDTO;
+import br.com.raizdobem.api.dto.response.DentistaResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -34,8 +34,8 @@ class GoogleMapsServiceTest {
         googleMapsService.chaveApi = "chave-teste-api-google";
     }
 
-    private DentistaDTO criarDentistaDTO(Long id, String nome, String logradouro, String numero) {
-        return new DentistaDTO(
+    private DentistaResponse criarDentistaDTO(Long id, String nome, String logradouro, String numero) {
+        return new DentistaResponse(
                 id,
                 "123456",
                 "98765432100",
@@ -60,9 +60,9 @@ class GoogleMapsServiceTest {
     void deveRetornarDentistaComMenorDistancia() {
         // Arrange
         String enderecoBeneficiario = "Praça da Sé, 100, São Paulo, SP";
-        DentistaDTO dentistaLonge = criarDentistaDTO(1L, "Dr. Longe", "Av Paulista", "2000");
-        DentistaDTO dentistaPerto = criarDentistaDTO(2L, "Dra. Perto", "Rua Boa Vista", "50");
-        List<DentistaDTO> dentistas = List.of(dentistaLonge, dentistaPerto);
+        DentistaResponse dentistaLonge = criarDentistaDTO(1L, "Dr. Longe", "Av Paulista", "2000");
+        DentistaResponse dentistaPerto = criarDentistaDTO(2L, "Dra. Perto", "Rua Boa Vista", "50");
+        List<DentistaResponse> dentistas = List.of(dentistaLonge, dentistaPerto);
 
         GoogleMapsResponseDTO rotaDentista0 = new GoogleMapsResponseDTO(0, 0, 8500, "ROUTE_EXISTS");
         GoogleMapsResponseDTO rotaDentista1 = new GoogleMapsResponseDTO(0, 1, 1200, "ROUTE_EXISTS");
@@ -74,7 +74,7 @@ class GoogleMapsServiceTest {
         )).thenReturn(List.of(rotaDentista0, rotaDentista1));
 
         // Act
-        DentistaDTO resultado = googleMapsService.calcularDistanciaProximidade(enderecoBeneficiario, dentistas);
+        DentistaResponse resultado = googleMapsService.calcularDistanciaProximidade(enderecoBeneficiario, dentistas);
 
         // Assert
         assertThat(resultado).isNotNull();
@@ -87,15 +87,15 @@ class GoogleMapsServiceTest {
     void deveRetornarPrimeiroDentistaComoFallbackQuandoOcorrerExcecao() {
         // Arrange
         String enderecoBeneficiario = "Praça da Sé, 100, São Paulo, SP";
-        DentistaDTO dentista1 = criarDentistaDTO(1L, "Dr. Primeiro", "Av Paulista", "1000");
-        DentistaDTO dentista2 = criarDentistaDTO(2L, "Dra. Segunda", "Av Brasil", "500");
-        List<DentistaDTO> dentistas = List.of(dentista1, dentista2);
+        DentistaResponse dentista1 = criarDentistaDTO(1L, "Dr. Primeiro", "Av Paulista", "1000");
+        DentistaResponse dentista2 = criarDentistaDTO(2L, "Dra. Segunda", "Av Brasil", "500");
+        List<DentistaResponse> dentistas = List.of(dentista1, dentista2);
 
         when(googleMapsClient.buscarRotas(any(), any(), any()))
                 .thenThrow(new RuntimeException("Google Maps API offline / Timeout"));
 
         // Act
-        DentistaDTO resultado = googleMapsService.calcularDistanciaProximidade(enderecoBeneficiario, dentistas);
+        DentistaResponse resultado = googleMapsService.calcularDistanciaProximidade(enderecoBeneficiario, dentistas);
 
         // Assert
         assertThat(resultado).isNotNull();
@@ -108,9 +108,9 @@ class GoogleMapsServiceTest {
     void deveSelecionarPrimeiraRotaQuandoNaoHouverRouteExists() {
         // Arrange
         String enderecoBeneficiario = "Praça da Sé, 100, São Paulo, SP";
-        DentistaDTO d1 = criarDentistaDTO(1L, "Dr. Um", "Rua A", "10");
-        DentistaDTO d2 = criarDentistaDTO(2L, "Dra. Dois", "Rua B", "20");
-        List<DentistaDTO> dentistas = List.of(d1, d2);
+        DentistaResponse d1 = criarDentistaDTO(1L, "Dr. Um", "Rua A", "10");
+        DentistaResponse d2 = criarDentistaDTO(2L, "Dra. Dois", "Rua B", "20");
+        List<DentistaResponse> dentistas = List.of(d1, d2);
 
         GoogleMapsResponseDTO rotaSemCaminho = new GoogleMapsResponseDTO(0, 0, 0, "ROUTE_NOT_FOUND");
 
@@ -118,7 +118,7 @@ class GoogleMapsServiceTest {
                 .thenReturn(List.of(rotaSemCaminho));
 
         // Act
-        DentistaDTO resultado = googleMapsService.calcularDistanciaProximidade(enderecoBeneficiario, dentistas);
+        DentistaResponse resultado = googleMapsService.calcularDistanciaProximidade(enderecoBeneficiario, dentistas);
 
         // Assert
         assertThat(resultado).isNotNull();

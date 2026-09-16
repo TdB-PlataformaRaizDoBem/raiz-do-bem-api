@@ -3,7 +3,7 @@ package br.com.raizdobem.api.service;
 import br.com.raizdobem.api.dto.request.AtendimentoUpdateRequest;
 import br.com.raizdobem.api.dto.request.AtendimentoCreateRequest;
 import br.com.raizdobem.api.dto.response.AtendimentoResponse;
-import br.com.raizdobem.api.dto.response.DentistaDTO;
+import br.com.raizdobem.api.dto.response.DentistaResponse;
 import br.com.raizdobem.api.entity.Atendimento;
 import br.com.raizdobem.api.entity.Beneficiario;
 import br.com.raizdobem.api.entity.Colaborador;
@@ -89,8 +89,8 @@ class AtendimentoServiceTest {
         return d;
     }
 
-    private DentistaDTO criarDentistaDTO() {
-        return new DentistaDTO(
+    private DentistaResponse criarDentistaDTO() {
+        return new DentistaResponse(
                 10L,
                 "123456",
                 "98765432100",
@@ -123,14 +123,14 @@ class AtendimentoServiceTest {
     void deveCriarAtendimentoComSucessoQuandoDadosForemValidos() {
         // Arrange
         String cpf = "12345678901";
-        AtendimentoCreateRequest dto = new AtendimentoCreateRequest("PRONT-001", cpf);
+        AtendimentoCreateRequest dto = new AtendimentoCreateRequest("PRONT-001", cpf, LocalDate.now());
         Beneficiario beneficiario = criarBeneficiario();
         Dentista dentista = criarDentista();
-        DentistaDTO dentistaDTO = criarDentistaDTO();
+        DentistaResponse dentistaResponse = criarDentistaDTO();
 
         when(beneficiarioRepository.buscarPorCpf(cpf)).thenReturn(beneficiario);
-        when(atendimentoMatchService.melhorMatchDentista(any())).thenReturn(dentistaDTO);
-        when(dentistaService.buscarEntidadePorId(dentistaDTO.id())).thenReturn(dentista);
+        when(atendimentoMatchService.melhorMatchDentista(any())).thenReturn(dentistaResponse);
+        when(dentistaService.buscarEntidadePorId(dentistaResponse.id())).thenReturn(dentista);
 
         // Act
         AtendimentoResponse resultado = atendimentoService.criarAtendimento(dto);
@@ -149,7 +149,7 @@ class AtendimentoServiceTest {
     void deveLancarNaoEncontradoExceptionAoCriarAtendimentoQuandoBeneficiarioNaoExistir() {
         // Arrange
         String cpf = "00000000000";
-        AtendimentoCreateRequest dto = new AtendimentoCreateRequest("PRONT-001", cpf);
+        AtendimentoCreateRequest dto = new AtendimentoCreateRequest("PRONT-001", cpf, LocalDate.now());
         when(beneficiarioRepository.buscarPorCpf(cpf)).thenReturn(null);
 
         // Act & Assert
@@ -166,13 +166,13 @@ class AtendimentoServiceTest {
     void deveLancarNaoEncontradoExceptionAoCriarAtendimentoQuandoDentistaNaoExistir() {
         // Arrange
         String cpf = "12345678901";
-        AtendimentoCreateRequest dto = new AtendimentoCreateRequest("PRONT-001", cpf);
+        AtendimentoCreateRequest dto = new AtendimentoCreateRequest("PRONT-001", cpf, LocalDate.now());
         Beneficiario beneficiario = criarBeneficiario();
-        DentistaDTO dentistaDTO = criarDentistaDTO();
+        DentistaResponse dentistaResponse = criarDentistaDTO();
 
         when(beneficiarioRepository.buscarPorCpf(cpf)).thenReturn(beneficiario);
-        when(atendimentoMatchService.melhorMatchDentista(any())).thenReturn(dentistaDTO);
-        when(dentistaService.buscarEntidadePorId(dentistaDTO.id())).thenReturn(null);
+        when(atendimentoMatchService.melhorMatchDentista(any())).thenReturn(dentistaResponse);
+        when(dentistaService.buscarEntidadePorId(dentistaResponse.id())).thenReturn(null);
 
         // Act & Assert
         assertThatThrownBy(() -> atendimentoService.criarAtendimento(dto))
@@ -322,26 +322,5 @@ class AtendimentoServiceTest {
         // Assert
         assertThat(resultado).isTrue();
         verify(repository, times(1)).excluir(id);
-    }
-
-    @Test
-    @DisplayName("Deve listar atendimentos para exportação preenchendo defaults quando campos forem nulos")
-    void deveListarAtendimentosParaExportacao() {
-        // Arrange
-        Atendimento a = new Atendimento();
-        a.setId(1L);
-        a.setProntuario("PRONT-1");
-        a.setBeneficiario(criarBeneficiario());
-        a.setDentista(criarDentista());
-        a.setDataInicial(LocalDate.now());
-
-        when(repository.listarTodos()).thenReturn(List.of(a));
-
-        // Act
-        List<AtendimentoResponse> exportacao = atendimentoService.listarParaExportacao();
-
-        // Assert
-        assertThat(exportacao).hasSize(1);
-        assertThat(exportacao.getFirst().dataFim()).isEqualTo("NÃO FINALIZADO");
     }
 }

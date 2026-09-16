@@ -26,8 +26,7 @@ public class ProgramaSocialResource {
     @Operation(summary = "Lista os programas sociais presentes na ONG: Dentista do Bem e Apolônias do Bem")
     @PermitAll
     public Response listarTodos(){
-        List<ProgramaSocial> programas = service.listarProgramasSociais();
-        return Response.ok().entity(programas).build();
+        return Response.ok().entity(service.listarProgramasSociais()).build();
     }
 
     @GET
@@ -37,7 +36,7 @@ public class ProgramaSocialResource {
     public Response buscarPorId(@PathParam("id") Long id) {
         ProgramaSocial programa = service.buscarPorId(id);
         if (programa == null) {
-            throw new NaoEncontradoException("Programa social não encontrado.");
+            throw new NaoEncontradoException("Programa social com id " + id  + " não encontrado.");
         }
         return Response.ok().entity(programa).build();
     }

@@ -2,8 +2,9 @@ package br.com.raizdobem.api.service;
 
 import br.com.raizdobem.api.client.ViaCepClient;
 import br.com.raizdobem.api.dto.external.ViaCepDTO;
-import br.com.raizdobem.api.dto.request.EntradaEnderecoCompletoDTO;
+import br.com.raizdobem.api.dto.request.EnderecoCompletoRequest;
 import br.com.raizdobem.api.dto.request.EnderecoRequest;
+import br.com.raizdobem.api.dto.response.EnderecoResponse;
 import br.com.raizdobem.api.entity.Endereco;
 import br.com.raizdobem.api.entity.TipoEndereco;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
@@ -52,12 +53,25 @@ class EnderecoServiceTest {
         );
     }
 
+    private Endereco criarEndereco(Long id) {
+        Endereco e = new Endereco();
+        e.setId(id);
+        e.setCep("01452002");
+        e.setLogradouro("Avenida Brigadeiro Faria Lima");
+        e.setNumero("1000");
+        e.setBairro("Pinheiros");
+        e.setCidade("São Paulo");
+        e.setEstado("SP");
+        e.setTipoEndereco(TipoEndereco.PROFISSIONAL);
+        return e;
+    }
+
     @Test
     @DisplayName("Deve criar endereço completo com sucesso consultando ViaCEP e persistindo")
     void deveCriarEnderecoCompletoComSucesso() {
         // Arrange
         String cep = "01452002";
-        EntradaEnderecoCompletoDTO dto = new EntradaEnderecoCompletoDTO(cep, "1000", "PROFISSIONAL");
+        EnderecoCompletoRequest dto = new EnderecoCompletoRequest(cep, "1000", "PROFISSIONAL");
         ViaCepDTO viaCep = criarViaCepSucesso(cep);
 
         when(client.buscarEndereco(cep)).thenReturn(viaCep);
@@ -104,7 +118,7 @@ class EnderecoServiceTest {
     @DisplayName("Deve lançar RegraNegocioException ao criar com CEP em formato inválido")
     void deveLancarRegraNegocioExceptionQuandoCepForInvalidoAoCriar(String cepInvalido) {
         // Arrange
-        EntradaEnderecoCompletoDTO dto = new EntradaEnderecoCompletoDTO(cepInvalido, "100", "RESIDENCIAL");
+        EnderecoCompletoRequest dto = new EnderecoCompletoRequest(cepInvalido, "100", "RESIDENCIAL");
 
         // Act & Assert
         assertThatThrownBy(() -> enderecoService.criar(dto))
@@ -120,7 +134,7 @@ class EnderecoServiceTest {
     void deveLancarRequisicaoInvalidaExceptionQuandoViaCepRetornarNulo() {
         // Arrange
         String cep = "01001000";
-        EntradaEnderecoCompletoDTO dto = new EntradaEnderecoCompletoDTO(cep, "100", "RESIDENCIAL");
+        EnderecoCompletoRequest dto = new EnderecoCompletoRequest(cep, "100", "RESIDENCIAL");
         when(client.buscarEndereco(cep)).thenReturn(null);
 
         // Act & Assert
@@ -135,11 +149,11 @@ class EnderecoServiceTest {
     @DisplayName("Deve lançar NaoEncontradoException quando ViaCEP retornar erro de CEP inexistente")
     void deveLancarNaoEncontradoExceptionQuandoViaCepRetornarErro() {
         // Arrange
-        String cepInexistente = "99999999";
-        EntradaEnderecoCompletoDTO dto = new EntradaEnderecoCompletoDTO(cepInexistente, "100", "RESIDENCIAL");
+        String cep = "99999999";
+        EnderecoCompletoRequest dto = new EnderecoCompletoRequest(cep, "100", "RESIDENCIAL");
         ViaCepDTO viaCepErro = new ViaCepDTO(null, null, null, null, null, null, "true");
 
-        when(client.buscarEndereco(cepInexistente)).thenReturn(viaCepErro);
+        when(client.buscarEndereco(cep)).thenReturn(viaCepErro);
 
         // Act & Assert
         assertThatThrownBy(() -> enderecoService.criar(dto))
@@ -155,9 +169,8 @@ class EnderecoServiceTest {
         // Arrange
         long id = 1L;
         String cep = "01452002";
-        EntradaEnderecoCompletoDTO dto = new EntradaEnderecoCompletoDTO(cep, "200", "RESIDENCIAL");
-        Endereco enderecoExistente = new Endereco();
-        enderecoExistente.setId(id);
+        EnderecoCompletoRequest dto = new EnderecoCompletoRequest(cep, "200", "RESIDENCIAL");
+        Endereco enderecoExistente = criarEndereco(id);
         ViaCepDTO viaCep = criarViaCepSucesso(cep);
 
         when(repository.buscarPeloId(id)).thenReturn(enderecoExistente);
@@ -178,7 +191,7 @@ class EnderecoServiceTest {
     void deveLancarNaoEncontradoExceptionAoAtualizarEnderecoInexistente() {
         // Arrange
         long idInexistente = 999L;
-        EntradaEnderecoCompletoDTO dto = new EntradaEnderecoCompletoDTO("01452002", "200", "RESIDENCIAL");
+        EnderecoCompletoRequest dto = new EnderecoCompletoRequest("01452002", "200", "RESIDENCIAL");
         when(repository.buscarPeloId(idInexistente)).thenReturn(null);
 
         // Act & Assert
@@ -194,26 +207,25 @@ class EnderecoServiceTest {
     void deveBuscarEnderecoPorId() {
         // Arrange
         long id = 5L;
-        Endereco endereco = new Endereco();
-        endereco.setId(id);
+        Endereco endereco = criarEndereco(id);
         when(repository.buscarPeloId(id)).thenReturn(endereco);
 
         // Act
-        Endereco resultado = enderecoService.buscaPorId(id);
+        EnderecoResponse resultado = enderecoService.buscaPorId(id);
 
         // Assert
         assertThat(resultado).isNotNull();
-        assertThat(resultado.getId()).isEqualTo(id);
+        assertThat(resultado.id()).isEqualTo(id);
     }
 
     @Test
     @DisplayName("Deve listar todos os endereços")
     void deveListarTodosOsEnderecos() {
         // Arrange
-        when(repository.listarTodos()).thenReturn(List.of(new Endereco(), new Endereco()));
+        when(repository.listarTodos()).thenReturn(List.of(criarEndereco(1L), criarEndereco(2L)));
 
         // Act
-        List<Endereco> lista = enderecoService.listarTodos();
+        List<EnderecoResponse> lista = enderecoService.listarTodos();
 
         // Assert
         assertThat(lista).hasSize(2);
@@ -223,10 +235,10 @@ class EnderecoServiceTest {
     @DisplayName("Deve listar endereços por cidade")
     void deveListarEnderecosPorCidade() {
         // Arrange
-        when(repository.listarPorCidade("Campinas")).thenReturn(List.of(new Endereco()));
+        when(repository.listarPorCidade("Campinas")).thenReturn(List.of(criarEndereco(1L)));
 
         // Act
-        List<Endereco> lista = enderecoService.listarPorCidades("Campinas");
+        List<EnderecoResponse> lista = enderecoService.listarPorCidades("Campinas");
 
         // Assert
         assertThat(lista).hasSize(1);

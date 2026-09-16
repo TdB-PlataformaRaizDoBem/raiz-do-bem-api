@@ -3,7 +3,7 @@ package br.com.raizdobem.api.service;
 import br.com.raizdobem.api.dto.request.DentistaUpdateRequest;
 import br.com.raizdobem.api.dto.request.DentistaCreateRequest;
 import br.com.raizdobem.api.dto.request.EnderecoRequest;
-import br.com.raizdobem.api.dto.response.DentistaDTO;
+import br.com.raizdobem.api.dto.response.DentistaResponse;
 import br.com.raizdobem.api.entity.*;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.exception.ValidacaoException;
@@ -121,7 +121,7 @@ class DentistaServiceTest {
         when(enderecoService.criarComoSuporte(dto.endereco(), TipoEndereco.PROFISSIONAL)).thenReturn(endereco);
 
         // Act
-        DentistaDTO resultado = dentistaService.criarDentista(dto);
+        DentistaResponse resultado = dentistaService.criarDentista(dto);
 
         // Assert
         assertThat(resultado).isNotNull();
@@ -223,7 +223,7 @@ class DentistaServiceTest {
         when(repository.findById(id)).thenReturn(dentista);
 
         // Act
-        DentistaDTO resultado = dentistaService.buscarPorId(id);
+        DentistaResponse resultado = dentistaService.buscarPorId(id);
 
         // Assert
         assertThat(resultado).isNotNull();
@@ -252,7 +252,7 @@ class DentistaServiceTest {
         when(repository.buscarPorCpf(cpf)).thenReturn(dentista);
 
         // Act
-        DentistaDTO resultado = dentistaService.exibirDentista(cpf);
+        DentistaResponse resultado = dentistaService.exibirDentista(cpf);
 
         // Assert
         assertThat(resultado).isNotNull();
@@ -280,7 +280,7 @@ class DentistaServiceTest {
         when(repository.listarTodos()).thenReturn(List.of(d));
 
         // Act
-        List<DentistaDTO> resultado = dentistaService.listarTodos();
+        List<DentistaResponse> resultado = dentistaService.listarTodos();
 
         // Assert
         assertThat(resultado).hasSize(1);
@@ -294,7 +294,7 @@ class DentistaServiceTest {
         when(repository.listarDisponiveis()).thenReturn(List.of(d));
 
         // Act
-        List<DentistaDTO> resultado = dentistaService.listarDisponiveis();
+        List<DentistaResponse> resultado = dentistaService.listarDisponiveis();
 
         // Assert
         assertThat(resultado).hasSize(1);
@@ -308,7 +308,7 @@ class DentistaServiceTest {
         when(repository.listarPorCidade("São Paulo")).thenReturn(List.of(d));
 
         // Act
-        List<DentistaDTO> resultado = dentistaService.listarPorCidades("São Paulo");
+        List<DentistaResponse> resultado = dentistaService.listarPorCidades("São Paulo");
 
         // Assert
         assertThat(resultado).hasSize(1);
@@ -326,7 +326,7 @@ class DentistaServiceTest {
         when(repository.buscarPorCpf(cpf)).thenReturn(dentista);
 
         // Act
-        DentistaDTO resultado = dentistaService.atualizar(cpf, request);
+        DentistaResponse resultado = dentistaService.atualizar(cpf, request);
 
         // Assert
         assertThat(resultado).isNotNull();
@@ -371,19 +371,5 @@ class DentistaServiceTest {
         // Assert
         assertThat(resultado).isEqualTo(1L);
         verify(repository, times(1)).excluir(cpf);
-    }
-
-    @Test
-    @DisplayName("Deve listar dentistas para exportação")
-    void deveListarDentistasParaExportacao() {
-        // Arrange
-        Dentista d = criarDentista(1L, CPF_VALIDO);
-        when(repository.listarTodos()).thenReturn(List.of(d));
-
-        // Act
-        List<DentistaDTO> resultado = dentistaService.listarParaExportacao();
-
-        // Assert
-        assertThat(resultado).hasSize(1);
     }
 }

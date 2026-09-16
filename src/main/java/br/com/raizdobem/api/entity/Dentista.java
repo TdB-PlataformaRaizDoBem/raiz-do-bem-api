@@ -65,4 +65,16 @@ public class Dentista {
             inverseJoinColumns = @JoinColumn(name = "id_programa")
     )
     private List<ProgramaSocial> programasSociais;
+
+    public Dentista(String croDentista, String cpf, String nomeCompleto, Sexo sexo, String email, String telefone, String categoria, String disponivel, Endereco endereco) {
+        this.croDentista = croDentista;
+        this.cpf = cpf;
+        this.nomeCompleto = nomeCompleto;
+        this.sexo = sexo;
+        this.email = email;
+        this.telefone = telefone;
+        this.categoria = categoria;
+        this.disponivel = disponivel;
+        this.endereco = endereco;
+    }
 }
