@@ -12,6 +12,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Map;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.when;
@@ -27,7 +29,7 @@ class LoginServiceTest {
     private LoginService loginService;
 
     @Test
-    @DisplayName("Deve gerar token JWT com sucesso quando email e senha forem válidos")
+    @DisplayName("Deve gerar access token e refresh token com sucesso quando email e senha forem válidos")
     void deveGerarTokenJwtQuandoCredenciaisForemValidas() {
         // Arrange
         String email = "admin@raizdobem.org";
@@ -44,10 +46,14 @@ class LoginServiceTest {
         when(colaboradorRepository.buscarPorEmail(email)).thenReturn(colaborador);
 
         // Act
-        String token = loginService.login(dto);
+        Map<String, String> tokens = loginService.login(dto);
 
         // Assert
-        assertThat(token).isNotBlank();
+        assertThat(tokens).isNotNull();
+        assertThat(tokens).containsKey("token");
+        assertThat(tokens.get("token")).isNotBlank();
+        assertThat(tokens).containsKey("refreshToken");
+        assertThat(tokens.get("refreshToken")).isNotBlank();
     }
 
     @Test

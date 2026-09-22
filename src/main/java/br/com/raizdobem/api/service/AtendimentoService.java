@@ -70,8 +70,11 @@ public class AtendimentoService {
     }
 
     public List<AtendimentoResponse> listarAtendimentos(){
-        List<Atendimento> atendimentos = repository.listarTodos();
-        return mapeamentoAtendimentos(atendimentos);
+        return mapeamentoAtendimentos(repository.listarTodos());
+    }
+
+    public List<AtendimentoResponse> listarComPaginacao(int pagina, int tamanho){
+        return mapeamentoAtendimentos(repository.listagemPaginacao(pagina, tamanho));
     }
 
     @Transactional

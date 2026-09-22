@@ -265,6 +265,24 @@ class BeneficiarioServiceTest {
     }
 
     @Test
+    @DisplayName("Deve listar beneficiários com paginação")
+    void deveListarBeneficiariosComPaginacao() {
+        // Arrange
+        int pagina = 0;
+        int tamanho = 10;
+        Beneficiario b1 = criarBeneficiario(1L);
+        Beneficiario b2 = criarBeneficiario(2L);
+        when(repository.listarTodos(pagina, tamanho)).thenReturn(List.of(b1, b2));
+
+        // Act
+        List<BeneficiarioResponse> lista = beneficiarioService.listarTodosPaginacao(pagina, tamanho);
+
+        // Assert
+        assertThat(lista).hasSize(2);
+        verify(repository, times(1)).listarTodos(pagina, tamanho);
+    }
+
+    @Test
     @DisplayName("Deve listar beneficiários por cidade")
     void deveListarBeneficiariosPorCidade() {
         // Arrange

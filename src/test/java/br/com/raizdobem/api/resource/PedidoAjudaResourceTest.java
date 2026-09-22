@@ -82,17 +82,19 @@ class PedidoAjudaResourceTest {
     }
 
     @Test
-    @DisplayName("Deve lançar NaoEncontradoException quando não houver pedidos na data consultada")
-    void deveLancarNaoEncontradoExceptionQuandoNaoHouverPedidosNaData() {
+    @DisplayName("Deve retornar lista vazia e HTTP 200 quando não houver pedidos na data consultada")
+    void deveRetornarListaVaziaQuandoNaoHouverPedidosNaData() {
         // Arrange
         String dataStr = "2026-03-10";
         LocalDate data = LocalDate.parse(dataStr);
         when(service.listarPorData(data)).thenReturn(Collections.emptyList());
 
-        // Act & Assert
-        assertThatThrownBy(() -> resource.listarPorData(dataStr))
-                .isInstanceOf(NaoEncontradoException.class)
-                .hasMessage("Nenhum pedido de ajuda encontrado.");
+        // Act
+        Response response = resource.listarPorData(dataStr);
+
+        // Assert
+        assertThat(response.getStatus()).isEqualTo(200);
+        assertThat(response.getEntity()).isEqualTo(Collections.emptyList());
     }
 
     @Test

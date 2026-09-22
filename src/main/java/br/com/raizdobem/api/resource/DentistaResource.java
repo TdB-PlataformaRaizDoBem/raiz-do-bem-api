@@ -46,8 +46,7 @@ public class DentistaResource {
     @Operation(summary = "Endpoint para a listagem de todos os dentistas.")
     @RolesAllowed({"ADMIN", "COLABORADOR"})
     public Response listarTodos(){
-        List<DentistaResponse> dentistas = service.listarTodos();
-        return Response.ok().entity(dentistas).build();
+        return Response.ok(service.listarTodos()).build();
     }
 
     @GET
@@ -55,10 +54,7 @@ public class DentistaResource {
     @Operation(summary = "Endpoint de listagem dos dentistas disponíveis.")
     @RolesAllowed({"ADMIN", "COLABORADOR"})
     public Response listarDisponiveis() {
-        List<DentistaResponse> dentistas = service.listarDisponiveis();
-        if(dentistas == null)
-            throw new NaoEncontradoException("Lista de dentistas disponíveis vazia.");
-        return Response.ok().entity(dentistas).build();
+        return Response.ok(service.listarDisponiveis()).build();
     }
 
     @GET
@@ -66,19 +62,15 @@ public class DentistaResource {
     @Operation(summary = "Endpoint de exibição de um único dentista usando o CPF.")
     @RolesAllowed({"ADMIN", "COLABORADOR"})
     public Response exibirDentista(@PathParam("cpf") String cpf){
-        DentistaResponse dentista = service.exibirDentista(cpf);
-        return Response.ok().entity(dentista).build();
+        return Response.ok(service.exibirDentista(cpf)).build();
     }
 
     @GET
     @Path("/cidade/{cidade}")
     @Operation(summary = "Endpoint de listagem de todos os dentistas de uma cidade específica.")
     @RolesAllowed({"ADMIN", "COLABORADOR"})
-    public Response listarTodos(@PathParam("cidade") String cidade){
-        List<DentistaResponse> dentistas = service.listarPorCidades(cidade);
-        if(dentistas == null || dentistas.isEmpty())
-            throw new NaoEncontradoException("Lista de dentistas não foi encontrada.");
-        return Response.status(200).entity(dentistas).build();
+    public Response listarTodos(@PathParam("cidade") String cidade) {
+        return Response.ok(service.listarPorCidades(cidade)).build();
     }
 
     @GET

@@ -10,6 +10,7 @@ import jakarta.inject.Inject;
 import io.quarkus.elytron.security.common.BcryptUtil;
 
 import java.time.Duration;
+import java.util.Map;
 import java.util.Set;
 
 @ApplicationScoped
@@ -17,17 +18,24 @@ public class LoginService {
     @Inject
     ColaboradorRepository colaboradorRepository;
 
-    public String login(LoginRequest login){
+    public Map<String, String> login(LoginRequest login){
         Colaborador colaborador = colaboradorRepository.buscarPorEmail(login.email());
         if(colaborador == null || !BcryptUtil.matches(login.senha(), colaborador.getSenha())){
             throw new ValidacaoException("Email ou senha inválido(s).");
         }
 
-        return Jwt.issuer("raiz-do-bem")
+        String tokenAcesso = Jwt.issuer("raiz-do-bem")
                 .subject(colaborador.getEmail())
-                .claim("nome", colaborador.getNomeCompleto())
                 .groups(Set.of(colaborador.getRole()))
                 .expiresIn(Duration.ofHours(8))
                 .sign();
+
+        String refreshToken = Jwt.issuer("raiz-do-bem")
+                .subject(colaborador.getEmail())
+                .claim("type", "refresh")
+                .expiresIn(Duration.ofDays(7))
+                .sign();
+
+        return Map.of("token", tokenAcesso, "refreshToken", refreshToken);
     }
 }

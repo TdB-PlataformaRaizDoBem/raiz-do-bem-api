@@ -52,11 +52,7 @@ public class EnderecoResource {
     @Path("/{cidade}")
     @RolesAllowed({"ADMIN", "COLABORADOR"})
     public Response listarPorCidade(@PathParam("cidade") String cidade){
-        List<EnderecoResponse> enderecos = service.listarPorCidades(cidade);
-        if(enderecos == null || enderecos.isEmpty()){
-            throw new NaoEncontradoException("Nenhum pedido de ajuda encontrado.");
-        }
-        return Response.ok(enderecos).build();
+        return Response.ok(service.listarPorCidades(cidade)).build();
     }
 
     @GET
@@ -74,7 +70,7 @@ public class EnderecoResource {
     public Response buscarViaCep(@PathParam("cep") String cep){
         ViaCepDTO responseViaCep = service.buscarEndereco(cep);
         if(responseViaCep == null){
-            throw new NaoEncontradoException("Endereço não enconrado na Api do ViaCep.");
+            throw new NaoEncontradoException("Endereço não encontrado na Api do ViaCep.");
         }
         return Response.ok(responseViaCep).build();
     }
@@ -84,8 +80,7 @@ public class EnderecoResource {
     @Path("/{id}")
     @RolesAllowed({"ADMIN", "COLABORADOR"})
     public Response atualizar(@PathParam("id") Long id, @RequestBody EnderecoCompletoRequest request){
-        Endereco endereco = service.atualizarEndereco(id, request);
-        return Response.ok().entity(endereco).build();
+        return Response.ok(service.atualizarEndereco(id, request)).build();
     }
 
     @DELETE

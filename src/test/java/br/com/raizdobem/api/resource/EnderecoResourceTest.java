@@ -132,15 +132,17 @@ class EnderecoResourceTest {
     }
 
     @Test
-    @DisplayName("Deve lançar NaoEncontradoException ao listar por cidade sem resultados")
-    void deveLancarNaoEncontradoExceptionAoListarPorCidadeSemResultados() {
+    @DisplayName("Deve retornar lista vazia e HTTP 200 ao listar por cidade sem resultados")
+    void deveRetornarListaVaziaAoListarPorCidadeSemResultados() {
         // Arrange
         when(service.listarPorCidades("CidadeInexistente")).thenReturn(List.of());
 
-        // Act & Assert
-        assertThatThrownBy(() -> resource.listarPorCidade("CidadeInexistente"))
-                .isInstanceOf(NaoEncontradoException.class)
-                .hasMessage("Nenhum pedido de ajuda encontrado.");
+        // Act
+        Response response = resource.listarPorCidade("CidadeInexistente");
+
+        // Assert
+        assertThat(response.getStatus()).isEqualTo(200);
+        assertThat(response.getEntity()).isEqualTo(List.of());
     }
 
     @Test
@@ -184,7 +186,7 @@ class EnderecoResourceTest {
         // Act & Assert
         assertThatThrownBy(() -> resource.buscarViaCep(cep))
                 .isInstanceOf(NaoEncontradoException.class)
-                .hasMessage("Endereço não enconrado na Api do ViaCep.");
+                .hasMessage("Endereço não encontrado na Api do ViaCep.");
     }
 
     @Test

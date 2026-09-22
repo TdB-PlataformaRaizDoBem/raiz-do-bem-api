@@ -61,6 +61,23 @@ class BeneficiarioResourceTest {
     }
 
     @Test
+    @DisplayName("Deve listar todos os beneficiários com paginação e retornar HTTP 200")
+    void deveListarTodosComPaginacaoRetornandoStatus200() {
+        // Arrange
+        int pagina = 0;
+        int tamanho = 10;
+        when(service.listarTodosPaginacao(pagina, tamanho)).thenReturn(List.of(criarDTO(1L, "12345678901")));
+
+        // Act
+        Response response = resource.listarTodosComPaginacao(pagina, tamanho);
+
+        // Assert
+        assertThat(response.getStatus()).isEqualTo(200);
+        assertThat(response.getEntity()).isNotNull();
+        verify(service, times(1)).listarTodosPaginacao(pagina, tamanho);
+    }
+
+    @Test
     @DisplayName("Deve criar beneficiário com sucesso e retornar HTTP 201 Created")
     void deveCriarBeneficiarioRetornandoStatus201() {
         // Arrange

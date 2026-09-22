@@ -79,7 +79,7 @@ public class EnderecoService {
     }
 
     @Transactional
-    public Endereco atualizarEndereco(Long id, EnderecoCompletoRequest dto) {
+    public EnderecoResponse atualizarEndereco(Long id, EnderecoCompletoRequest dto) {
         Endereco endereco = repository.buscarPeloId(id);
         if(endereco == null)
             throw new NaoEncontradoException("Endereço não encontrado.");
@@ -87,7 +87,7 @@ public class EnderecoService {
         entradaEnderecoCompleto(endereco, dto);
 
         repository.persist(endereco);
-        return endereco;
+        return EnderecoMapper.mapeamentoParaResponse(endereco);
     }
 
     @Transactional

@@ -27,11 +27,20 @@ public class LoginResource {
     LoginService service;
 
     @POST
-    @Path("/login")
+    @Path("/tokenAcesso")
     @PermitAll
     @Operation(summary = "Login de colaborador", description = "Realiza o login do usuário e retorna um token JWT para autenticação.")
     public Response login(LoginRequest loginRequest) {
         return Response.ok(Map.of("token", service.login(loginRequest), "tipo", "BearerToken"
         )).build();
     }
+
+//    @POST
+//    @Path("/refreshToken")
+//    @PermitAll
+//    @Operation(summary = "Refresh Token para login de colaborador", description = "Realiza o login do usuário e retorna um token JWT para autenticação.")
+//    public Response login(LoginRequest loginRequest) {
+//        return Response.ok(Map.of("refreshToken", service.login(loginRequest), "tipo", "BearerToken"
+//        )).build();
+//    }
 }

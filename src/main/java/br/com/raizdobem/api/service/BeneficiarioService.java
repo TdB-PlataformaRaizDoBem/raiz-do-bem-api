@@ -11,6 +11,7 @@ import br.com.raizdobem.api.mapper.BeneficiarioMapper;
 import br.com.raizdobem.api.repository.BeneficiarioRepository;
 import br.com.raizdobem.api.util.CpfValidatorUtil;
 import io.quarkus.cache.CacheResult;
+import io.quarkus.panache.common.Page;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -86,6 +87,10 @@ public class BeneficiarioService {
     @CacheResult(cacheName = "beneficiarios")
     public List<BeneficiarioResponse> listarTodos() {
         return BeneficiarioMapper.mapeamentoBeneficiarios(repository.listarTodos());
+    }
+    @CacheResult(cacheName = "beneficiarios")
+    public List<BeneficiarioResponse> listarTodosPaginacao(int pagina, int tamanho) {
+        return BeneficiarioMapper.mapeamentoBeneficiarios(repository.listarTodos(pagina, tamanho));
     }
 
     public List<BeneficiarioResponse> listarPorCidade(String cidade) {

@@ -1,8 +1,7 @@
 package br.com.raizdobem.api.resource;
 
 import br.com.raizdobem.api.dto.request.LoginRequest;
-import br.com.raizdobem.api.exception.NaoEncontradoException;
-import br.com.raizdobem.api.exception.RequisicaoInvalidaException;
+import br.com.raizdobem.api.exception.ValidacaoException;
 import br.com.raizdobem.api.service.LoginService;
 import jakarta.ws.rs.core.Response;
 import org.junit.jupiter.api.DisplayName;
@@ -29,48 +28,38 @@ class LoginResourceTest {
     private LoginResource loginResource;
 
     @Test
-    @DisplayName("Deve autenticar com sucesso e retornar token JWT com HTTP 200")
+    @DisplayName("Deve autenticar com sucesso e retornar tokens com HTTP 200")
     @SuppressWarnings("unchecked")
     void deveAutenticarComSucesso() {
         // Arrange
         LoginRequest loginRequest = new LoginRequest("usuario@raizdobem.org", "Senha@123");
-        String tokenEsperado = "jwt.token.gerado";
+        Map<String, String> tokensEsperados = Map.of(
+                "token", "jwt.access.token",
+                "refreshToken", "jwt.refresh.token"
+        );
 
-        when(loginService.login(loginRequest)).thenReturn(tokenEsperado);
+        when(loginService.login(loginRequest)).thenReturn(tokensEsperados);
 
         // Act
         Response response = loginResource.login(loginRequest);
 
         // Assert
         assertThat(response.getStatus()).isEqualTo(200);
-        Map<String, String> entity = (Map<String, String>) response.getEntity();
-        assertThat(entity).containsEntry("token", tokenEsperado);
+        Map<String, Object> entity = (Map<String, Object>) response.getEntity();
+        assertThat(entity).containsEntry("token", tokensEsperados);
         assertThat(entity).containsEntry("tipo", "BearerToken");
     }
 
     @Test
-    @DisplayName("Deve propagar NaoEncontradoException quando email não for encontrado")
-    void devePropagarNaoEncontradoExceptionQuandoEmailNaoExistir() {
+    @DisplayName("Deve propagar ValidacaoException quando credenciais forem inválidas")
+    void devePropagarValidacaoExceptionQuandoCredenciaisForemInvalidas() {
         // Arrange
         LoginRequest loginRequest = new LoginRequest("inexistente@raizdobem.org", "Senha@123");
-        when(loginService.login(loginRequest)).thenThrow(new NaoEncontradoException("Email inválido."));
+        when(loginService.login(loginRequest)).thenThrow(new ValidacaoException("Email ou senha inválido(s)."));
 
         // Act & Assert
         assertThatThrownBy(() -> loginResource.login(loginRequest))
-                .isInstanceOf(NaoEncontradoException.class)
-                .hasMessage("Email inválido.");
-    }
-
-    @Test
-    @DisplayName("Deve propagar RequisicaoInvalidaException quando senha for incorreta")
-    void devePropagarRequisicaoInvalidaExceptionQuandoSenhaIncorreta() {
-        // Arrange
-        LoginRequest loginRequest = new LoginRequest("usuario@raizdobem.org", "SenhaErrada");
-        when(loginService.login(loginRequest)).thenThrow(new RequisicaoInvalidaException("Senha inválida."));
-
-        // Act & Assert
-        assertThatThrownBy(() -> loginResource.login(loginRequest))
-                .isInstanceOf(RequisicaoInvalidaException.class)
-                .hasMessage("Senha inválida.");
+                .isInstanceOf(ValidacaoException.class)
+                .hasMessage("Email ou senha inválido(s).");
     }
 }

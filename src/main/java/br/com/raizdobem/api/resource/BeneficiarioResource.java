@@ -34,9 +34,20 @@ public class BeneficiarioResource {
     @Operation(summary = "Endpoint de listagem dos beneficiários cadastrados.")
     @RolesAllowed({"ADMIN", "COLABORADOR"})
     public Response listarTodos(){
-        List<BeneficiarioResponse> beneficiarios = service.listarTodos();
-        return Response.ok(beneficiarios).build();
+        return Response.ok(service.listarTodos()).build();
     }
+
+    @GET
+    @Path("/paginacao")
+    @Operation(summary = "Endpoint de listagem dos beneficiários cadastrados.")
+    @RolesAllowed({"ADMIN", "COLABORADOR"})
+    public Response listarTodosComPaginacao(
+            @QueryParam("pagina") @DefaultValue("0") int pagina,
+            @QueryParam("size") @DefaultValue("20") int tamanho){
+        return Response.ok(service.listarTodosPaginacao(pagina, tamanho)).build();
+    }
+
+
 
     @POST
     @Operation(summary = "Endpoint para a criação de beneficiário, de um pedido de ajuda aprovado.")

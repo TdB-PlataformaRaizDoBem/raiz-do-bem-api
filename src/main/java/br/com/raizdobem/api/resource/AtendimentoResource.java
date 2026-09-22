@@ -39,6 +39,15 @@ public class AtendimentoResource {
         return Response.ok(service.listarAtendimentos()).build();
     }
 
+    @GET
+    @Path("/paginacao")
+    @Operation(summary = "Endpoint de listagem dos atendimentos.")
+    @RolesAllowed({"ADMIN", "COLABORADOR"})
+    public Response listarTodos(@QueryParam("pagina") @DefaultValue("0") int pagina,
+                                @QueryParam("size") @DefaultValue("20") int tamanho){
+        return Response.ok(service.listarComPaginacao(pagina, tamanho)).build();
+    }
+
     @POST
     @Operation(summary = "Endpoint de criação dos atendimentos de beneficiários cadastrados.")
     @RolesAllowed({"ADMIN", "COLABORADOR"})
@@ -95,7 +104,6 @@ public class AtendimentoResource {
     @Hidden
     public Response excluirAtendimento(@PathParam("id") Long id){
         boolean apagado = service.excluir(id);
-
         if(apagado){
             return Response.noContent().build();
         }

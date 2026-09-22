@@ -225,6 +225,30 @@ class AtendimentoServiceTest {
     }
 
     @Test
+    @DisplayName("Deve listar atendimentos com paginação com sucesso")
+    void deveListarAtendimentosComPaginacao() {
+        // Arrange
+        int pagina = 0;
+        int tamanho = 10;
+        Atendimento a = new Atendimento();
+        a.setId(1L);
+        a.setProntuario("PRONT-PAG-1");
+        a.setBeneficiario(criarBeneficiario());
+        a.setDentista(criarDentista());
+        a.setDataInicial(LocalDate.now());
+
+        when(repository.listagemPaginacao(pagina, tamanho)).thenReturn(List.of(a));
+
+        // Act
+        List<AtendimentoResponse> lista = atendimentoService.listarComPaginacao(pagina, tamanho);
+
+        // Assert
+        assertThat(lista).hasSize(1);
+        assertThat(lista.getFirst().prontuario()).isEqualTo("PRONT-PAG-1");
+        verify(repository, times(1)).listagemPaginacao(pagina, tamanho);
+    }
+
+    @Test
     @DisplayName("Deve encerrar atendimento com sucesso vinculando colaborador e data de finalização")
     void deveEncerrarAtendimentoComSucessoQuandoDadosForemValidos() {
         // Arrange

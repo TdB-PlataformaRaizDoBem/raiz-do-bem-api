@@ -45,11 +45,7 @@ public class PedidoAjudaResource {
     @Path("/data/{data}")
     @RolesAllowed({"ADMIN", "COLABORADOR"})
     public Response listarPorData(@PathParam("data") String data) {
-        List<PedidoAjudaResponse> pedidos = service.listarPorData(LocalDate.parse(data));
-        if(pedidos == null || pedidos.isEmpty()){
-            throw new NaoEncontradoException("Nenhum pedido de ajuda encontrado.");
-        }
-        return Response.ok(pedidos).build();
+        return Response.ok(service.listarPorData(LocalDate.parse(data))).build();
     }
 
     @POST

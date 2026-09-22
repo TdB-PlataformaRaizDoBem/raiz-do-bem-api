@@ -60,6 +60,23 @@ class AtendimentoResourceTest {
     }
 
     @Test
+    @DisplayName("Deve listar atendimentos com paginação retornando HTTP 200")
+    void deveListarAtendimentosComPaginacaoRetornandoStatus200() {
+        // Arrange
+        int pagina = 0;
+        int tamanho = 10;
+        when(service.listarComPaginacao(pagina, tamanho)).thenReturn(List.of(criarAtendimentoDTO(1L)));
+
+        // Act
+        Response response = resource.listarTodos(pagina, tamanho);
+
+        // Assert
+        assertThat(response.getStatus()).isEqualTo(200);
+        assertThat(response.getEntity()).isNotNull();
+        verify(service, times(1)).listarComPaginacao(pagina, tamanho);
+    }
+
+    @Test
     @DisplayName("Deve criar atendimento com sucesso retornando HTTP 201 Created com Location")
     void deveCriarAtendimentoRetornandoStatus201() {
         // Arrange

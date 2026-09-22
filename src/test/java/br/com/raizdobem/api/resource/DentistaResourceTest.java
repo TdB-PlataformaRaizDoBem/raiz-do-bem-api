@@ -115,15 +115,17 @@ class DentistaResourceTest {
     }
 
     @Test
-    @DisplayName("Deve lançar NaoEncontradoException quando lista de dentistas disponíveis for nula")
-    void deveLancarNaoEncontradoExceptionQuandoListaDisponiveisForNula() {
+    @DisplayName("Deve retornar HTTP 200 ao listar dentistas disponíveis mesmo quando lista for vazia")
+    void deveRetornarStatus200QuandoListaDisponiveisForVazia() {
         // Arrange
-        when(service.listarDisponiveis()).thenReturn(null);
+        when(service.listarDisponiveis()).thenReturn(Collections.emptyList());
 
-        // Act & Assert
-        assertThatThrownBy(() -> resource.listarDisponiveis())
-                .isInstanceOf(NaoEncontradoException.class)
-                .hasMessage("Lista de dentistas disponíveis vazia.");
+        // Act
+        Response response = resource.listarDisponiveis();
+
+        // Assert
+        assertThat(response.getStatus()).isEqualTo(200);
+        assertThat(response.getEntity()).isEqualTo(Collections.emptyList());
     }
 
     @Test
@@ -155,16 +157,18 @@ class DentistaResourceTest {
     }
 
     @Test
-    @DisplayName("Deve lançar NaoEncontradoException quando não houver dentistas na cidade")
-    void deveLancarNaoEncontradoExceptionQuandoNaoHouverDentistasNaCidade() {
+    @DisplayName("Deve retornar lista vazia e HTTP 200 quando não houver dentistas na cidade")
+    void deveRetornarListaVaziaQuandoNaoHouverDentistasNaCidade() {
         // Arrange
         String cidade = "CidadeSemDentistas";
         when(service.listarPorCidades(cidade)).thenReturn(Collections.emptyList());
 
-        // Act & Assert
-        assertThatThrownBy(() -> resource.listarTodos(cidade))
-                .isInstanceOf(NaoEncontradoException.class)
-                .hasMessage("Lista de dentistas não foi encontrada.");
+        // Act
+        Response response = resource.listarTodos(cidade);
+
+        // Assert
+        assertThat(response.getStatus()).isEqualTo(200);
+        assertThat(response.getEntity()).isEqualTo(Collections.emptyList());
     }
 
     @Test
