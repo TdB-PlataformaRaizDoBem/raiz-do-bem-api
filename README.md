@@ -963,6 +963,17 @@ A documentação OpenAPI é disponibilizada pelo Quarkus através das extensões
 quarkus-smallrye-openapi
 quarkus-swagger-ui
 ```
+### 🔎 Swagger UI
+
+Com a aplicação em execução localmente:
+
+👉 **[Abrir Swagger UI](http://localhost:8080/q/swagger-ui/)**
+
+Ou acesse diretamente:
+
+```text
+http://localhost:8080/q/swagger-ui/
+```
 
 Durante a execução da aplicação, a interface Swagger UI pode ser utilizada para explorar os contratos REST disponibilizados pelo projeto.
 
