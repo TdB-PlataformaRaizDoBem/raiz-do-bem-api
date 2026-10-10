@@ -8,6 +8,7 @@ import br.com.raizdobem.api.exception.RequisicaoInvalidaException;
 import br.com.raizdobem.api.service.DentistaService;
 import br.com.raizdobem.api.util.CsvUtil;
 import io.vertx.core.cli.annotations.Hidden;
+import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
@@ -32,8 +33,8 @@ public class DentistaResource {
     DentistaService service;
 
     @POST
-    @Operation(summary = "Endpoint para a criação de dentista.")
-    @RolesAllowed({"ADMIN", "COLABORADOR"})
+    @Operation(summary = "Endpoint para a criação de dentista.", description = "Público: usado tanto pelo cadastro de voluntários quanto pela área logada.")
+    @PermitAll
     public Response criar(@Valid DentistaCreateRequest request){
         DentistaResponse dentista = service.criarDentista(request);
         if(dentista == null){
