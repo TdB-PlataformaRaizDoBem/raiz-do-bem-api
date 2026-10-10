@@ -195,8 +195,8 @@ class EnderecoResourceTest {
         // Arrange
         long id = 1L;
         EnderecoCompletoRequest request = new EnderecoCompletoRequest("01001000", "200", "RESIDENCIAL");
-        Endereco atualizado = criarEndereco(id);
-        atualizado.setNumero("200");
+        EnderecoResponse atualizado = new EnderecoResponse(id, "Praça da Sé", "01001000", "200",
+                "Sé", "São Paulo", "SP", "RESIDENCIAL");
         when(service.atualizarEndereco(id, request)).thenReturn(atualizado);
 
         // Act

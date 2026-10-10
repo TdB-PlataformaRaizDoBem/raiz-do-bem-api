@@ -31,6 +31,7 @@ public record DentistaCreateRequest(
         @NotBlank
         String categoria,
 
+        @NotNull(message = "Especialidade é obrigatória.")
         Long idEspecialidade,
 
         @NotBlank

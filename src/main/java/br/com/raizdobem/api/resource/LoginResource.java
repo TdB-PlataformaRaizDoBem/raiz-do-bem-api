@@ -1,6 +1,7 @@
 package br.com.raizdobem.api.resource;
 
 import br.com.raizdobem.api.dto.request.LoginRequest;
+import br.com.raizdobem.api.dto.request.RefreshTokenRequest;
 import br.com.raizdobem.api.service.LoginService;
 import jakarta.annotation.security.PermitAll;
 import jakarta.enterprise.context.RequestScoped;
@@ -31,16 +32,24 @@ public class LoginResource {
     @PermitAll
     @Operation(summary = "Login de colaborador", description = "Realiza o login do usuário e retorna um token JWT para autenticação.")
     public Response login(LoginRequest loginRequest) {
-        return Response.ok(Map.of("token", service.login(loginRequest), "tipo", "BearerToken"
+        Map<String, String> tokens = service.login(loginRequest);
+        return Response.ok(Map.of(
+                "token", tokens.get("token"),
+                "refreshToken", tokens.get("refreshToken"),
+                "tipo", "BearerToken"
         )).build();
     }
 
-//    @POST
-//    @Path("/refreshToken")
-//    @PermitAll
-//    @Operation(summary = "Refresh Token para login de colaborador", description = "Realiza o login do usuário e retorna um token JWT para autenticação.")
-//    public Response login(LoginRequest loginRequest) {
-//        return Response.ok(Map.of("refreshToken", service.login(loginRequest), "tipo", "BearerToken"
-//        )).build();
-//    }
+    @POST
+    @Path("/refreshToken")
+    @PermitAll
+    @Operation(summary = "Renovação de token", description = "Recebe um refresh token válido e retorna um novo token de acesso e um novo refresh token.")
+    public Response renovar(RefreshTokenRequest request) {
+        Map<String, String> tokens = service.renovarToken(request == null ? null : request.refreshToken());
+        return Response.ok(Map.of(
+                "token", tokens.get("token"),
+                "refreshToken", tokens.get("refreshToken"),
+                "tipo", "BearerToken"
+        )).build();
+    }
 }

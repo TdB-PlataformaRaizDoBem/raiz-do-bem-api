@@ -177,12 +177,12 @@ class EnderecoServiceTest {
         when(client.buscarEndereco(cep)).thenReturn(viaCep);
 
         // Act
-        Endereco atualizado = enderecoService.atualizarEndereco(id, dto);
+        EnderecoResponse atualizado = enderecoService.atualizarEndereco(id, dto);
 
         // Assert
         assertThat(atualizado).isNotNull();
-        assertThat(atualizado.getNumero()).isEqualTo("200");
-        assertThat(atualizado.getLogradouro()).isEqualTo("Avenida Brigadeiro Faria Lima");
+        assertThat(atualizado.numero()).isEqualTo("200");
+        assertThat(atualizado.logradouro()).isEqualTo("Avenida Brigadeiro Faria Lima");
         verify(repository, times(1)).persist(enderecoExistente);
     }
 

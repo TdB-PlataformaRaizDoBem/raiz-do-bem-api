@@ -1,6 +1,7 @@
 package br.com.raizdobem.api.resource;
 
 import br.com.raizdobem.api.dto.request.LoginRequest;
+import br.com.raizdobem.api.dto.request.RefreshTokenRequest;
 import br.com.raizdobem.api.exception.ValidacaoException;
 import br.com.raizdobem.api.service.LoginService;
 import jakarta.ws.rs.core.Response;
@@ -46,7 +47,8 @@ class LoginResourceTest {
         // Assert
         assertThat(response.getStatus()).isEqualTo(200);
         Map<String, Object> entity = (Map<String, Object>) response.getEntity();
-        assertThat(entity).containsEntry("token", tokensEsperados);
+        assertThat(entity).containsEntry("token", "jwt.access.token");
+        assertThat(entity).containsEntry("refreshToken", "jwt.refresh.token");
         assertThat(entity).containsEntry("tipo", "BearerToken");
     }
 
@@ -61,5 +63,21 @@ class LoginResourceTest {
         assertThatThrownBy(() -> loginResource.login(loginRequest))
                 .isInstanceOf(ValidacaoException.class)
                 .hasMessage("Email ou senha inválido(s).");
+    }
+
+    @Test
+    @DisplayName("Deve renovar tokens com HTTP 200")
+    @SuppressWarnings("unchecked")
+    void deveRenovarTokens() {
+        when(loginService.renovarToken("refresh.antigo")).thenReturn(Map.of(
+                "token", "jwt.novo", "refreshToken", "refresh.novo"));
+
+        Response response = loginResource.renovar(new RefreshTokenRequest("refresh.antigo"));
+
+        assertThat(response.getStatus()).isEqualTo(200);
+        Map<String, Object> entity = (Map<String, Object>) response.getEntity();
+        assertThat(entity).containsEntry("token", "jwt.novo");
+        assertThat(entity).containsEntry("refreshToken", "refresh.novo");
+        assertThat(entity).containsEntry("tipo", "BearerToken");
     }
 }
