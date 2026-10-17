@@ -110,6 +110,30 @@ class CsvUtilTest {
     }
 
     @Test
+    @DisplayName("Deve gerar CSV de beneficiários sem NullPointerException quando pedido e endereço forem nulos")
+    void deveGerarCsvBeneficiariosComPedidoEEnderecoNulos() {
+        // Arrange
+        BeneficiarioResponse b = new BeneficiarioResponse(
+                2L,
+                "98765432100",
+                "Carlos Silva",
+                LocalDate.of(2015, 8, 20),
+                "11977776666",
+                "carlos@email.com",
+                null,
+                "Apolônias do Bem",
+                null
+        );
+
+        // Act
+        String csv = CsvUtil.gerarCsvBeneficiarios(List.of(b));
+
+        // Assert
+        assertThat(csv).isNotNull();
+        assertThat(csv).contains("2,98765432100,Carlos Silva,2015-08-20,11977776666,carlos@email.com,,Apolônias do Bem,,,,");
+    }
+
+    @Test
     @DisplayName("Deve gerar nome do arquivo com formato tipo_dd-MM-yyyy.csv")
     void deveGerarNomeArquivoComDataAtual() {
         // Arrange

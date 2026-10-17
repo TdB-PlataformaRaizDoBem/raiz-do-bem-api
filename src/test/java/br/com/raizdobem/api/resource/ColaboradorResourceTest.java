@@ -3,6 +3,7 @@ package br.com.raizdobem.api.resource;
 import br.com.raizdobem.api.dto.request.ColaboradorUpdateRequest;
 import br.com.raizdobem.api.dto.request.ColaboradorCreateRequest;
 import br.com.raizdobem.api.dto.response.ColaboradorResponse;
+import br.com.raizdobem.api.dto.response.PageResponse;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.service.ColaboradorService;
 import jakarta.ws.rs.core.Response;
@@ -14,6 +15,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -100,6 +102,47 @@ class ColaboradorResourceTest {
         // Assert
         assertThat(response.getStatus()).isEqualTo(200);
         assertThat(response.getEntity()).isEqualTo(List.of(responseDTO));
+    }
+
+    @Test
+    @DisplayName("Deve listar colaboradores com paginação retornando HTTP 200")
+    void deveListarComPaginacaoRetornandoStatus200() {
+        // Arrange
+        int pagina = 0;
+        int tamanho = 10;
+        ColaboradorResponse responseDTO = criarColaboradorResponse(1L, "12345678901");
+        PageResponse<ColaboradorResponse> pageResponse = new PageResponse<>(
+                List.of(responseDTO), pagina, tamanho, 1L, 1
+        );
+        when(service.listarComPaginacao(pagina, tamanho)).thenReturn(pageResponse);
+
+        // Act
+        Response response = resource.listarTodos(pagina, tamanho);
+
+        // Assert
+        assertThat(response.getStatus()).isEqualTo(200);
+        assertThat(response.getEntity()).isEqualTo(pageResponse);
+        verify(service, times(1)).listarComPaginacao(pagina, tamanho);
+    }
+
+    @Test
+    @DisplayName("Deve retornar página vazia e HTTP 200 quando paginação de colaboradores não encontrar resultados")
+    void deveRetornarPaginaVaziaQuandoPaginacaoNaoEncontrarResultados() {
+        // Arrange
+        int pagina = 99;
+        int tamanho = 10;
+        PageResponse<ColaboradorResponse> pageResponse = new PageResponse<>(
+                Collections.emptyList(), pagina, tamanho, 0L, 0
+        );
+        when(service.listarComPaginacao(pagina, tamanho)).thenReturn(pageResponse);
+
+        // Act
+        Response response = resource.listarTodos(pagina, tamanho);
+
+        // Assert
+        assertThat(response.getStatus()).isEqualTo(200);
+        assertThat(response.getEntity()).isEqualTo(pageResponse);
+        verify(service, times(1)).listarComPaginacao(pagina, tamanho);
     }
 
     @Test

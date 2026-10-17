@@ -1,10 +1,12 @@
 package br.com.raizdobem.api.resource;
 
 import br.com.raizdobem.api.dto.request.LoginRequest;
+import br.com.raizdobem.api.dto.request.RefreshTokenRequest;
 import br.com.raizdobem.api.service.LoginService;
 import jakarta.annotation.security.PermitAll;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
+import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
@@ -13,8 +15,6 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
-
-import java.util.Map;
 
 @RequestScoped
 @Path("/auth")
@@ -37,9 +37,8 @@ public class LoginResource {
     @POST
     @Path("/refreshToken")
     @PermitAll
-    @Operation(summary = "Refresh Token para login de colaborador", description = "Realiza o login do usuário e retorna um token JWT para autenticação.")
-    public Response refreshToken(LoginRequest loginRequest) {
-        return Response.ok(Map.of("refreshToken", service.login(loginRequest), "tipo", "BearerToken"
-        )).build();
+    @Operation(summary = "Refresh Token para login de colaborador", description = "Renova o token JWT utilizando um refresh token válido.")
+    public Response refreshToken(@Valid RefreshTokenRequest request) {
+        return Response.ok(service.refreshToken(request)).build();
     }
 }

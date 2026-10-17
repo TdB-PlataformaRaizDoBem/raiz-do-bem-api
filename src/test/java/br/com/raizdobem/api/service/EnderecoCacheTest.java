@@ -1,7 +1,6 @@
 package br.com.raizdobem.api.service;
 
 import br.com.raizdobem.api.dto.request.EnderecoCompletoRequest;
-import io.quarkus.cache.CacheInvalidate;
 import io.quarkus.cache.CacheInvalidateAll;
 import io.quarkus.cache.CacheResult;
 import org.junit.jupiter.api.DisplayName;
@@ -27,24 +26,21 @@ class EnderecoCacheTest {
     }
 
     @Test
-    @DisplayName("Erro mais óbvio / Auditoria - Deve auditar ausência de anotações de invalidação de cache nos métodos de escrita")
-    void deveAuditarAusenciaDeInvalidacaoDeCacheNosMetodosDeEscrita() throws NoSuchMethodException {
+    @DisplayName("Deve verificar se todos os métodos de escrita possuem @CacheInvalidateAll(enderecos)")
+    void deveVerificarInvalidacaoDeCacheNosMetodosDeEscrita() throws NoSuchMethodException {
         // Arrange
         Method criar = EnderecoService.class.getMethod("criar", EnderecoCompletoRequest.class);
         Method atualizar = EnderecoService.class.getMethod("atualizarEndereco", Long.class, EnderecoCompletoRequest.class);
         Method excluir = EnderecoService.class.getMethod("excluir", Long.class);
 
-        // Act
-        boolean criarPossuiInvalidacao = criar.isAnnotationPresent(CacheInvalidateAll.class)
-                || criar.isAnnotationPresent(CacheInvalidate.class);
-        boolean atualizarPossuiInvalidacao = atualizar.isAnnotationPresent(CacheInvalidateAll.class)
-                || atualizar.isAnnotationPresent(CacheInvalidate.class);
-        boolean excluirPossuiInvalidacao = excluir.isAnnotationPresent(CacheInvalidateAll.class)
-                || excluir.isAnnotationPresent(CacheInvalidate.class);
+        // Assert
+        assertThat(criar.isAnnotationPresent(CacheInvalidateAll.class)).isTrue();
+        assertThat(criar.getAnnotation(CacheInvalidateAll.class).cacheName()).isEqualTo("enderecos");
 
-        // Assert - registra o débito técnico: métodos de escrita em EnderecoService não possuem @CacheInvalidateAll(cacheName = "enderecos")
-        assertThat(criarPossuiInvalidacao).isFalse();
-        assertThat(atualizarPossuiInvalidacao).isFalse();
-        assertThat(excluirPossuiInvalidacao).isFalse();
+        assertThat(atualizar.isAnnotationPresent(CacheInvalidateAll.class)).isTrue();
+        assertThat(atualizar.getAnnotation(CacheInvalidateAll.class).cacheName()).isEqualTo("enderecos");
+
+        assertThat(excluir.isAnnotationPresent(CacheInvalidateAll.class)).isTrue();
+        assertThat(excluir.getAnnotation(CacheInvalidateAll.class).cacheName()).isEqualTo("enderecos");
     }
 }

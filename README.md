@@ -3,1081 +3,400 @@
 [![Java](https://img.shields.io/badge/Java-21-ED8B00?logo=openjdk&logoColor=white)](https://www.oracle.com/java/)
 [![Quarkus](https://img.shields.io/badge/Quarkus-3.34.5-4695EB?logo=quarkus&logoColor=white)](https://quarkus.io/)
 [![Oracle](https://img.shields.io/badge/Oracle-Database-F80000?logo=oracle&logoColor=white)](https://www.oracle.com/database/)
-[![JWT](https://img.shields.io/badge/Auth-JWT-000000?logo=jsonwebtokens&logoColor=white)](https://jwt.io/)
+[![JWT](https://img.shields.io/badge/SmallRye_JWT-RSA_256-000000?logo=jsonwebtokens&logoColor=white)](https://jwt.io/)
 [![Maven](https://img.shields.io/badge/Maven-3.x-C71A36?logo=apachemaven&logoColor=white)](https://maven.apache.org/)
-[![OpenAPI](https://img.shields.io/badge/OpenAPI-Swagger-85EA2D?logo=swagger&logoColor=black)](https://swagger.io/specification/)
+[![OpenAPI](https://img.shields.io/badge/OpenAPI-Swagger_UI-85EA2D?logo=swagger&logoColor=black)](https://swagger.io/specification/)
+[![Tests](https://img.shields.io/badge/Tests-285_Passing-2EA44F?logo=junit5&logoColor=white)](#5-testes-e-qualidade-de-software)
 
-> API REST desenvolvida em **Java 21 + Quarkus** para suporte à plataforma **Raiz do Bem**, contemplando gestão de beneficiários, pedidos de ajuda, atendimentos odontológicos, dentistas, colaboradores, endereços e programas sociais.
+> **Backend RESTful Enterprise** desenvolvido em **Java 21 + Quarkus 3.34.5** para a plataforma **Raiz do Bem** (Challenge FIAP em parceria com a **ONG Turma do Bem**), centralizando a gestão de beneficiários, triagem de pedidos de ajuda, atendimentos odontológicos, dentistas voluntários, colaboradores, endereços georreferenciados e programas sociais.
 
 ---
 
 ## 📌 Sumário
 
-- [Visão Geral](#-visão-geral)
-- [Proposta de Valor](#-proposta-de-valor)
-- [Principais Funcionalidades](#-principais-funcionalidades)
-- [Arquitetura](#-arquitetura)
-- [Estrutura do Projeto](#-estrutura-do-projeto)
-- [Domínio da Aplicação](#-domínio-da-aplicação)
-- [Match Geográfico](#-match-geográfico)
-- [Integrações Externas](#-integrações-externas)
-- [Autenticação e Autorização](#-autenticação-e-autorização)
-- [Endpoints](#-endpoints)
-- [Formato de Erros](#-formato-de-erros)
-- [Tecnologias](#-tecnologias)
-- [Testes](#-testes)
-- [Execução Local](#-execução-local)
-- [Variáveis de Ambiente](#-variáveis-de-ambiente)
-- [Docker](#-docker)
-- [CI/CD](#-cicd)
-- [Status e Débitos Conhecidos](#-status-e-débitos-conhecidos)
-- [Documentação](#-documentação)
-- [Evolução](#-evolução)
+1. [Visão Geral e Proposta de Valor](#1-visão-geral-e-proposta-de-valor)
+2. [Arquitetura e Boas Práticas](#2-arquitetura-e-boas-práticas)
+3. [Domínio e Match Geográfico](#3-domínio-e-match-geográfico)
+4. [Tabela de Endpoints Atualizada](#4-tabela-de-endpoints-atualizada)
+5. [Testes e Qualidade de Software](#5-testes-e-qualidade-de-software)
+6. [Deploy, CI/CD e Execução Local](#6-deploy-cicd-e-execução-local)
 
 ---
 
-## 🌱 Visão Geral
+## 1. Visão Geral e Proposta de Valor
 
-O **Raiz do Bem** é uma plataforma voltada à gestão de ações sociais e atendimentos odontológicos.
+### 🌍 Contexto Social e Acadêmico
+O projeto **Raiz do Bem** nasceu no contexto do **Challenge FIAP** em parceria com a **ONG Turma do Bem**, a maior rede de voluntariado especializado do mundo voltada à saúde bucal de pessoas em situação de vulnerabilidade social — atuando principalmente por meio dos programas **Dentista do Bem** (jovens de baixa renda) e **Apolônias do Bem** (mulheres vítimas de violência).
 
-A API concentra as principais operações de negócio relacionadas a:
+### 🎯 Papel Centralizador da API
+A **Raiz do Bem API** atua como o núcleo transacional e orquestrador de regras de negócio do ecossistema, substituindo processos manuais e descentralizados por uma arquitetura moderna, escalável e auditável:
 
-- Beneficiários;
-- Pedidos de ajuda;
-- Atendimentos odontológicos;
-- Dentistas;
-- Colaboradores;
-- Endereços;
-- Especialidades;
-- Programas sociais.
-
-Além das operações tradicionais de cadastro e consulta, o backend possui uma regra de **match geográfico** para auxiliar na seleção de dentistas considerando a distância entre o beneficiário e os profissionais disponíveis.
-
-A aplicação foi estruturada utilizando **Quarkus**, **Hibernate ORM/Panache**, **Oracle Database**, **JWT**, **MicroProfile REST Client** e **OpenAPI/Swagger**.
+- **Triagem e Pedidos de Ajuda**: Recebimento público de solicitações de auxílio odontológico com validação automatizada de elegibilidade e fluxo de aprovação.
+- **Gestão de Beneficiários e Programas Sociais**: Conversão de pedidos aprovados em beneficiários ativos vinculados aos programas sociais da ONG.
+- **Rede de Dentistas Voluntários e Especialidades**: Cadastro, qualificação por especialidades odontológicas e controle de disponibilidade de profissionais voluntários.
+- **Orquestração de Atendimentos e Match Geográfico**: Vinculação inteligente entre beneficiários e dentistas voluntários com base na menor distância real de deslocamento via **Google Maps Routes API**.
+- **Gestão de Colaboradores e Governança**: Controle de acesso baseado em papéis (`ADMIN` e `COLABORADOR`) e exportação de relatórios operacionais em formato **CSV**.
 
 ---
 
-## 🎯 Proposta de Valor
+## 2. Arquitetura e Boas Práticas
 
-A API fornece uma camada centralizada para gerenciamento dos dados e regras necessárias à operação da plataforma.
-
-Entre os principais fluxos estão:
-
-1. Cadastro e gerenciamento de beneficiários;
-2. Cadastro e gerenciamento de dentistas;
-3. Registro de pedidos de ajuda;
-4. Gerenciamento de atendimentos odontológicos;
-5. Associação entre beneficiários e dentistas;
-6. Consulta de endereços;
-7. Integração com o ViaCEP;
-8. Cálculo de distância utilizando a Google Maps Routes API;
-9. Autenticação baseada em JWT;
-10. Controle de acesso baseado em papéis;
-11. Exportação de dados em CSV;
-12. Paginação de consultas;
-13. Padronização global das respostas de erro.
-
----
-
-## ⚙️ Principais Funcionalidades
-
-### 👤 Beneficiários
-
-- Cadastro;
-- Consulta;
-- Consulta por CPF;
-- Consulta por cidade;
-- Consulta por programa social;
-- Atualização;
-- Remoção;
-- Paginação;
-- Exportação CSV.
-
-### 🦷 Dentistas
-
-- Cadastro;
-- Consulta;
-- Consulta por CPF;
-- Consulta por cidade;
-- Consulta de profissionais disponíveis;
-- Atualização;
-- Remoção;
-- Exportação CSV.
-
-### 🏥 Atendimentos
-
-- Cadastro;
-- Consulta;
-- Consulta por CPF;
-- Paginação;
-- Atualização;
-- Exportação CSV;
-- Associação com dentistas e beneficiários.
-
-### 🤝 Pedidos de Ajuda
-
-- Criação;
-- Consulta;
-- Consulta por data;
-- Atualização;
-- Remoção;
-- Controle de status.
-
-### 🏠 Endereços
-
-- Cadastro;
-- Consulta;
-- Consulta por cidade;
-- Consulta por ID;
-- Busca de endereço por CEP;
-- Atualização;
-- Remoção.
-
-### 🔐 Segurança
-
-- Autenticação por JWT;
-- Bearer Token;
-- Controle de acesso com `@RolesAllowed`;
-- Perfis `ADMIN` e `COLABORADOR`;
-- Endpoints públicos utilizando `@PermitAll`.
-
----
-
-# 🏗️ Arquitetura
-
-A aplicação segue uma arquitetura organizada em camadas, separando responsabilidades entre recursos HTTP, regras de negócio, persistência e entidades.
+A aplicação adota uma **Arquitetura em Camadas (Layered Architecture)** estrita, garantindo alta coesão, baixo acoplamento, separação clara entre o contrato HTTP (`DTOs`) e o modelo de persistência (`Entities`), além de isolamento completo de integrações externas.
 
 ```text
-                         ┌─────────────────────┐
-                         │      Front-end      │
-                         └──────────┬──────────┘
-                                    │
-                                    ▼
-                         ┌─────────────────────┐
-                         │       Resource      │
-                         │     REST / HTTP     │
-                         └──────────┬──────────┘
-                                    │
-                                    ▼
-                         ┌─────────────────────┐
-                         │       Service       │
-                         │   Regras de negócio │
-                         └──────────┬──────────┘
-                                    │
-                                    ▼
-                         ┌─────────────────────┐
-                         │     Repository      │
-                         │ Persistência / ORM  │
-                         └──────────┬──────────┘
-                                    │
-                                    ▼
-                         ┌─────────────────────┐
-                         │       Entity        │
-                         │     Domínio/JPA     │
-                         └──────────┬──────────┘
-                                    │
-                                    ▼
-                         ┌─────────────────────┐
-                         │   Oracle Database   │
-                         └─────────────────────┘
-
+┌─────────────────────────────────────────────────────────────────────────┐
+│                          CONSUMIDORES / FRONT-END                       │
+└────────────────────────────────────┬────────────────────────────────────┘
+                                     │ HTTPS / JSON (Bearer JWT)
+                                     ▼
+┌─────────────────────────────────────────────────────────────────────────┐
+│ 1. RESOURCE LAYER (REST / JAX-RS)                    [@RequestScoped]   │
+│    • Validação de entrada (@Valid), Paginação, Controle de Acesso RBAC  │
+│    • Tratamento Global de Exceções (ExceptionsMapperGlobal)             │
+└────────────────────────────────────┬────────────────────────────────────┘
+                                     │ DTOs (Request / Response)
+                                     ▼
+┌─────────────────────────────────────────────────────────────────────────┐
+│ 2. SERVICE LAYER (Regras de Negócio)             [@ApplicationScoped]   │
+│    • Transações (@Transactional), Cache (@CacheResult/@CacheInvalidate) │
+│    • Conversão segura via Mappers dedicados e Validações de Domínio     │
+└──────────────────┬───────────────────────────────────┬──────────────────┘
+                   │ Entidades JPA                     │ MicroProfile REST Client
+                   ▼                                   ▼
+┌─────────────────────────────────────┐ ┌─────────────────────────────────┐
+│ 3. REPOSITORY LAYER (Panache ORM)   │ │ 4. EXTERNAL CLIENTS             │
+│    • Consultas otimizadas e         │ │    • ViaCepClient (CEP)         │
+│      Paginação (PanacheQuery/Page)  │ │    • GoogleMapsClient (Rotas)   │
+└──────────────────┬──────────────────┘ └──────────────┬──────────────────┘
+                   │ JDBC                              │ HTTPS
+                   ▼                                   ▼
+┌─────────────────────────────────────┐ ┌─────────────────────────────────┐
+│ 5. ENTITY / DATABASE LAYER          │ │ APIs Externas                   │
+│    • Oracle Database                │ │    • ViaCEP / Google Maps API   │
+└─────────────────────────────────────┘ └─────────────────────────────────┘
 ```
 
-## Fluxo complementar de integrações
+### 🏆 Destaques Técnicos e Engenharia de Software
 
-```text
+#### 💉 Injeção de Dependências e Escopos CDI (`Quarkus ArC`)
+- **`@RequestScoped` na camada `Resource`**: Garante isolamento do contexto de requisição HTTP.
+- **`@ApplicationScoped` nas camadas `Service` e `Repository`**: Instâncias singletons gerenciadas pelo container CDI com proxies otimizados em tempo de compilação pelo Quarkus, reduzindo overhead de memória e tempo de startup.
 
-Resource
-   │
-   ▼
-Service
-   │
-   ├──────────────► Repository ───────────► Oracle
-   │
-   ├──────────────► ViaCepClient ─────────► ViaCEP
-   │
-   └──────────────► GoogleMapsService
-                          │
-                          ▼
-                    GoogleMapsClient
-                          │
-                          ▼
-                Google Maps Routes API
+#### 🛡️ Tratamento Global de Exceções (`ExceptionsMapperGlobal`)
+Toda a árvore de exceções da API é interceptada pelo provider global `ExceptionsMapperGlobal` (`ExceptionMapper<Exception>`), assegurando que nenhuma *stacktrace* ou detalhe sensível de infraestrutura vaze para o cliente e padronizando todas as respostas no record imutável `ErroResponse`:
 
-```
-# 📂 Estrutura do Projeto
-
-```text
-
-raiz-do-bem-api/
-├── .github/
-│   ├── copilot-instructions.md
-│   ├── prompts/
-│   └── workflows/
-│
-├── .mvn/
-│   └── wrapper/
-│
-├── docs/
-│   ├── banco/
-│   └── documentacao-java/
-│
-├── src/
-│   ├── main/
-│   │   ├── docker/
-│   │   │   ├── Dockerfile.jvm
-│   │   │   ├── Dockerfile.legacy-jar
-│   │   │   ├── Dockerfile.native
-│   │   │   └── Dockerfile.native-micro
-│   │   │
-│   │   ├── java/
-│   │   │   └── br/com/raizdobem/api/
-│   │   │       ├── client/
-│   │   │       ├── dto/
-│   │   │       ├── entity/
-│   │   │       ├── exception/
-│   │   │       ├── mapper/
-│   │   │       ├── repository/
-│   │   │       ├── resource/
-│   │   │       ├── service/
-│   │   │       └── util/
-│   │   │
-│   │   └── resources/
-│   │
-│   └── test/
-│       └── java/
-│           └── br/com/raizdobem/api/
-│               ├── exception/
-│               ├── mapper/
-│               ├── resource/
-│               ├── service/
-│               └── util/
-│
-├── azure-pipelines.yml
-├── mvnw
-├── mvnw.cmd
-├── pom.xml
-└── .dockerignore
-
-```
-
-## 🧩 Domínio da Aplicação
-
-As principais entidades presentes no domínio são:
-
-| Entidade         | Responsabilidade                                         |
-| ---------------- | -------------------------------------------------------- |
-| `Beneficiario`   | Representa a pessoa atendida pela plataforma             |
-| `PedidoAjuda`    | Representa uma solicitação de ajuda                      |
-| `ProgramaSocial` | Representa programas sociais disponíveis                 |
-| `Atendimento`    | Representa um atendimento odontológico                   |
-| `Dentista`       | Representa profissionais responsáveis pelos atendimentos |
-| `Especialidade`  | Representa especialidades odontológicas                  |
-| `Colaborador`    | Representa usuários colaboradores da plataforma          |
-| `Endereco`       | Representa endereços associados às entidades             |
-
-Também existem enums relacionados ao domínio, incluindo:
-
-```
-Sexo
-StatusPedido
-TipoEndereco
-```
-
-## 📍 Match Geográfico
-
-Um dos fluxos de negócio implementados é o match geográfico entre beneficiários e dentistas.
-
-O processo utiliza os endereços envolvidos no atendimento e consulta a Google Maps Routes API para obter informações de distância.
-
-### Fluxo
-```
-Beneficiário
-     │
-     ▼
-Endereço do beneficiário
-     │
-     ▼
-AtendimentoMatchService
-     │
-     ▼
-GoogleMapsService
-     │
-     ▼
-GoogleMapsClient
-     │
-     ▼
-Google Maps Routes API
-     │
-     ▼
-Distâncias calculadas
-     │
-     ▼
-Seleção do dentista
-```
-
-O `GoogleMapsService` recebe os dados necessários para cálculo das rotas e trabalha com a distância retornada pela API externa.
-
-Os testes do serviço utilizam mocks para a integração externa e verificam a seleção do dentista considerando a menor distância calculada.
-
-## 🌐 Integrações Externas
-### 📮 ViaCEP
-
-A aplicação utiliza o ViaCEP para consulta de informações de endereço a partir do CEP.
-
-A integração é implementada utilizando MicroProfile REST Client.
-
-O cliente é registrado utilizando:
-```java
-@RegisterRestClient(configKey = "via-cep-api")
-```
-A consulta utiliza o endpoint:
-```
-GET /{cep}/json/
-```
-O serviço de endereço utiliza o cliente para obter informações relacionadas ao CEP informado.
-
-### 🗺️ Google Maps Routes API
-
-A aplicação também possui integração com a Google Maps Routes API para cálculo de distâncias.
-
-O cliente utiliza:
-```java
-@RegisterRestClient(configKey = "google-maps-api")
-```
-A operação utilizada é:
-```
-POST /distanceMatrix/v2:computeRouteMatrix
-```
-A requisição utiliza informações como:
-
-- Origem;
-- Destino;
-- Modo de transporte;
-- Preferência de roteamento;
-- API Key;
-- Field Mask.
-
-Os headers utilizados incluem:
-```
-X-Goog-Api-Key
-X-Goog-FieldMask
-```
-O retorno contém informações como:
-
-- Índice da origem;
-- Índice do destino;
-- Distância em metros;
-- Condição da rota.
-
----
-## 🔐 Autenticação e Autorização
-
-A API utiliza JWT Bearer Token para autenticação.
-
-O contrato OpenAPI está configurado utilizando o esquema:
-```
-HTTP Bearer
-Bearer Format: JWT
-```
-🔑 Obtenção do Token
-```http
-POST /auth/tokenAcesso
-```
-Este endpoint utiliza:
-```java
-@PermitAll
-```
-Após autenticação, o token JWT deve ser enviado nas requisições protegidas utilizando:
-```http
-Authorization: Bearer <token>
-```
-
----
-
-## 👥 Perfis
-
-A aplicação trabalha principalmente com os seguintes papéis:
-| Role          | Descrição             |
-| ------------- | --------------------- |
-| `ADMIN`       | Acesso administrativo |
-| `COLABORADOR` | Acesso operacional    |
-
-Os recursos utilizam ```@RolesAllowed``` para restringir operações.
-
-Endpoints públicos utilizam ```@PermitAll```.
-
----
-
-## 📡 Endpoints
-
-### 🔑 Autenticação
-
-| Método | Endpoint            | Acesso      |
-| ------ | ------------------- | ----------- |
-| `POST` | `/auth/tokenAcesso` | `PermitAll` |
-
-### 👤 Beneficiário
-
-| Método   | Endpoint                                    | Acesso                 |
-| -------- | ------------------------------------------- | ---------------------- |
-| `GET`    | `/beneficiario`                             | `ADMIN`, `COLABORADOR` |
-| `GET`    | `/beneficiario/paginacao`                   | `ADMIN`, `COLABORADOR` |
-| `POST`   | `/beneficiario`                             | `ADMIN`, `COLABORADOR` |
-| `GET`    | `/beneficiario/{cpf}`                       | `ADMIN`, `COLABORADOR` |
-| `GET`    | `/beneficiario/cidade/{cidade}`             | `ADMIN`, `COLABORADOR` |
-| `GET`    | `/beneficiario/programa/{idProgramaSocial}` | `ADMIN`, `COLABORADOR` |
-| `GET`    | `/beneficiario/exportarCsv`                 | `ADMIN`                |
-| `PUT`    | `/beneficiario/{cpf}`                       | `ADMIN`, `COLABORADOR` |
-| `DELETE` | `/beneficiario/{cpf}`                       | `ADMIN`                |
-
-O endpoint de `DELETE` está implementado, porém utiliza `@Hidden` e, portanto, não é exibido na documentação Swagger.
-
-### 🦷 Dentista
-
-| Método   | Endpoint                    | Acesso                 |
-| -------- | --------------------------- | ---------------------- |
-| `POST`   | `/dentista`                 | `ADMIN`, `COLABORADOR` |
-| `GET`    | `/dentista`                 | `ADMIN`, `COLABORADOR` |
-| `GET`    | `/dentista/disponiveis`     | `ADMIN`, `COLABORADOR` |
-| `GET`    | `/dentista/{cpf}`           | `ADMIN`, `COLABORADOR` |
-| `GET`    | `/dentista/cidade/{cidade}` | `ADMIN`, `COLABORADOR` |
-| `GET`    | `/dentista/exportarCsv`     | `ADMIN`, `COLABORADOR` |
-| `PUT`    | `/dentista/{cpf}`           | `ADMIN`, `COLABORADOR` |
-| `DELETE` | `/dentista/{cpf}`           | `ADMIN`                |
-
-O endpoint de `DELETE` está implementado, porém utiliza `@Hidden`.
-
-### 🏥 Atendimento
-| Método   | Endpoint                   | Acesso                 |
-| -------- | -------------------------- | ---------------------- |
-| `GET`    | `/atendimento/`            | `ADMIN`, `COLABORADOR` |
-| `GET`    | `/atendimento/paginacao`   | `ADMIN`, `COLABORADOR` |
-| `POST`   | `/atendimento/`            | `ADMIN`, `COLABORADOR` |
-| `GET`    | `/atendimento/{cpf}`       | `ADMIN`, `COLABORADOR` |
-| `GET`    | `/atendimento/exportarCsv` | `ADMIN`                |
-| `PUT`    | `/atendimento/{cpf}`       | `ADMIN`, `COLABORADOR` |
-| `DELETE` | `/atendimento/{id}`        | `ADMIN`                |
-
-O endpoint de `DELETE` está implementado, porém utiliza `@Hidden`.
-
-A paginação possui os seguintes valores padrão:
-```
-pagina = 0
-size   = 20
-```
-
-### 🤝 Pedido de Ajuda
-
-| Método   | Endpoint                    | Acesso                 |
-| -------- | --------------------------- | ---------------------- |
-| `GET`    | `/pedido-ajuda`             | `ADMIN`, `COLABORADOR` |
-| `GET`    | `/pedido-ajuda/data/{data}` | `ADMIN`, `COLABORADOR` |
-| `POST`   | `/pedido-ajuda`             | `PermitAll`            |
-| `PUT`    | `/pedido-ajuda/{id}`        | `ADMIN`, `COLABORADOR` |
-| `DELETE` | `/pedido-ajuda/{id}`        | `ADMIN`                |
-
-O endpoint de `DELETE` utiliza `@Hidden`.
-
-### 👨‍💼 Colaborador
-
-| Método   | Endpoint             | Acesso                 |
-| -------- | -------------------- | ---------------------- |
-| `POST`   | `/colaborador`       | `ADMIN`                |
-| `GET`    | `/colaborador`       | `ADMIN`, `COLABORADOR` |
-| `GET`    | `/colaborador/{cpf}` | `ADMIN`, `COLABORADOR` |
-| `PUT`    | `/colaborador/{cpf}` | `ADMIN`                |
-| `DELETE` | `/colaborador/{cpf}` | `ADMIN`                |
-
-### 🏠 Endereço
-| Método   | Endpoint                 | Acesso                 |
-| -------- | ------------------------ | ---------------------- |
-| `POST`   | `/endereco`              | `ADMIN`, `COLABORADOR` |
-| `GET`    | `/endereco`              | `ADMIN`, `COLABORADOR` |
-| `GET`    | `/endereco/{cidade}`     | `ADMIN`, `COLABORADOR` |
-| `GET`    | `/endereco/id/{id}`      | `ADMIN`, `COLABORADOR` |
-| `GET`    | `/endereco/viacep/{cep}` | `ADMIN`, `COLABORADOR` |
-| `PUT`    | `/endereco/{id}`         | `ADMIN`, `COLABORADOR` |
-| `DELETE` | `/endereco/{id}`         | `ADMIN`                |
-
-### 📚 Especialidades
-| Método | Endpoint               | Acesso      |
-| ------ | ---------------------- | ----------- |
-| `GET`  | `/especialidades`      | `PermitAll` |
-| `GET`  | `/especialidades/{id}` | `PermitAll` |
-
-### 🌱 Programas Sociais
-| Método | Endpoint                  | Acesso      |
-| ------ | ------------------------- | ----------- |
-| `GET`  | `/programas-sociais`      | `PermitAll` |
-| `GET`  | `/programas-sociais/{id}` | `PermitAll` |
-
----
-
-## ❌ Formato de Erros
-
-As exceções da aplicação são centralizadas pelo:
-```java
-ExceptionsMapperGlobal
-```
-que implementa:
-```java
-ExceptionMapper<Exception>
-```
-As respostas utilizam o DTO:
-```java
-ErroResponse
-```
-com os campos:
-```
-statusCode
-mensagem
-timestamp
-```
-Exemplo
 ```json
 {
   "statusCode": 404,
-  "mensagem": "Recurso não encontrado.",
-  "timestamp": "2026-09-28T23:59:59"
+  "mensagem": "Beneficiário não encontrado.",
+  "timestamp": "2026-10-17T10:30:00"
 }
 ```
 
-### Mapeamento
+| Exceção Capturada | Código HTTP | Semântica de Negócio |
+| :--- | :---: | :--- |
+| `RequisicaoInvalidaException` / `ConstraintViolationException` | **`400 Bad Request`** | Payload malformado, parâmetros ausentes ou violação de Bean Validation (`@Valid`). |
+| `NaoEncontradoException` | **`404 Not Found`** | Recurso solicitado (CPF, ID, CEP ou cidade) inexistente na base ou serviço externo. |
+| `RegraNegocioException` | **`409 Conflict`** | Violação de estado ou conflito de integridade negocial (ex.: duplicidade de registro). |
+| `ValidacaoException` | **`422 Unprocessable Entity`** | Dados sintaticamente corretos, porém inválidos perante regras de domínio (ex.: CPF inválido). |
+| `Exception` (Fallback Seguro) | **`500 Internal Server Error`** | Erro inesperado registrado via `JBoss Logger` interno com mensagem genérica ao consumidor. |
+
+#### 🔐 Segurança Robusta (SmallRye JWT RSA + Bcrypt + RBAC)
+- **Criptografia Assimétrica RSA**: Emissão e validação de tokens JWT assinados com chave privada RSA (`privateKey.pem`) e verificados via chave pública (`publicKey.pem`).
+- **Fluxo de Access Token & Refresh Token**: Suporte nativo à renovação de sessão sem reenvio de credenciais (`/auth/tokenAcesso` e `/auth/refreshToken`).
+- **Hashing de Senhas com Bcrypt**: Senhas de colaboradores jamais trafegam ou são persistidas em texto puro, utilizando `BcryptUtil.bcryptHash` (Elytron Security) e omissão total nos DTOs de saída.
+- **Controle de Acesso Granular (RBAC)**: Proteção declarativa em nível de endpoint com `@RolesAllowed({"ADMIN", "COLABORADOR"})` para rotas operacionais, `@RolesAllowed("ADMIN")` para operações críticas/exclusões/exportações sensíveis e `@PermitAll` para rotas públicas (abertura de pedidos de ajuda, catálogo de programas sociais e especialidades).
+
+#### ⚡ Cache Inteligente em Memória (`Quarkus Cache` / Caffeine)
+- Consultas paginadas de alta frequência em `BeneficiarioService`, `DentistaService`, `AtendimentoService`, `PedidoAjudaService` e `ColaboradorService` são aceleradas com `@CacheResult` (caches `beneficiarios`, `dentistas`, `atendimento`, `pedido-ajuda`, `colaborador`).
+- **Consistência Automática (Write-Through Invalidation)**: Todas as operações transacionais de escrita (`criar`, `atualizar`, `excluir`, `processarPedido`, `encerrarAtendimento`) possuem `@CacheInvalidateAll` acoplado, evitando *stale reads* (leitura de dados defasados).
+
+#### 📄 Paginação Padronizada (`PageResponse<T>`)
+- Todas as listagens principais operam diretamente na rota raiz do recurso (`GET /recurso?pagina=0&size=20`), integrando `PanacheQuery<E>` e `Page.of(pagina, tamanho)` ao envelope genérico `PageResponse<T>`:
 
-| Exceção                       |                        HTTP |
-| ----------------------------- | --------------------------: |
-| `NaoEncontradoException`      |             `404 Not Found` |
-| `RequisicaoInvalidaException` |           `400 Bad Request` |
-| `ValidacaoException`          |  `422 Unprocessable Entity` |
-| `RegraNegocioException`       |              `409 Conflict` |
-| Exceção genérica              | `500 Internal Server Error` |
-
-Em erros `500`, a exceção original é registrada nos logs e a mensagem interna não é exposta diretamente ao consumidor da API.
-
----
-
-## 🛠️ Tecnologias
-
-| Tecnologia                           | Utilização                            |
-| ------------------------------------ | ------------------------------------- |
-| **Java 21**                          | Linguagem principal                   |
-| **Quarkus 3.34.5**                   | Framework backend                     |
-| **Maven**                            | Build e gerenciamento de dependências |
-| **Hibernate ORM / Panache**          | Persistência                          |
-| **Oracle Database**                  | Banco de dados                        |
-| **RESTEasy Reactive / Quarkus REST** | API REST                              |
-| **SmallRye JWT**                     | Autenticação JWT                      |
-| **SmallRye OpenAPI**                 | Especificação OpenAPI                 |
-| **Swagger UI**                       | Documentação interativa               |
-| **MicroProfile REST Client**         | Integrações externas                  |
-| **JUnit**                            | Testes                                |
-| **Mockito**                          | Mocks                                 |
-| **AssertJ**                          | Assertions                            |
-| **REST Assured**                     | Testes de endpoints                   |
-| **Docker**                           | Containerização                       |
-| **Azure Pipelines**                  | CI/CD                                 |
-
----
-
-## 🧪 Testes
-
-O projeto possui uma estrutura de testes organizada por responsabilidade:
-
-```
-src/test/java/br/com/raizdobem/api/
-├── exception/
-├── mapper/
-├── resource/
-├── service/
-└── util/
-```
-
-Entre os cenários cobertos estão:
-- Resources REST;
-- Services;
-- Mappers;
-- Exceptions;
-- Validação de CPF;
-- CSV;
-- Autenticação;
-- Match geográfico;
-- Integração com Google Maps isolada por mocks.
-
-### Match geográfico
-O `GoogleMapsServiceTest` utiliza Mockito para simular a integração externa e validar a seleção do dentista considerando a menor distância.
-
-O `AtendimentoMatchService` também possui testes utilizando mocks para isolar:
-
-```
-DentistaService
-GoogleMapsService
-```
-
-Isso permite validar a regra de negócio sem depender diretamente da API externa durante os testes.
-
---- 
-
-## 🚀 Execução Local
-Pré-requisitos
-- Java 21;
-- Maven Wrapper;
-- Oracle Database configurado;
-- Credenciais/configurações das integrações externas utilizadas pela aplicação.
-
-O projeto já possui o Maven Wrapper:
-```
-mvnw
-mvnw.cmd
-```
-
-## ▶️ Executando a aplicação
-
-### Linux / macOS
-```bash
-./mvnw quarkus:dev
-```bash
-```powershell
-### Windows
-```
-.\mvnw.cmd quarkus:dev
-
-O modo `quarkus:dev` permite executar a aplicação em ambiente de desenvolvimento.
-
----
-
-## 📦 Build
-
-```bash
-./mvnw clean package
-```
-
-No Windows:
-
-```powershell
-.\mvnw.cmd clean package
-```
-O artefato Quarkus é gerado no diretório:
-```
-target/quarkus-app/
-```
-
----
-
-## 🔧 Variáveis de Ambiente
-
-A configuração da aplicação utiliza variáveis para informações de conexão com infraestrutura e serviços externos.
-
-As variáveis utilizadas pela configuração/documentação do projeto incluem:
-```
-DB_USUARIO
-DB_SENHA
-DB_URL
-GOOGLE_API_KEY
-```
-
-Exemplo
-```bash
-export DB_USUARIO="<usuario>"
-export DB_SENHA="<senha>"
-export DB_URL="<url-de-conexao>"
-export GOOGLE_API_KEY="<api-key>"
-```
-No Windows PowerShell:
-```powershell
-$env:DB_USUARIO="<usuario>"
-$env:DB_SENHA="<senha>"
-$env:DB_URL="<url-de-conexao>"
-$env:GOOGLE_API_KEY="<api-key>"
-```
-Nunca versionar credenciais, senhas ou API Keys no repositório.
-
----
-
-## 🐳 Docker
-
-O projeto possui diferentes Dockerfiles em:
-
-```
-src/main/docker/
-```
-
-Disponíveis:
-```
-Dockerfile.jvm
-Dockerfile.legacy-jar
-Dockerfile.native
-Dockerfile.native-micro
-```
-
----
-
-## ☕ JVM
-
-O Dockerfile.jvm utiliza runtime baseado em:
-
-```
-registry.access.redhat.com/ubi9/openjdk-21-runtime
-```
-
-A aplicação é disponibilizada na porta:
-```
-8080
-```
-
-Exemplo de build:
-```bash
-./mvnw clean package
-```
-
-Build da imagem:
-```bash
-docker build \
-  -f src/main/docker/Dockerfile.jvm \
-  -t raiz-do-bem-api:jvm .
-```
-
-Execução:
-```bash
-docker run -p 8080:8080 raiz-do-bem-api:jvm
-```
-
----
-## ⚡ Native
-
-O projeto também possui suporte a build nativo através do:
-```
-Dockerfile.native
-```
-e:
-```
-Dockerfile.native-micro
-```
-A versão native utiliza uma imagem base UBI minimal/micro, reduzindo o runtime necessário para execução da aplicação compilada nativamente.
-
----
-
-## ☁️ CI/CD
-
-O projeto possui pipeline Azure DevOps definido em:
-```
-azure-pipelines.yml
-```
-A pipeline contempla os branches:
-
-```
-main
-develop
-```
-
-O fluxo inclui:
-```
-Git
- │
- ▼
-Azure Pipelines
- │
- ├── Maven Build
- │
- ├── Geração do artefato
- │
- └── Publicação
-        │
-        ▼
-Azure Web App
-        │
-        ▼
-raizdobem-backend
-```
-O artefato principal utilizado no processo é:
-```
-target/quarkus-app/
-```
-
----
-
-## ⚠️ Status e Débitos Conhecidos
-
-A documentação técnica interna do projeto registra algumas inconsistências e pontos de evolução.
-
-Os itens abaixo representam pendências e comportamentos documentados no estado atual do código, e não alterações inferidas externamente.
-
-### 📋 Inconsistências de domínio
-```
-Sexo
-```
-
-Existe divergência entre os valores utilizados no código e os valores descritos na documentação:
-```
-Código:       M / F / O
-Documentação: MASCULINO / FEMININO
-```
-```
-TipoEndereco
-```
-
-Também existe divergência entre:
-```
-Código:       PROFISSIONAL
-Documentação: COMERCIAL
-```
-
-### 🪪 Validação de CPF
-
-A validação atual verifica o formato/tamanho do CPF, mas não realiza a validação completa dos dígitos verificadores.
-
-Como consequência, valores como:
-```
-00000000000
-```
-podem passar pela validação de formato.
-
-### 🧱 Tipagem de AtendimentoResponse
-
-O DTO AtendimentoResponse possui campos tipados como:
-```java
-Object
-```
-para determinadas informações relacionadas ao beneficiário, dentista e data de encerramento.
-
-Isso reduz a segurança de tipos e pode aumentar riscos relacionados à serialização e manutenção do contrato da API.
-
-### 🔐 Exposição de dados de colaboradores
-
-A aplicação possui mapper que remove a senha da resposta.
-
-Entretanto, a documentação técnica registra uma inconsistência em relação a recursos que podem trabalhar diretamente com a entidade.
-
-O comportamento esperado é que respostas externas nunca exponham informações sensíveis, especialmente credenciais.
-
-### 🗄️ Atualização em repositories
-
-A documentação registra problemas nos métodos de atualização:
-
-```java
-PedidoAjudaRepository.atualizar
-AtendimentoRepository.atualizar
-```
-No caso de PedidoAjudaRepository, existe uma consulta cujo resultado é descartado.
-
-No AtendimentoRepository, o método de atualização encontra-se sem implementação efetiva.
-
-### 🌱 Dados iniciais
-
-As entidades:
-```
-ProgramaSocial
-Especialidade
-```
-não utilizam geração IDENTITY para seus IDs.
-
-Além disso, o import.sql não possui todos os dados funcionais necessários para determinadas operações.
-
-Fluxos dependentes dessas entidades podem exigir registros previamente existentes no banco.
-
-### 🦷 IDs fixos em DentistaService
-
-O processo de criação de dentistas utiliza IDs fixos:
-```
-1
-2
-```
-para determinados programas sociais.
-
-O serviço também não realiza a verificação de existência desses registros antes de utilizá-los.
-
-### 📄 Exportação CSV
-
-Existem diferenças nos delimitadores utilizados pelos recursos de exportação.
-
-Beneficiários e dentistas utilizam:
-```
-,
-```
-Enquanto atendimentos utilizam:
-```
-|
-```
-A padronização desse comportamento pode facilitar o consumo dos arquivos por sistemas externos.
-
-### 🌐 CORS
-
-A configuração atual utiliza:
-```
-*
-```
-para CORS.
-
-Esse comportamento é conveniente durante desenvolvimento, mas a documentação técnica aponta a necessidade de uma política mais restritiva em ambientes produtivos.
-
-### 📋 Regra de elegibilidade de pedidos
-
-Existe uma regra de negócio documentada relacionada à elegibilidade de pedidos de ajuda.
-
-Beneficiários do sexo masculino com idade superior a 18 anos podem ter o pedido automaticamente rejeitado.
-
-A documentação também registra que, nesse cenário, o status pode ser persistido como:
-```
-REJEITADO
-```
-enquanto a operação HTTP ainda retorna:
-```
-201 Created
-```
-Esse comportamento merece revisão para manter consistência entre resultado da regra de negócio e semântica HTTP.
-
-### 📦 Coleções vazias
-
-Alguns services lançam:
-```
-NaoEncontradoException
-```
-quando uma consulta não retorna registros.
-
-Isso pode resultar em:
-```http
-404 Not Found
-```
-para consultas de coleção vazias, em vez de uma resposta convencional:
-```http
-200 OK
-```
-com:
 ```json
-[]
+{
+  "conteudo": [ ... ],
+  "pagina": 0,
+  "tamanho": 20,
+  "totalElementos": 142,
+  "totalPaginas": 8
+}
 ```
+> *Nota de Retrocompatibilidade*: As rotas não paginadas foram preservadas sob o sufixo `/legado` com `@Operation(hidden = true)` para não quebrar integrações existentes e manter os endpoints de exportação CSV íntegros.
+
+#### 🌐 Integrações Externas Desacopladas (`MicroProfile REST Client`)
+- **ViaCEP (`@RegisterRestClient(configKey = "via-cep-api")`)**: Enriquecimento e validação automática de logradouros, bairros, cidades e UFs a partir do CEP (`GET /{cep}/json/`).
+- **Google Maps Routes API (`@RegisterRestClient(configKey = "google-maps-api")`)**: Consumo do endpoint `POST /distanceMatrix/v2:computeRouteMatrix` utilizando headers `X-Goog-Api-Key` e `X-Goog-FieldMask` para cálculo preciso de distância viária em metros.
+
 ---
 
-## 📚 Documentação
+## 3. Domínio e Match Geográfico
 
-O projeto utiliza:
+### 🧩 Entidades Principais do Domínio
 
-- OpenAPI;
-- Swagger UI;
-- Documentação técnica interna;
-- Documentação relacionada ao banco;
-- Prompts e instruções auxiliares no diretório .github.
+| Entidade | Responsabilidade no Domínio |
+| :--- | :--- |
+| **`Beneficiario`** | Pessoa vulnerável aprovada na triagem e vinculada a um Programa Social. |
+| **`PedidoAjuda`** | Solicitação inicial de auxílio odontológico com controle de `StatusPedido` (`ANALISE`, `APROVADO`, `REJEITADO`). |
+| **`Dentista`** | Profissional voluntário cadastrado com CRO, especialidades, programas sociais e flag de disponibilidade. |
+| **`Atendimento`** | Registro clínico que conecta um `Beneficiario` a um `Dentista`, contendo datas de abertura/encerramento e histórico. |
+| **`Colaborador`** | Usuário interno da ONG autenticado via JWT, classificado por perfil (`ADMIN` ou `COLABORADOR`). |
+| **`Endereco`** | Entidade georreferenciada (`RESIDENCIAL` ou `PROFISSIONAL`) validada junto ao ViaCEP. |
+| **`ProgramaSocial`** | Programas mantidos pela ONG (*Dentista do Bem* e *Apolônias do Bem*). |
+| **`Especialidade`** | Catálogo de especialidades odontológicas atribuíveis aos dentistas voluntários. |
 
-A documentação OpenAPI é disponibilizada pelo Quarkus através das extensões:
-```
-quarkus-smallrye-openapi
-quarkus-swagger-ui
-```
-### 🔎 Swagger UI
+### 📍 Algoritmo de Match Geográfico por Proximidade
 
-Com a aplicação em execução localmente:
-
-👉 **[Abrir Swagger UI](http://localhost:8080/q/swagger-ui/)**
-
-Ou acesse diretamente:
+Durante a abertura de um atendimento (`AtendimentoMatchService`), caso nenhum dentista específico seja designado manualmente, a API executa o **Match Geográfico Automático**:
 
 ```text
-http://localhost:8080/q/swagger-ui/
-```
-
-Durante a execução da aplicação, a interface Swagger UI pode ser utilizada para explorar os contratos REST disponibilizados pelo projeto.
-
-## 🔎 Convenções Técnicas
-
-A organização do projeto busca manter responsabilidades separadas:
-```
-Resource
-   ↓
-Service
-   ↓
-Repository
-   ↓
-Entity
-```
-
-Integrações externas são isoladas através de clients específicos:
-
-```
-Service
-   ↓
-External Service
-   ↓
-REST Client
-```
-DTOs e mappers são utilizados para controlar os objetos expostos pela API e separar o contrato HTTP das entidades de persistência.
-
-Exceções de negócio são centralizadas através de um mapper global.
-
----
-
-## 🚧 Evolução Recomendada
-
-Com base nos débitos registrados na documentação técnica, os principais pontos de evolução são:
-
-- Padronizar os valores dos enums entre código e documentação;
-- Implementar validação completa de CPF;
-- Fortalecer a tipagem dos DTOs;
-- Garantir que senhas nunca sejam expostas por resources;
-- Corrigir métodos de atualização dos repositories;
-- Melhorar o processo de seed das entidades de referência;
-- Remover dependências de IDs fixos;
-- Padronizar delimitadores dos arquivos CSV;
-- Restringir CORS para ambientes produtivos;
-- Revisar a semântica HTTP de pedidos rejeitados por regra de negócio;
-- Padronizar o tratamento de coleções vazias;
-- Melhorar a consistência geral entre documentação, contratos e implementação.
-
----
-
-## 📊 Visão Técnica
-```
-┌─────────────────────────────────────────────────────────────┐
-│                     RAIZ DO BEM API                         │
-├─────────────────────────────────────────────────────────────┤
-│                                                             │
-│  REST Resources                                             │
-│       │                                                     │
-│       ▼                                                     │
-│  Business Services                                          │
-│       │                                                     │
-│       ├───────────────┐                                     │
-│       │               │                                     │
-│       ▼               ▼                                     │
-│  Repositories     External Clients                          │
-│       │               │                                     │
-│       ▼               ├──────────► ViaCEP                   │
-│  Oracle Database      │                                     │
-│                       └──────────► Google Maps              │
-│                                                             │
-├─────────────────────────────────────────────────────────────┤
-│ Authentication: JWT                                         │
-│ Documentation: OpenAPI / Swagger                            │
-│ Build: Maven                                                │
-│ Runtime: Quarkus / Java 21                                  │
-│ Container: Docker                                           │
-│ CI/CD: Azure Pipelines                                      │
-└─────────────────────────────────────────────────────────────┘
+[Beneficiário] ──► Endereço Residencial (Origem)
+                         │
+                         ▼
+             [AtendimentoMatchService] ◄── Lista Dentistas Disponíveis (Endereços Profissionais)
+                         │
+                         ▼
+               [GoogleMapsService] ──────► Google Maps Routes API (computeRouteMatrix)
+                         │
+                         ▼
+       Seleção do Dentista com Menor Distância (metros) ──► Criação do Atendimento
 ```
 
 ---
 
-## 📌 Informações do Projeto
+## 4. Tabela de Endpoints Atualizada
 
-| Item              | Informação         |
-| ----------------- | ------------------ |
-| Nome              | Raiz do Bem API    |
-| Group ID          | `br.com.raizdobem` |
-| Artifact ID       | `raiz-do-bem-api`  |
-| Versão            | `1.0.0-SNAPSHOT`   |
-| Java              | `21`               |
-| Quarkus           | `3.34.5`           |
-| Banco             | Oracle Database    |
-| Autenticação      | JWT                |
-| API Documentation | OpenAPI / Swagger  |
-| Build             | Maven              |
-| Containerização   | Docker             |
-| CI/CD             | Azure Pipelines    |
+> Documentação interativa disponível via **Swagger UI** em: `http://localhost:8080/q/swagger-ui/`
+
+### 🔑 Autenticação (`/auth`)
+
+| Método | Endpoint | Query Params / Payload | Acesso | Descrição |
+| :---: | :--- | :--- | :---: | :--- |
+| `POST` | `/auth/tokenAcesso` | `LoginRequest` (JSON) | `@PermitAll` | Autentica o colaborador e emite o par `accessToken` + `refreshToken` (RSA JWT). |
+| `POST` | `/auth/refreshToken` | `RefreshTokenRequest` (JSON) | `@PermitAll` | Valida o Refresh Token e emite um novo par de tokens JWT. |
+
+### 👤 Beneficiários (`/beneficiario`)
+
+| Método | Endpoint | Query Params | Acesso | Descrição |
+| :---: | :--- | :--- | :---: | :--- |
+| `GET` | `/beneficiario` | `pagina=0`, `size=20` | `ADMIN`, `COLABORADOR` | Lista beneficiários de forma paginada (`PageResponse`) com cache. |
+| `POST` | `/beneficiario` | — | `ADMIN`, `COLABORADOR` | Cadastra um beneficiário a partir de um pedido de ajuda `APROVADO`. |
+| `GET` | `/beneficiario/{cpf}` | — | `ADMIN`, `COLABORADOR` | Busca um beneficiário específico pelo CPF. |
+| `GET` | `/beneficiario/cidade/{cidade}` | — | `ADMIN`, `COLABORADOR` | Filtra beneficiários por cidade. |
+| `GET` | `/beneficiario/programa/{idProgramaSocial}` | — | `ADMIN`, `COLABORADOR` | Filtra beneficiários vinculados a um programa social. |
+| `GET` | `/beneficiario/exportarCsv` | — | `ADMIN` | Exporta a base completa de beneficiários em arquivo `.csv` (`UTF-8`). |
+| `PUT` | `/beneficiario/{cpf}` | — | `ADMIN`, `COLABORADOR` | Atualiza contato e endereço residencial do beneficiário. |
+| `DELETE` | `/beneficiario/{cpf}` | — | `ADMIN` | Remove um beneficiário pelo CPF *(oculto no Swagger)*. |
+
+### 🦷 Dentistas Voluntários (`/dentista`)
+
+| Método | Endpoint | Query Params | Acesso | Descrição |
+| :---: | :--- | :--- | :---: | :--- |
+| `GET` | `/dentista` | `pagina=0`, `size=20` | `ADMIN`, `COLABORADOR` | Lista dentistas voluntários de forma paginada (`PageResponse`) com cache. |
+| `POST` | `/dentista` | — | `ADMIN`, `COLABORADOR` | Cadastra um novo dentista voluntário, endereço profissional e especialidades. |
+| `GET` | `/dentista/disponiveis` | — | `ADMIN`, `COLABORADOR` | Lista todos os dentistas com disponibilidade ativa para novos atendimentos. |
+| `GET` | `/dentista/{cpf}` | — | `ADMIN`, `COLABORADOR` | Busca um dentista voluntário pelo CPF. |
+| `GET` | `/dentista/cidade/{cidade}` | — | `ADMIN`, `COLABORADOR` | Lista dentistas voluntários que atendem em determinada cidade. |
+| `GET` | `/dentista/exportarCsv` | — | `ADMIN`, `COLABORADOR` | Exporta a relação de dentistas voluntários em arquivo `.csv` (`UTF-8`). |
+| `PUT` | `/dentista/{cpf}` | — | `ADMIN`, `COLABORADOR` | Atualiza dados cadastrais, disponibilidade e endereço do dentista. |
+| `DELETE` | `/dentista/{cpf}` | — | `ADMIN` | Exclui o registro de um dentista pelo CPF *(oculto no Swagger)*. |
+
+### 🏥 Atendimentos Odontológicos (`/atendimento`)
+
+| Método | Endpoint | Query Params | Acesso | Descrição |
+| :---: | :--- | :--- | :---: | :--- |
+| `GET` | `/atendimento/` | `pagina=0`, `size=20` | `ADMIN`, `COLABORADOR` | Lista atendimentos odontológicos paginados (`PageResponse`) com cache. |
+| `POST` | `/atendimento/` | — | `ADMIN`, `COLABORADOR` | Cria um atendimento (acionando o Match Geográfico quando aplicável). |
+| `GET` | `/atendimento/{cpf}` | — | `ADMIN`, `COLABORADOR` | Consulta atendimento vinculado ao CPF informado. |
+| `GET` | `/atendimento/exportarCsv` | — | `ADMIN` | Exporta o relatório completo de atendimentos em arquivo `.csv` (`UTF-8`). |
+| `PUT` | `/atendimento/{cpf}` | — | `ADMIN`, `COLABORADOR` | Atualiza/finaliza o atendimento odontológico registrando observações e encerramento. |
+| `DELETE` | `/atendimento/{id}` | — | `ADMIN` | Exclui um atendimento pelo ID *(oculto no Swagger)*. |
+
+### 🤝 Pedidos de Ajuda (`/pedido-ajuda`)
+
+| Método | Endpoint | Query Params | Acesso | Descrição |
+| :---: | :--- | :--- | :---: | :--- |
+| `POST` | `/pedido-ajuda` | — | `@PermitAll` | Registra publicamente um novo pedido de ajuda submetido à triagem. |
+| `GET` | `/pedido-ajuda` | `pagina=0`, `size=20` | `ADMIN`, `COLABORADOR` | Lista pedidos de ajuda de forma paginada (`PageResponse`) com cache. |
+| `GET` | `/pedido-ajuda/data/{data}` | — | `ADMIN`, `COLABORADOR` | Filtra pedidos de ajuda registrados em uma data específica (`YYYY-MM-DD`). |
+| `PUT` | `/pedido-ajuda/{id}` | — | `ADMIN`, `COLABORADOR` | Processa a triagem do pedido (aprovação/rejeição e vínculo de colaborador). |
+| `DELETE` | `/pedido-ajuda/{id}` | — | `ADMIN` | Remove um pedido de ajuda pelo ID *(oculto no Swagger)*. |
+
+### 👨‍💼 Colaboradores (`/colaborador`)
+
+| Método | Endpoint | Query Params | Acesso | Descrição |
+| :---: | :--- | :--- | :---: | :--- |
+| `GET` | `/colaborador` | `pagina=0`, `size=20` | `ADMIN`, `COLABORADOR` | Lista colaboradores de forma paginada (`PageResponse`) com cache. |
+| `POST` | `/colaborador` | — | `ADMIN` | Cadastra novo colaborador com senha criptografada via Bcrypt. |
+| `GET` | `/colaborador/{cpf}` | — | `ADMIN`, `COLABORADOR` | Busca dados de um colaborador específico pelo CPF (sem expor senha). |
+| `PUT` | `/colaborador/{cpf}` | — | `ADMIN` | Atualiza o e-mail e informações do colaborador. |
+| `DELETE` | `/colaborador/{cpf}` | — | `ADMIN` | Exclui um colaborador pelo CPF. |
+
+### 🏠 Endereços, Especialidades e Programas Sociais
+
+| Método | Endpoint | Acesso | Descrição |
+| :---: | :--- | :---: | :--- |
+| `POST` | `/endereco` | `ADMIN`, `COLABORADOR` | Cadastra novo endereço enriquecido via ViaCEP. |
+| `GET` | `/endereco` | `ADMIN`, `COLABORADOR` | Lista todos os endereços cadastrados. |
+| `GET` | `/endereco/{cidade}` | `ADMIN`, `COLABORADOR` | Filtra endereços por cidade. |
+| `GET` | `/endereco/id/{id}` | `ADMIN`, `COLABORADOR` | Busca endereço específico por ID. |
+| `GET` | `/endereco/viacep/{cep}` | `ADMIN`, `COLABORADOR` | Consulta dados de endereço diretamente na API do ViaCEP. |
+| `PUT` | `/endereco/{id}` | `ADMIN`, `COLABORADOR` | Atualiza os dados de um endereço existente. |
+| `DELETE` | `/endereco/{id}` | `ADMIN` | Exclui um endereço pelo ID. |
+| `GET` | `/especialidades` | `@PermitAll` | Lista todas as especialidades odontológicas disponíveis. |
+| `GET` | `/especialidades/{id}` | `@PermitAll` | Busca uma especialidade odontológica pelo ID. |
+| `GET` | `/programas-sociais` | `@PermitAll` | Lista os programas sociais da ONG (*Dentista do Bem* e *Apolônias do Bem*). |
+| `GET` | `/programas-sociais/{id}` | `@PermitAll` | Busca um programa social específico pelo ID. |
 
 ---
 
-## 🌱 Raiz do Bem
+## 5. Testes e Qualidade de Software
 
-A API concentra a camada backend da plataforma, fornecendo os recursos necessários para gerenciamento dos beneficiários, pedidos de ajuda e atendimentos odontológicos, além das entidades de suporte e integrações externas.
+A confiabilidade da **Raiz do Bem API** é assegurada por uma suíte abrangente de **285 testes unitários automatizados**, construída com **JUnit 5**, **Mockito 5.18**, **AssertJ 3.27** e **JaCoCo**, atingindo **100% de aproveitamento (0 falhas, 0 erros — Build Verde)**.
 
-A arquitetura foi organizada para separar responsabilidades entre exposição HTTP, regras de negócio, persistência, integrações e domínio, mantendo espaço para evolução dos fluxos de negócio e dos contratos da API.
+```text
+src/test/java/br/com/raizdobem/api/
+├── exception/   ──► Testes do ExceptionsMapperGlobal (HTTP 400, 404, 409, 422 e 500)
+├── mapper/      ──► Testes de conversão fiel Entity <-> DTO e omissão de dados sensíveis
+├── resource/    ──► Testes de contrato HTTP, paginação, exportação CSV e status codes
+├── service/     ──► Testes de regras de negócio, autenticação JWT/Refresh, Cache e Match Geográfico
+└── util/        ──► Testes de validação algorítmica de CPF e geração padronizada de arquivos CSV
+```
 
+### 🔍 Escopo da Cobertura de Testes
+- **Camada de Serviços (`service/`)**: Validação exaustiva de fluxos felizes e cenários de exceção em `BeneficiarioServiceTest`, `DentistaServiceTest`, `AtendimentoServiceTest`, `AtendimentoMatchServiceTest`, `PedidoAjudaServiceTest`, `ColaboradorServiceTest`, `EnderecoServiceTest`, `EspecialidadeServiceTest`, `ProgramaServiceTest`, `LoginServiceTest` e `GoogleMapsServiceTest`.
+- **Isolamento de Integrações com Mocks**: Simulação completa do `GoogleMapsClient` e `ViaCepClient` via Mockito, testando seleção por menor distância em metros, tratamento de rotas inválidas e indisponibilidade de serviços externos sem dependência de rede.
+- **Camada REST (`resource/`)**: Verificação de todos os endpoints paginados (`PageResponse`), rotas legadas, cabeçalhos `Content-Disposition` de download CSV e respostas HTTP em todas as classes `*ResourceTest`.
+- **Conversores e Utilitários (`mapper/`, `util/`, `exception/`)**: Garantia de integridade dos mapeadores estáticos, validação de dígitos verificadores de CPF (`CpfValidatorUtilTest`), formatação CSV (`CsvUtilTest`) e mapeamento de erros (`ExceptionsMapperGlobalTest`).
+
+### ▶️ Executando a Suíte de Testes e Relatório JaCoCo
+
+```bash
+# Linux / macOS
+./mvnw clean test
+
+# Windows (PowerShell)
+.\mvnw.cmd clean test
+```
+O relatório de cobertura do **JaCoCo** é gerado automaticamente em `target/site/jacoco/index.html`.
+
+---
+
+## 6. Deploy, CI/CD e Execução Local
+
+### 🔧 Pré-requisitos e Variáveis de Ambiente
+
+Certifique-se de possuir o **Java 21 (JDK 21)** instalado. Configure as seguintes variáveis de ambiente antes de iniciar a aplicação:
+
+| Variável | Descrição |
+| :--- | :--- |
+| `DB_URL` | String JDBC de conexão com o banco Oracle (ex.: `jdbc:oracle:thin:@//host:1521/service`). |
+| `DB_USUARIO` | Usuário de acesso ao banco de dados Oracle. |
+| `DB_SENHA` | Senha de acesso ao banco de dados Oracle. |
+| `GOOGLE_API_KEY` | Chave de API do Google Cloud com a *Routes API* habilitada. |
+
+**No Linux / macOS:**
+```bash
+export DB_URL="jdbc:oracle:thin:@//localhost:1521/XEPDB1"
+export DB_USUARIO="<seu_usuario>"
+export DB_SENHA="<sua_senha>"
+export GOOGLE_API_KEY="<sua_google_api_key>"
+```
+
+**No Windows (PowerShell):**
+```powershell
+$env:DB_URL="jdbc:oracle:thin:@//localhost:1521/XEPDB1"
+$env:DB_USUARIO="<seu_usuario>"
+$env:DB_SENHA="<sua_senha>"
+$env:GOOGLE_API_KEY="<sua_google_api_key>"
+```
+
+---
+
+### 💻 Execução Local (Modo Dev com Live Reload)
+
+O projeto inclui o **Maven Wrapper** (`mvnw` / `mvnw.cmd`), dispensando instalação manual do Maven:
+
+```bash
+# Linux / macOS
+./mvnw quarkus:dev
+
+# Windows (PowerShell)
+.\mvnw.cmd quarkus:dev
+```
+- **API Base URL**: `http://localhost:8080`
+- **Swagger UI**: `http://localhost:8080/q/swagger-ui/`
+- **Dev UI do Quarkus**: `http://localhost:8080/q/dev-ui/`
+
+---
+
+### 🐳 Build e Containerização com Docker (JVM & GraalVM Native)
+
+O diretório `src/main/docker/` disponibiliza Dockerfiles otimizados em múltiplas camadas (`fast-jar` e binário nativo):
+
+#### 1. Build JVM (Recomendado — `Dockerfile.jvm` com Red Hat UBI 9 OpenJDK 21)
+```bash
+# 1. Empacotar a aplicação (gera target/quarkus-app/)
+./mvnw clean package -DskipTests
+
+# 2. Construir a imagem Docker multi-layer
+docker build -f src/main/docker/Dockerfile.jvm -t raiz-do-bem-api:jvm .
+
+# 3. Executar o container
+docker run -i --rm -p 8080:8080 \
+  -e DB_URL="$DB_URL" \
+  -e DB_USUARIO="$DB_USUARIO" \
+  -e DB_SENHA="$DB_SENHA" \
+  -e GOOGLE_API_KEY="$GOOGLE_API_KEY" \
+  raiz-do-bem-api:jvm
+```
+
+#### 2. Build Nativo GraalVM (`Dockerfile.native` / `Dockerfile.native-micro`)
+```bash
+# 1. Compilar executável nativo via container builder
+./mvnw clean package -Dnative -Dquarkus.native.container-build=true
+
+# 2. Construir a imagem nativa enxuta
+docker build -f src/main/docker/Dockerfile.native -t raiz-do-bem-api:native .
+
+# 3. Executar o container nativo
+docker run -i --rm -p 8080:8080 raiz-do-bem-api:native
+```
+
+---
+
+### ☁️ Pipeline de CI/CD (Azure Pipelines & Azure Web App)
+
+O projeto conta com entrega contínua configurada em [`azure-pipelines.yml`](azure-pipelines.yml), monitorando os branches `main` e `develop`:
+
+```text
+[Git Push: main / develop]
+            │
+            ▼
+  [Azure Pipelines (Ubuntu Latest)]
+            │
+            ├──► 1. Setup JDK 21 + Cache de dependências Maven
+            ├──► 2. Build & Testes Unitários (./mvnw clean package)
+            ├──► 3. Empacotamento Fast-Jar (target/quarkus-app/)
+            └──► 4. Deploy Automatizado via AzureWebApp@1
+                        │
+                        ▼
+        [Azure App Service: raizdobem-backend (Linux / Java 21)]
+```
+
+---
+
+## 📋 Metadados do Projeto
+
+| Atributo | Especificação |
+| :--- | :--- |
+| **Nome do Projeto** | Raiz do Bem API |
+| **Contexto** | Challenge FIAP — Parceria ONG Turma do Bem |
+| **Group ID / Artifact ID** | `br.com.raizdobem` / `raiz-do-bem-api` |
+| **Versão** | `1.0.0-SNAPSHOT` |
+| **Runtime & Framework** | Java 21 LTS + Quarkus 3.34.5 |
+| **Persistência & Cache** | Hibernate ORM with Panache (Oracle) + Quarkus Cache (Caffeine) |
+| **Segurança** | SmallRye JWT (RSA-256) + Elytron Bcrypt + RBAC (`@RolesAllowed`) |
+| **Qualidade** | 285 Testes Unitários (JUnit 5, Mockito, AssertJ, JaCoCo) |
+| **Cloud & CI/CD** | Docker + Azure Pipelines + Azure Web App |

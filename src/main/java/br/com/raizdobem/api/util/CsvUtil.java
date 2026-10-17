@@ -24,12 +24,12 @@ public class CsvUtil {
             csv.append(dentista.telefone()).append(",");
             csv.append(dentista.categoria()).append(",");
             csv.append(dentista.disponivel()).append(",");
-            csv.append(dentista.especialidades().stream()
+            csv.append(dentista.especialidades() != null ? dentista.especialidades().stream()
                     .map(Object::toString)
-                    .collect(Collectors.joining("; "))).append(",");
-            csv.append(dentista.programasSociais().stream()
+                    .collect(Collectors.joining("; ")) : "").append(",");
+            csv.append(dentista.programasSociais() != null ? dentista.programasSociais().stream()
                     .map(Object::toString)
-                    .collect(Collectors.joining("; "))).append(",");
+                    .collect(Collectors.joining("; ")) : "").append(",");
             csv.append(dentista.logradouro()).append(" - ").append(dentista.numero()).append(",");
             csv.append(dentista.cidade()).append(",");
             csv.append(dentista.estado()).append("\n");
@@ -68,9 +68,9 @@ public class CsvUtil {
             csv.append(b.pedido() != null ? b.pedido().id() : "").append(",");
             csv.append(b.programaSocial()).append(",");
             csv.append(b.endereco() != null ? b.endereco().logradouro() : "").append(",");
-            csv.append(b.endereco() != null ? b.endereco().numero()  : "").append(",");
-            csv.append(b.endereco() != null ? b.endereco().cidade()  : "").append(",");
-            csv.append(b.endereco() != null ? b.endereco().estado()  : "").append("\n");
+            csv.append(b.endereco() != null ? b.endereco().numero() : "").append(",");
+            csv.append(b.endereco() != null ? b.endereco().cidade() : "").append(",");
+            csv.append(b.endereco() != null ? b.endereco().estado() : "").append("\n");
         }
         return csv.toString();
     }

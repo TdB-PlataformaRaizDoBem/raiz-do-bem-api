@@ -1,6 +1,7 @@
 package br.com.raizdobem.api.resource;
 
 import br.com.raizdobem.api.dto.request.LoginRequest;
+import br.com.raizdobem.api.dto.request.RefreshTokenRequest;
 import br.com.raizdobem.api.exception.ValidacaoException;
 import br.com.raizdobem.api.service.LoginService;
 import jakarta.ws.rs.core.Response;
@@ -29,13 +30,13 @@ class LoginResourceTest {
 
     @Test
     @DisplayName("Deve autenticar com sucesso e retornar tokens com HTTP 200")
-    @SuppressWarnings("unchecked")
     void deveAutenticarComSucesso() {
         // Arrange
         LoginRequest loginRequest = new LoginRequest("usuario@raizdobem.org", "Senha@123");
         Map<String, String> tokensEsperados = Map.of(
                 "token", "jwt.access.token",
-                "refreshToken", "jwt.refresh.token"
+                "refreshToken", "jwt.refresh.token",
+                "tipo", "BearerToken"
         );
 
         when(loginService.login(loginRequest)).thenReturn(tokensEsperados);
@@ -53,21 +54,23 @@ class LoginResourceTest {
     @SuppressWarnings("unchecked")
     void deveRealizarRefreshTokenComSucesso() {
         // Arrange
-        LoginRequest loginRequest = new LoginRequest("usuario@raizdobem.org", "Senha@123");
+        RefreshTokenRequest refreshRequest = new RefreshTokenRequest("jwt.refresh.token.valido");
         Map<String, String> tokensEsperados = Map.of(
-                "token", "jwt.access.token",
-                "refreshToken", "jwt.refresh.token"
+                "token", "novo.jwt.access.token",
+                "refreshToken", "novo.jwt.refresh.token",
+                "tipo", "BearerToken"
         );
 
-        when(loginService.login(loginRequest)).thenReturn(tokensEsperados);
+        when(loginService.refreshToken(refreshRequest)).thenReturn(tokensEsperados);
 
         // Act
-        Response response = loginResource.refreshToken(loginRequest);
+        Response response = loginResource.refreshToken(refreshRequest);
 
         // Assert
         assertThat(response.getStatus()).isEqualTo(200);
-        Map<String, Object> entity = (Map<String, Object>) response.getEntity();
-        assertThat(entity).containsEntry("refreshToken", tokensEsperados);
+        Map<String, String> entity = (Map<String, String>) response.getEntity();
+        assertThat(entity).containsEntry("token", "novo.jwt.access.token");
+        assertThat(entity).containsEntry("refreshToken", "novo.jwt.refresh.token");
         assertThat(entity).containsEntry("tipo", "BearerToken");
     }
 

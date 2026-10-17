@@ -90,6 +90,7 @@ public class BeneficiarioService {
     public List<BeneficiarioResponse> listarTodos() {
         return BeneficiarioMapper.mapeamentoBeneficiarios(repository.listarTodos());
     }
+
     @CacheResult(cacheName = "beneficiarios")
     public PageResponse<BeneficiarioResponse> listarTodosPaginacao(int pagina, int tamanho) {
         PanacheQuery<Beneficiario> consulta = repository.listagemPaginacao(pagina, tamanho);

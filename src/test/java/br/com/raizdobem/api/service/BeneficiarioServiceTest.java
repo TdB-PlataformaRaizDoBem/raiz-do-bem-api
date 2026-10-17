@@ -4,11 +4,13 @@ import br.com.raizdobem.api.dto.request.BeneficiarioUpdateRequest;
 import br.com.raizdobem.api.dto.request.BeneficiarioCreateRequest;
 import br.com.raizdobem.api.dto.request.EnderecoRequest;
 import br.com.raizdobem.api.dto.response.BeneficiarioResponse;
+import br.com.raizdobem.api.dto.response.PageResponse;
 import br.com.raizdobem.api.entity.*;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.exception.RequisicaoInvalidaException;
 import br.com.raizdobem.api.exception.ValidacaoException;
 import br.com.raizdobem.api.repository.BeneficiarioRepository;
+import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -266,36 +268,50 @@ class BeneficiarioServiceTest {
 
     @Test
     @DisplayName("Deve listar beneficiários com paginação")
+    @SuppressWarnings("unchecked")
     void deveListarBeneficiariosComPaginacao() {
         // Arrange
         int pagina = 0;
         int tamanho = 10;
         Beneficiario b1 = criarBeneficiario(1L);
         Beneficiario b2 = criarBeneficiario(2L);
-        when(repository.listarTodos(pagina, tamanho)).thenReturn(List.of(b1, b2));
+        PanacheQuery<Beneficiario> queryMock = mock(PanacheQuery.class);
+        when(queryMock.list()).thenReturn(List.of(b1, b2));
+        when(queryMock.count()).thenReturn(2L);
+        when(queryMock.pageCount()).thenReturn(1);
+        when(repository.listagemPaginacao(pagina, tamanho)).thenReturn(queryMock);
 
         // Act
-        List<BeneficiarioResponse> lista = beneficiarioService.listarTodosPaginacao(pagina, tamanho);
+        PageResponse<BeneficiarioResponse> resultado = beneficiarioService.listarTodosPaginacao(pagina, tamanho);
 
         // Assert
-        assertThat(lista).hasSize(2);
-        verify(repository, times(1)).listarTodos(pagina, tamanho);
+        assertThat(resultado.conteudo()).hasSize(2);
+        assertThat(resultado.totalElementos()).isEqualTo(2L);
+        assertThat(resultado.totalPaginas()).isEqualTo(1);
+        verify(repository, times(1)).listagemPaginacao(pagina, tamanho);
     }
 
     @Test
     @DisplayName("Deve retornar lista vazia quando paginação não encontrar beneficiários")
+    @SuppressWarnings("unchecked")
     void deveRetornarListaVaziaQuandoPaginacaoNaoEncontrarBeneficiarios() {
         // Arrange
         int pagina = 10;
         int tamanho = 10;
-        when(repository.listarTodos(pagina, tamanho)).thenReturn(List.of());
+        PanacheQuery<Beneficiario> queryMock = mock(PanacheQuery.class);
+        when(queryMock.list()).thenReturn(List.of());
+        when(queryMock.count()).thenReturn(0L);
+        when(queryMock.pageCount()).thenReturn(0);
+        when(repository.listagemPaginacao(pagina, tamanho)).thenReturn(queryMock);
 
         // Act
-        List<BeneficiarioResponse> lista = beneficiarioService.listarTodosPaginacao(pagina, tamanho);
+        PageResponse<BeneficiarioResponse> resultado = beneficiarioService.listarTodosPaginacao(pagina, tamanho);
 
         // Assert
-        assertThat(lista).isEmpty();
-        verify(repository, times(1)).listarTodos(pagina, tamanho);
+        assertThat(resultado.conteudo()).isEmpty();
+        assertThat(resultado.totalElementos()).isZero();
+        assertThat(resultado.totalPaginas()).isZero();
+        verify(repository, times(1)).listagemPaginacao(pagina, tamanho);
     }
 
     @Test

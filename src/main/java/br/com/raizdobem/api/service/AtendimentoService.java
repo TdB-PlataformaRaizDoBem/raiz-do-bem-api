@@ -24,8 +24,6 @@ import jakarta.transaction.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 import static br.com.raizdobem.api.mapper.AtendimentoMapper.mapeamentoAtendimento;
 import static br.com.raizdobem.api.mapper.AtendimentoMapper.mapeamentoAtendimentos;

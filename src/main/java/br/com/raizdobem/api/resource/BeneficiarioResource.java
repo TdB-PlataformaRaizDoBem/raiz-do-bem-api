@@ -38,7 +38,7 @@ public class BeneficiarioResource {
     }
 
     @GET
-    @Operation(summary = "Endpoint de listagem dos beneficiários cadastrados com paginação.")
+    @Operation(summary = "Endpoint de listagem dos beneficiários cadastrados.")
     @RolesAllowed({"ADMIN", "COLABORADOR"})
     public Response listarTodosComPaginacao(
             @QueryParam("pagina") @DefaultValue("0") int pagina,

@@ -21,8 +21,6 @@ import jakarta.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 
-import static br.com.raizdobem.api.mapper.AtendimentoMapper.mapeamentoAtendimentos;
-
 @ApplicationScoped
 public class ColaboradorService {
     @Inject

@@ -4,6 +4,7 @@ import br.com.raizdobem.api.dto.request.AtendimentoUpdateRequest;
 import br.com.raizdobem.api.dto.request.AtendimentoCreateRequest;
 import br.com.raizdobem.api.dto.response.AtendimentoResponse;
 import br.com.raizdobem.api.dto.response.DentistaResponse;
+import br.com.raizdobem.api.dto.response.PageResponse;
 import br.com.raizdobem.api.entity.Atendimento;
 import br.com.raizdobem.api.entity.Beneficiario;
 import br.com.raizdobem.api.entity.Colaborador;
@@ -13,6 +14,7 @@ import br.com.raizdobem.api.entity.TipoEndereco;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.repository.AtendimentoRepository;
 import br.com.raizdobem.api.repository.BeneficiarioRepository;
+import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -226,6 +228,7 @@ class AtendimentoServiceTest {
 
     @Test
     @DisplayName("Deve listar atendimentos com paginação com sucesso")
+    @SuppressWarnings("unchecked")
     void deveListarAtendimentosComPaginacao() {
         // Arrange
         int pagina = 0;
@@ -237,30 +240,43 @@ class AtendimentoServiceTest {
         a.setDentista(criarDentista());
         a.setDataInicial(LocalDate.now());
 
-        when(repository.listagemPaginacao(pagina, tamanho)).thenReturn(List.of(a));
+        PanacheQuery<Atendimento> queryMock = mock(PanacheQuery.class);
+        when(queryMock.list()).thenReturn(List.of(a));
+        when(queryMock.count()).thenReturn(1L);
+        when(queryMock.pageCount()).thenReturn(1);
+        when(repository.listagemPaginacao(pagina, tamanho)).thenReturn(queryMock);
 
         // Act
-        List<AtendimentoResponse> lista = atendimentoService.listarComPaginacao(pagina, tamanho);
+        PageResponse<AtendimentoResponse> resultado = atendimentoService.listarComPaginacao(pagina, tamanho);
 
         // Assert
-        assertThat(lista).hasSize(1);
-        assertThat(lista.getFirst().prontuario()).isEqualTo("PRONT-PAG-1");
+        assertThat(resultado.conteudo()).hasSize(1);
+        assertThat(resultado.conteudo().getFirst().prontuario()).isEqualTo("PRONT-PAG-1");
+        assertThat(resultado.totalElementos()).isEqualTo(1L);
+        assertThat(resultado.totalPaginas()).isEqualTo(1);
         verify(repository, times(1)).listagemPaginacao(pagina, tamanho);
     }
 
     @Test
     @DisplayName("Deve retornar lista vazia quando paginação não encontrar atendimentos")
+    @SuppressWarnings("unchecked")
     void deveRetornarListaVaziaQuandoPaginacaoNaoEncontrarAtendimentos() {
         // Arrange
         int pagina = 5;
         int tamanho = 10;
-        when(repository.listagemPaginacao(pagina, tamanho)).thenReturn(List.of());
+        PanacheQuery<Atendimento> queryMock = mock(PanacheQuery.class);
+        when(queryMock.list()).thenReturn(List.of());
+        when(queryMock.count()).thenReturn(0L);
+        when(queryMock.pageCount()).thenReturn(0);
+        when(repository.listagemPaginacao(pagina, tamanho)).thenReturn(queryMock);
 
         // Act
-        List<AtendimentoResponse> lista = atendimentoService.listarComPaginacao(pagina, tamanho);
+        PageResponse<AtendimentoResponse> resultado = atendimentoService.listarComPaginacao(pagina, tamanho);
 
         // Assert
-        assertThat(lista).isEmpty();
+        assertThat(resultado.conteudo()).isEmpty();
+        assertThat(resultado.totalElementos()).isZero();
+        assertThat(resultado.totalPaginas()).isZero();
         verify(repository, times(1)).listagemPaginacao(pagina, tamanho);
     }
 

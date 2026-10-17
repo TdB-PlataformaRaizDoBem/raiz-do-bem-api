@@ -4,6 +4,7 @@ import br.com.raizdobem.api.dto.request.BeneficiarioUpdateRequest;
 import br.com.raizdobem.api.dto.request.BeneficiarioCreateRequest;
 import br.com.raizdobem.api.dto.response.BeneficiarioResponse;
 import br.com.raizdobem.api.dto.response.EnderecoResponse;
+import br.com.raizdobem.api.dto.response.PageResponse;
 import br.com.raizdobem.api.dto.response.PedidoAjudaResumidoDTO;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.service.BeneficiarioService;
@@ -67,14 +68,17 @@ class BeneficiarioResourceTest {
         // Arrange
         int pagina = 0;
         int tamanho = 10;
-        when(service.listarTodosPaginacao(pagina, tamanho)).thenReturn(List.of(criarDTO(1L, "12345678901")));
+        PageResponse<BeneficiarioResponse> pageResponse = new PageResponse<>(
+                List.of(criarDTO(1L, "12345678901")), pagina, tamanho, 1L, 1
+        );
+        when(service.listarTodosPaginacao(pagina, tamanho)).thenReturn(pageResponse);
 
         // Act
         Response response = resource.listarTodosComPaginacao(pagina, tamanho);
 
         // Assert
         assertThat(response.getStatus()).isEqualTo(200);
-        assertThat(response.getEntity()).isNotNull();
+        assertThat(response.getEntity()).isEqualTo(pageResponse);
         verify(service, times(1)).listarTodosPaginacao(pagina, tamanho);
     }
 
@@ -84,14 +88,17 @@ class BeneficiarioResourceTest {
         // Arrange
         int pagina = 10;
         int tamanho = 10;
-        when(service.listarTodosPaginacao(pagina, tamanho)).thenReturn(Collections.emptyList());
+        PageResponse<BeneficiarioResponse> pageResponse = new PageResponse<>(
+                Collections.emptyList(), pagina, tamanho, 0L, 0
+        );
+        when(service.listarTodosPaginacao(pagina, tamanho)).thenReturn(pageResponse);
 
         // Act
         Response response = resource.listarTodosComPaginacao(pagina, tamanho);
 
         // Assert
         assertThat(response.getStatus()).isEqualTo(200);
-        assertThat(response.getEntity()).isEqualTo(Collections.emptyList());
+        assertThat(response.getEntity()).isEqualTo(pageResponse);
         verify(service, times(1)).listarTodosPaginacao(pagina, tamanho);
     }
 

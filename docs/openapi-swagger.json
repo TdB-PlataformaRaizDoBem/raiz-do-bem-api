@@ -1,0 +1,1695 @@
+{
+  "openapi" : "3.1.0",
+  "tags" : [ {
+    "name" : "Atendimento",
+    "description" : "Disponibiliza funcionalidades relacionadas aos atendimentos."
+  }, {
+    "name" : "Autenticação",
+    "description" : "Disponibiliza funções para autenticação JWT."
+  }, {
+    "name" : "Beneficiario",
+    "description" : "Disponibiliza funcionalidades relacionadas aos beneficiários."
+  }, {
+    "name" : "Colaborador",
+    "description" : "Disponibiliza funcionalidades relacionadas a colaboradores."
+  }, {
+    "name" : "Dentista",
+    "description" : "Disponibiliza funcionalidades relacionadas a dentistas."
+  }, {
+    "name" : "Endereco",
+    "description" : "Disponibiliza funcionalidades relacionadas aos endereços."
+  }, {
+    "name" : "Especialidades",
+    "description" : "Disponibiliza visualização das especialidades gerais dos dentistas."
+  }, {
+    "name" : "Pedido Ajuda",
+    "description" : "Disponibiliza funcionalidades relacionadas aos pedidos de ajuda."
+  }, {
+    "name" : "Programas",
+    "description" : "Disponibiliza os programas oferecidos pela Ong."
+  } ],
+  "paths" : {
+    "/atendimento" : {
+      "get" : {
+        "summary" : "Endpoint de listagem dos atendimentos paginados.",
+        "tags" : [ "Atendimento" ],
+        "parameters" : [ {
+          "name" : "pagina",
+          "in" : "query",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "default" : 0
+          }
+        }, {
+          "name" : "size",
+          "in" : "query",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "default" : 20
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : { }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ "ADMIN", "COLABORADOR" ]
+        } ]
+      },
+      "post" : {
+        "summary" : "Endpoint de criação dos atendimentos de beneficiários cadastrados.",
+        "tags" : [ "Atendimento" ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/AtendimentoCreateRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : { }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
+          },
+          "400" : {
+            "description" : "Bad Request"
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ "ADMIN", "COLABORADOR" ]
+        } ]
+      }
+    },
+    "/atendimento/exportarCsv" : {
+      "get" : {
+        "summary" : "Endpoint para exportar todos os atendimentos em um arquivo csv.",
+        "tags" : [ "Atendimento" ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "text/csv" : { }
+            }
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ "ADMIN" ]
+        } ]
+      }
+    },
+    "/atendimento/{cpf}" : {
+      "get" : {
+        "tags" : [ "Atendimento" ],
+        "parameters" : [ {
+          "name" : "cpf",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : { }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
+          }
+        },
+        "summary" : "Buscar Por Cpf",
+        "security" : [ {
+          "bearerAuth" : [ "ADMIN", "COLABORADOR" ]
+        } ]
+      },
+      "put" : {
+        "summary" : "Endpoint para finalizar atendimento.",
+        "tags" : [ "Atendimento" ],
+        "parameters" : [ {
+          "name" : "cpf",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/AtendimentoUpdateRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : { }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
+          },
+          "400" : {
+            "description" : "Bad Request"
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ "ADMIN", "COLABORADOR" ]
+        } ]
+      }
+    },
+    "/auth/refreshToken" : {
+      "post" : {
+        "summary" : "Refresh Token para login de colaborador",
+        "description" : "Renova o token JWT utilizando um refresh token válido.",
+        "tags" : [ "Autenticação" ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/RefreshTokenRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : { }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request"
+          }
+        }
+      }
+    },
+    "/auth/tokenAcesso" : {
+      "post" : {
+        "summary" : "Login de colaborador",
+        "description" : "Realiza o login do usuário e retorna um token JWT para autenticação.",
+        "tags" : [ "Autenticação" ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/LoginRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : { }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request"
+          }
+        }
+      }
+    },
+    "/beneficiario" : {
+      "get" : {
+        "summary" : "Endpoint de listagem dos beneficiários cadastrados.",
+        "tags" : [ "Beneficiario" ],
+        "parameters" : [ {
+          "name" : "pagina",
+          "in" : "query",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "default" : 0
+          }
+        }, {
+          "name" : "size",
+          "in" : "query",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "default" : 20
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : { }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ "ADMIN", "COLABORADOR" ]
+        } ]
+      },
+      "post" : {
+        "summary" : "Endpoint para a criação de beneficiário, de um pedido de ajuda aprovado.",
+        "tags" : [ "Beneficiario" ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/BeneficiarioCreateRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : { }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
+          },
+          "400" : {
+            "description" : "Bad Request"
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ "ADMIN", "COLABORADOR" ]
+        } ]
+      }
+    },
+    "/beneficiario/cidade/{cidade}" : {
+      "get" : {
+        "summary" : "Endpoint para listar beneficiários por cidade.",
+        "tags" : [ "Beneficiario" ],
+        "parameters" : [ {
+          "name" : "cidade",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : { }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ "ADMIN", "COLABORADOR" ]
+        } ]
+      }
+    },
+    "/beneficiario/exportarCsv" : {
+      "get" : {
+        "summary" : "Endpoint para exportar todos os atendimentos em um arquivo csv.",
+        "tags" : [ "Beneficiario" ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "text/csv; charset=UTF-8" : { }
+            }
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ "ADMIN" ]
+        } ]
+      }
+    },
+    "/beneficiario/programa/{idProgramaSocial}" : {
+      "get" : {
+        "summary" : "Endpoint para listar beneficiários por programa social.",
+        "tags" : [ "Beneficiario" ],
+        "parameters" : [ {
+          "name" : "idProgramaSocial",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : { }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ "ADMIN", "COLABORADOR" ]
+        } ]
+      }
+    },
+    "/beneficiario/{cpf}" : {
+      "get" : {
+        "summary" : "Endpoint para encontrar um beneficiário específico.",
+        "tags" : [ "Beneficiario" ],
+        "parameters" : [ {
+          "name" : "cpf",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : { }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ "ADMIN", "COLABORADOR" ]
+        } ]
+      },
+      "put" : {
+        "summary" : "Endpoint de atualização de informações de beneficiário.",
+        "tags" : [ "Beneficiario" ],
+        "parameters" : [ {
+          "name" : "cpf",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/BeneficiarioUpdateRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : { }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
+          },
+          "400" : {
+            "description" : "Bad Request"
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ "ADMIN", "COLABORADOR" ]
+        } ]
+      }
+    },
+    "/colaborador" : {
+      "get" : {
+        "summary" : "Endpoint de listagem dos colaboradores com paginação.",
+        "tags" : [ "Colaborador" ],
+        "parameters" : [ {
+          "name" : "pagina",
+          "in" : "query",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "default" : 0
+          }
+        }, {
+          "name" : "size",
+          "in" : "query",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "default" : 20
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : { }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ "ADMIN", "COLABORADOR" ]
+        } ]
+      },
+      "post" : {
+        "summary" : "Endpoint de criação de um colaborador da ONG.",
+        "tags" : [ "Colaborador" ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ColaboradorCreateRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : { }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
+          },
+          "400" : {
+            "description" : "Bad Request"
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ "ADMIN" ]
+        } ]
+      }
+    },
+    "/colaborador/{cpf}" : {
+      "delete" : {
+        "summary" : "Endpoint de exclusão de um colaborador.",
+        "tags" : [ "Colaborador" ],
+        "parameters" : [ {
+          "name" : "cpf",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : { }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ "ADMIN" ]
+        } ]
+      },
+      "get" : {
+        "summary" : "Endpoint que exibe um colaborador único usando o CPF.",
+        "tags" : [ "Colaborador" ],
+        "parameters" : [ {
+          "name" : "cpf",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : { }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ "ADMIN", "COLABORADOR" ]
+        } ]
+      },
+      "put" : {
+        "summary" : "Endpoint de atualização de email do colaborador.",
+        "tags" : [ "Colaborador" ],
+        "parameters" : [ {
+          "name" : "cpf",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ColaboradorUpdateRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : { }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
+          },
+          "400" : {
+            "description" : "Bad Request"
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ "ADMIN" ]
+        } ]
+      }
+    },
+    "/dentista" : {
+      "get" : {
+        "summary" : "Endpoint para a listagem de todos os dentistas paginados.",
+        "tags" : [ "Dentista" ],
+        "parameters" : [ {
+          "name" : "pagina",
+          "in" : "query",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "default" : 0
+          }
+        }, {
+          "name" : "size",
+          "in" : "query",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "default" : 20
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : { }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ "ADMIN", "COLABORADOR" ]
+        } ]
+      },
+      "post" : {
+        "summary" : "Endpoint para a criação de dentista.",
+        "tags" : [ "Dentista" ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/DentistaCreateRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : { }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
+          },
+          "400" : {
+            "description" : "Bad Request"
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ "ADMIN", "COLABORADOR" ]
+        } ]
+      }
+    },
+    "/dentista/cidade/{cidade}" : {
+      "get" : {
+        "summary" : "Endpoint de listagem de todos os dentistas de uma cidade específica.",
+        "tags" : [ "Dentista" ],
+        "parameters" : [ {
+          "name" : "cidade",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : { }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ "ADMIN", "COLABORADOR" ]
+        } ]
+      }
+    },
+    "/dentista/disponiveis" : {
+      "get" : {
+        "summary" : "Endpoint de listagem dos dentistas disponíveis.",
+        "tags" : [ "Dentista" ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : { }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ "ADMIN", "COLABORADOR" ]
+        } ]
+      }
+    },
+    "/dentista/exportarCsv" : {
+      "get" : {
+        "summary" : "Endpoint de exportação de todos os dentistas em arquivo csv.",
+        "tags" : [ "Dentista" ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "text/csv; charset=UTF-8" : { }
+            }
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ "ADMIN", "COLABORADOR" ]
+        } ]
+      }
+    },
+    "/dentista/{cpf}" : {
+      "get" : {
+        "summary" : "Endpoint de exibição de um único dentista usando o CPF.",
+        "tags" : [ "Dentista" ],
+        "parameters" : [ {
+          "name" : "cpf",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : { }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ "ADMIN", "COLABORADOR" ]
+        } ]
+      },
+      "put" : {
+        "summary" : "Endpoint para a atualização de dentista.",
+        "tags" : [ "Dentista" ],
+        "parameters" : [ {
+          "name" : "cpf",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/DentistaUpdateRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : { }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
+          },
+          "400" : {
+            "description" : "Bad Request"
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ "ADMIN", "COLABORADOR" ]
+        } ]
+      }
+    },
+    "/endereco" : {
+      "get" : {
+        "summary" : "Endpoint de listagem de todos os endereços.",
+        "tags" : [ "Endereco" ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : { }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ "ADMIN", "COLABORADOR" ]
+        } ]
+      },
+      "post" : {
+        "summary" : "Endpoint de criação de endereço.",
+        "tags" : [ "Endereco" ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/EnderecoCompletoRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : { }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
+          },
+          "400" : {
+            "description" : "Bad Request"
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ "ADMIN", "COLABORADOR" ]
+        } ]
+      }
+    },
+    "/endereco/id/{id}" : {
+      "get" : {
+        "summary" : "Endpoint de busca de endereço específico pelo id.",
+        "tags" : [ "Endereco" ],
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : { }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ "ADMIN", "COLABORADOR" ]
+        } ]
+      }
+    },
+    "/endereco/viacep/{cep}" : {
+      "get" : {
+        "summary" : "Endpoint de busca de informações de endereços na API do ViaCep.",
+        "tags" : [ "Endereco" ],
+        "parameters" : [ {
+          "name" : "cep",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : { }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ "ADMIN", "COLABORADOR" ]
+        } ]
+      }
+    },
+    "/endereco/{cidade}" : {
+      "get" : {
+        "summary" : "Endpoint para a listagem de endereços por cidade.",
+        "tags" : [ "Endereco" ],
+        "parameters" : [ {
+          "name" : "cidade",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : { }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ "ADMIN", "COLABORADOR" ]
+        } ]
+      }
+    },
+    "/endereco/{id}" : {
+      "delete" : {
+        "summary" : "Endpoint de exclusão de endereço.",
+        "tags" : [ "Endereco" ],
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : { }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ "ADMIN" ]
+        } ]
+      },
+      "put" : {
+        "summary" : "Endpoint de atualização de endereço.",
+        "tags" : [ "Endereco" ],
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/EnderecoCompletoRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : { }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
+          },
+          "400" : {
+            "description" : "Bad Request"
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ "ADMIN", "COLABORADOR" ]
+        } ]
+      }
+    },
+    "/especialidades" : {
+      "get" : {
+        "summary" : "Lista todas as especialidades que podem ser atribuídas a um dentista.",
+        "tags" : [ "Especialidades" ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : { }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/especialidades/{id}" : {
+      "get" : {
+        "summary" : "Busca especialidade específica pelo id",
+        "tags" : [ "Especialidades" ],
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : { }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/pedido-ajuda" : {
+      "get" : {
+        "summary" : "Endpoint de listagem de todos os pedidos de ajuda registrados com paginação.",
+        "tags" : [ "Pedido Ajuda" ],
+        "parameters" : [ {
+          "name" : "pagina",
+          "in" : "query",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "default" : 0
+          }
+        }, {
+          "name" : "size",
+          "in" : "query",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "default" : 20
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : { }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ "ADMIN", "COLABORADOR" ]
+        } ]
+      },
+      "post" : {
+        "summary" : "Endpoint de criação de um pedido de ajuda.",
+        "tags" : [ "Pedido Ajuda" ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/PedidoAjudaCreateRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : { }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request"
+          }
+        }
+      }
+    },
+    "/pedido-ajuda/data/{data}" : {
+      "get" : {
+        "summary" : "Endpoint de listagem dos pedidos de ajuda de uma data específica.",
+        "tags" : [ "Pedido Ajuda" ],
+        "parameters" : [ {
+          "name" : "data",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : { }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ "ADMIN", "COLABORADOR" ]
+        } ]
+      }
+    },
+    "/pedido-ajuda/{id}" : {
+      "put" : {
+        "summary" : "Endpoint de processamento de um pedido de ajuda.",
+        "tags" : [ "Pedido Ajuda" ],
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/PedidoAjudaUpdateRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : { }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
+          },
+          "400" : {
+            "description" : "Bad Request"
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ "ADMIN", "COLABORADOR" ]
+        } ]
+      }
+    },
+    "/programas-sociais" : {
+      "get" : {
+        "summary" : "Lista os programas sociais presentes na ONG: Dentista do Bem e Apolônias do Bem",
+        "tags" : [ "Programas" ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : { }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/programas-sociais/{id}" : {
+      "get" : {
+        "summary" : "Busca programa social com o id",
+        "tags" : [ "Programas" ],
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : { }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components" : {
+    "schemas" : {
+      "AtendimentoCreateRequest" : {
+        "type" : "object",
+        "required" : [ "prontuario", "cpfBeneficiario" ],
+        "properties" : {
+          "prontuario" : {
+            "type" : "string",
+            "pattern" : "\\S"
+          },
+          "cpfBeneficiario" : {
+            "type" : "string",
+            "pattern" : "\\S"
+          },
+          "dataInicial" : {
+            "$ref" : "#/components/schemas/LocalDate"
+          }
+        }
+      },
+      "AtendimentoUpdateRequest" : {
+        "type" : "object",
+        "properties" : {
+          "prontuario" : {
+            "type" : "string"
+          },
+          "idColaborador" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        }
+      },
+      "BeneficiarioCreateRequest" : {
+        "type" : "object",
+        "required" : [ "idPedidoAjuda", "idProgramaSocial" ],
+        "properties" : {
+          "idPedidoAjuda" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "idProgramaSocial" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        }
+      },
+      "BeneficiarioUpdateRequest" : {
+        "type" : "object",
+        "properties" : {
+          "telefone" : {
+            "type" : "string"
+          },
+          "email" : {
+            "type" : "string"
+          },
+          "endereco" : {
+            "$ref" : "#/components/schemas/EnderecoRequest"
+          }
+        }
+      },
+      "ColaboradorCreateRequest" : {
+        "type" : "object",
+        "required" : [ "nomeCompleto" ],
+        "properties" : {
+          "cpf" : {
+            "type" : "string",
+            "pattern" : "^\\d{11}$"
+          },
+          "nomeCompleto" : {
+            "type" : "string",
+            "pattern" : "\\S"
+          },
+          "dataNascimento" : {
+            "$ref" : "#/components/schemas/LocalDate"
+          },
+          "dataContratacao" : {
+            "$ref" : "#/components/schemas/LocalDate"
+          },
+          "email" : {
+            "type" : "string"
+          },
+          "senha" : {
+            "type" : "string"
+          },
+          "role" : {
+            "type" : "string"
+          }
+        }
+      },
+      "ColaboradorUpdateRequest" : {
+        "type" : "object",
+        "properties" : {
+          "email" : {
+            "type" : "string"
+          },
+          "senha" : {
+            "type" : "string"
+          }
+        }
+      },
+      "DentistaCreateRequest" : {
+        "type" : "object",
+        "required" : [ "croDentista", "cpf", "nomeCompleto", "sexo", "email", "telefone", "categoria", "disponivel", "endereco" ],
+        "properties" : {
+          "croDentista" : {
+            "type" : "string",
+            "pattern" : "^(?i)[A-Z0-9-/ ]{3,10}$"
+          },
+          "cpf" : {
+            "type" : "string",
+            "pattern" : "^\\d{11}$"
+          },
+          "nomeCompleto" : {
+            "type" : "string",
+            "pattern" : "\\S"
+          },
+          "sexo" : {
+            "type" : "string",
+            "pattern" : "\\S"
+          },
+          "email" : {
+            "type" : "string",
+            "pattern" : "\\S"
+          },
+          "telefone" : {
+            "type" : "string",
+            "pattern" : "\\S"
+          },
+          "categoria" : {
+            "type" : "string",
+            "pattern" : "\\S"
+          },
+          "idEspecialidade" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "disponivel" : {
+            "type" : "string",
+            "pattern" : "\\S"
+          },
+          "endereco" : {
+            "$ref" : "#/components/schemas/EnderecoRequest"
+          }
+        }
+      },
+      "DentistaUpdateRequest" : {
+        "type" : "object",
+        "properties" : {
+          "telefone" : {
+            "type" : "string"
+          },
+          "email" : {
+            "type" : "string"
+          },
+          "categoriaDentista" : {
+            "type" : "string"
+          },
+          "idEspecialidade" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "disponivel" : {
+            "type" : "string"
+          },
+          "endereco" : {
+            "$ref" : "#/components/schemas/EnderecoRequest"
+          }
+        }
+      },
+      "EnderecoCompletoRequest" : {
+        "type" : "object",
+        "properties" : {
+          "cep" : {
+            "type" : "string"
+          },
+          "numero" : {
+            "type" : "string"
+          },
+          "tipoEndereco" : {
+            "type" : "string"
+          }
+        }
+      },
+      "EnderecoRequest" : {
+        "type" : "object",
+        "properties" : {
+          "cep" : {
+            "type" : "string"
+          },
+          "numero" : {
+            "type" : "string"
+          }
+        }
+      },
+      "LocalDate" : {
+        "type" : "string",
+        "format" : "date",
+        "examples" : [ "2022-03-10" ]
+      },
+      "LoginRequest" : {
+        "type" : "object",
+        "properties" : {
+          "email" : {
+            "type" : "string"
+          },
+          "senha" : {
+            "type" : "string"
+          }
+        }
+      },
+      "PedidoAjudaCreateRequest" : {
+        "type" : "object",
+        "required" : [ "cpf", "nome", "dataNascimento", "sexo", "telefone", "email", "descricaoProblema", "endereco" ],
+        "properties" : {
+          "cpf" : {
+            "type" : "string",
+            "pattern" : "^\\d{11}$"
+          },
+          "nome" : {
+            "type" : "string",
+            "pattern" : "\\S"
+          },
+          "dataNascimento" : {
+            "$ref" : "#/components/schemas/LocalDate"
+          },
+          "sexo" : {
+            "type" : "string",
+            "pattern" : "\\S"
+          },
+          "telefone" : {
+            "type" : "string",
+            "pattern" : "\\S"
+          },
+          "email" : {
+            "type" : "string",
+            "pattern" : "\\S"
+          },
+          "descricaoProblema" : {
+            "type" : "string",
+            "pattern" : "\\S"
+          },
+          "endereco" : {
+            "$ref" : "#/components/schemas/EnderecoRequest"
+          }
+        }
+      },
+      "PedidoAjudaUpdateRequest" : {
+        "type" : "object",
+        "properties" : {
+          "statusPedido" : {
+            "$ref" : "#/components/schemas/StatusPedido"
+          },
+          "idDentista" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        }
+      },
+      "RefreshTokenRequest" : {
+        "type" : "object",
+        "required" : [ "refreshToken" ],
+        "properties" : {
+          "refreshToken" : {
+            "type" : "string",
+            "pattern" : "\\S"
+          }
+        }
+      },
+      "StatusPedido" : {
+        "type" : "string",
+        "enum" : [ "PENDENTE", "APROVADO", "REJEITADO" ]
+      }
+    },
+    "securitySchemes" : {
+      "bearerAuth" : {
+        "description" : "Authentication",
+        "type" : "http",
+        "scheme" : "bearer",
+        "bearerFormat" : "JWT"
+      }
+    }
+  },
+  "info" : {
+    "title" : "Raiz do Bem",
+    "version" : "1.0.0",
+    "description" : "Projeto academico elaborado para o Challenge FIAP 2025-26"
+  }
+}

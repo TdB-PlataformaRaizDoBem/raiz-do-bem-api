@@ -4,6 +4,7 @@ import br.com.raizdobem.api.dto.request.DentistaUpdateRequest;
 import br.com.raizdobem.api.dto.request.DentistaCreateRequest;
 import br.com.raizdobem.api.dto.request.EnderecoRequest;
 import br.com.raizdobem.api.dto.response.DentistaResponse;
+import br.com.raizdobem.api.dto.response.PageResponse;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.exception.RequisicaoInvalidaException;
 import br.com.raizdobem.api.service.DentistaService;
@@ -99,6 +100,46 @@ class DentistaResourceTest {
 
         // Assert
         assertThat(response.getStatus()).isEqualTo(200);
+    }
+
+    @Test
+    @DisplayName("Deve listar dentistas com paginação retornando HTTP 200")
+    void deveListarTodosPaginadosRetornandoStatus200() {
+        // Arrange
+        int pagina = 0;
+        int tamanho = 10;
+        PageResponse<DentistaResponse> pageResponse = new PageResponse<>(
+                List.of(criarDTO(1L, "12345678901")), pagina, tamanho, 1L, 1
+        );
+        when(service.listarComPaginacao(pagina, tamanho)).thenReturn(pageResponse);
+
+        // Act
+        Response response = resource.listarTodosPaginados(pagina, tamanho);
+
+        // Assert
+        assertThat(response.getStatus()).isEqualTo(200);
+        assertThat(response.getEntity()).isEqualTo(pageResponse);
+        verify(service, times(1)).listarComPaginacao(pagina, tamanho);
+    }
+
+    @Test
+    @DisplayName("Deve retornar página vazia e HTTP 200 quando paginação de dentistas não encontrar resultados")
+    void deveRetornarPaginaVaziaQuandoPaginacaoNaoEncontrarResultados() {
+        // Arrange
+        int pagina = 99;
+        int tamanho = 10;
+        PageResponse<DentistaResponse> pageResponse = new PageResponse<>(
+                Collections.emptyList(), pagina, tamanho, 0L, 0
+        );
+        when(service.listarComPaginacao(pagina, tamanho)).thenReturn(pageResponse);
+
+        // Act
+        Response response = resource.listarTodosPaginados(pagina, tamanho);
+
+        // Assert
+        assertThat(response.getStatus()).isEqualTo(200);
+        assertThat(response.getEntity()).isEqualTo(pageResponse);
+        verify(service, times(1)).listarComPaginacao(pagina, tamanho);
     }
 
     @Test
