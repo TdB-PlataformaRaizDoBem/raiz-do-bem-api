@@ -28,3 +28,4 @@ steps:
       appType: 'webAppLinux'
       appName: 'raizdobem-backend'
       package: '$(System.DefaultWorkingDirectory)/target/quarkus-app/'
+      startUpCommand: 'java -jar /home/site/wwwroot/quarkus-run.jar'
