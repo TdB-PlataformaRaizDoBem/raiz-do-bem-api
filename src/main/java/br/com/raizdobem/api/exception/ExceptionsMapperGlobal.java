@@ -3,6 +3,7 @@ package br.com.raizdobem.api.exception;
 import br.com.raizdobem.api.dto.response.ErroResponse;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.ExceptionMapper;
@@ -45,6 +46,13 @@ public class ExceptionsMapperGlobal implements ExceptionMapper<Exception> {
                     .build();
         }
 
+        if (e instanceof WebApplicationException wae && wae.getResponse().getStatus() < 500) {
+            int status = wae.getResponse().getStatus();
+            String mensagem = status == 404 ? "Recurso não encontrado." : e.getMessage();
+            return Response.status(status)
+                    .entity(new ErroResponse(status, mensagem, LocalDateTime.now()))
+                    .build();
+        }
 
         LOG.errorf(e, "[Erro interno de servidor]: %s, %s", e.getClass().getSimpleName(), e.getMessage());
 

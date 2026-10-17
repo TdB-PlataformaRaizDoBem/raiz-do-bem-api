@@ -2,6 +2,7 @@ package br.com.raizdobem.api.exception;
 
 import br.com.raizdobem.api.dto.response.ErroResponse;
 import jakarta.validation.ConstraintViolationException;
+import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -94,6 +95,40 @@ class ExceptionsMapperGlobalTest {
         ErroResponse erro = (ErroResponse) response.getEntity();
         assertThat(erro.statusCode()).isEqualTo(400);
         assertThat(erro.mensagem()).isEqualTo("Violação de restrição");
+    }
+
+    @Test
+    @DisplayName("Deve mapear WebApplicationException 401 mantendo a mensagem original")
+    void deveMapearWebApplicationException401ComMensagemOriginal() {
+        // Arrange
+        WebApplicationException ex = new WebApplicationException("Refresh token inválido ou expirado.", 401);
+
+        // Act
+        Response response = mapper.toResponse(ex);
+
+        // Assert
+        assertThat(response.getStatus()).isEqualTo(401);
+        ErroResponse erro = (ErroResponse) response.getEntity();
+        assertThat(erro.statusCode()).isEqualTo(401);
+        assertThat(erro.mensagem()).isEqualTo("Refresh token inválido ou expirado.");
+        assertThat(erro.timestamp()).isNotNull();
+    }
+
+    @Test
+    @DisplayName("Deve mapear WebApplicationException 404 com mensagem padrão de recurso não encontrado")
+    void deveMapearWebApplicationException404ComMensagemPadrao() {
+        // Arrange
+        WebApplicationException ex = new WebApplicationException("Not Found", 404);
+
+        // Act
+        Response response = mapper.toResponse(ex);
+
+        // Assert
+        assertThat(response.getStatus()).isEqualTo(404);
+        ErroResponse erro = (ErroResponse) response.getEntity();
+        assertThat(erro.statusCode()).isEqualTo(404);
+        assertThat(erro.mensagem()).isEqualTo("Recurso não encontrado.");
+        assertThat(erro.timestamp()).isNotNull();
     }
 
     @Test

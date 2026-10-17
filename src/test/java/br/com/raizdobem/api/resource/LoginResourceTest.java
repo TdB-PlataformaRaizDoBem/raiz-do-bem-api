@@ -4,6 +4,7 @@ import br.com.raizdobem.api.dto.request.LoginRequest;
 import br.com.raizdobem.api.dto.request.RefreshTokenRequest;
 import br.com.raizdobem.api.exception.ValidacaoException;
 import br.com.raizdobem.api.service.LoginService;
+import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -85,5 +86,21 @@ class LoginResourceTest {
         assertThatThrownBy(() -> loginResource.login(loginRequest))
                 .isInstanceOf(ValidacaoException.class)
                 .hasMessage("Email ou senha inválido(s).");
+    }
+
+    @Test
+    @DisplayName("Deve propagar WebApplicationException 401 quando refresh token for inválido")
+    void devePropagarWebApplicationExceptionQuandoRefreshTokenForInvalido() {
+        // Arrange
+        RefreshTokenRequest refreshRequest = new RefreshTokenRequest("token.invalido");
+        when(loginService.refreshToken(refreshRequest))
+                .thenThrow(new WebApplicationException("Refresh token inválido ou expirado.", 401));
+
+        // Act & Assert
+        assertThatThrownBy(() -> loginResource.refreshToken(refreshRequest))
+                .isInstanceOf(WebApplicationException.class)
+                .hasMessage("Refresh token inválido ou expirado.")
+                .extracting(ex -> ((WebApplicationException) ex).getResponse().getStatus())
+                .isEqualTo(401);
     }
 }
