@@ -12,8 +12,6 @@ import jakarta.ws.rs.core.Response;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
-import java.util.List;
-
 @RequestScoped
 @Path("/programas-sociais")
 @Tag(name = "Programas", description = "Disponibiliza os programas oferecidos pela Ong.")

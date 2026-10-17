@@ -1,6 +1,7 @@
 package br.com.raizdobem.api.exception;
 
 import br.com.raizdobem.api.dto.response.ErroResponse;
+import jakarta.validation.ConstraintViolationException;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -38,8 +39,14 @@ public class ExceptionsMapperGlobal implements ExceptionMapper<Exception> {
                     .entity(new ErroResponse(400, e.getMessage(), LocalDateTime.now()))
                     .build();
         }
+        if (e instanceof ConstraintViolationException) {
+            return Response.status(400)
+                    .entity(new ErroResponse(400, e.getMessage(), LocalDateTime.now()))
+                    .build();
+        }
 
-        LOG.errorf(e, "[Erro 500]: %s, %s", e.getClass().getSimpleName(), e.getMessage());
+
+        LOG.errorf(e, "[Erro interno de servidor]: %s, %s", e.getClass().getSimpleName(), e.getMessage());
 
         return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                 .entity(new ErroResponse(500, "Erro interno do servidor.", LocalDateTime.now()))

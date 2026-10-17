@@ -3,6 +3,7 @@ package br.com.raizdobem.api.service;
 import br.com.raizdobem.api.dto.request.DentistaUpdateRequest;
 import br.com.raizdobem.api.dto.request.DentistaCreateRequest;
 import br.com.raizdobem.api.dto.response.DentistaResponse;
+import br.com.raizdobem.api.dto.response.PageResponse;
 import br.com.raizdobem.api.entity.*;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.exception.ValidacaoException;
@@ -11,13 +12,14 @@ import br.com.raizdobem.api.repository.DentistaRepository;
 import br.com.raizdobem.api.repository.EspecialidadeRepository;
 import br.com.raizdobem.api.repository.ProgramaRepository;
 import br.com.raizdobem.api.util.CpfValidatorUtil;
+import io.quarkus.cache.CacheInvalidateAll;
 import io.quarkus.cache.CacheResult;
+import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import java.util.List;
 
-import static br.com.raizdobem.api.mapper.DentistaMapper.mapeamentoParaResponse;
 import static br.com.raizdobem.api.mapper.DentistaMapper.mapeamentoParaResponse;
 
 @ApplicationScoped
@@ -35,6 +37,7 @@ public class DentistaService {
     ProgramaRepository programaRepository;
 
     @Transactional
+    @CacheInvalidateAll(cacheName = "dentistas")
     public DentistaResponse criarDentista(DentistaCreateRequest dto){
         if(!CpfValidatorUtil.cpfValido(dto.cpf())){
             throw new ValidacaoException("CPF inserido é inválido");
@@ -69,13 +72,28 @@ public class DentistaService {
         return mapeamentoParaResponse(dentista);
     }
 
-    @CacheResult(cacheName = "dentistas")
     public List<DentistaResponse> listarTodos() {
-        List<Dentista> dentistas = repository.listarTodos();
-        return DentistaMapper.mapeamentoParaResponse(dentistas);
+        return DentistaMapper.mapeamentoParaResponse(repository.listarTodos());
     }
 
-//    @CacheResult(cacheName = "dentistas-disponiveis")
+    @CacheResult(cacheName = "dentistas")
+    public PageResponse<DentistaResponse> listarComPaginacao(int pagina, int tamanho) {
+        PanacheQuery<Dentista> consulta = repository.listagemPaginacao(pagina, tamanho);
+
+        List<DentistaResponse> itens = consulta.list()
+                .stream()
+                .map(DentistaMapper::mapeamentoParaResponse)
+                .toList();
+
+        return new PageResponse<>(
+                itens,
+                pagina,
+                tamanho,
+                consulta.count(),
+                consulta.pageCount()
+        );
+    }
+
     public List<DentistaResponse> listarDisponiveis() {
         List<Dentista> dentistas = repository.listarDisponiveis();
         return DentistaMapper.mapeamentoParaResponse(dentistas);
@@ -105,6 +123,7 @@ public class DentistaService {
     }
 
     @Transactional
+    @CacheInvalidateAll(cacheName = "dentistas")
     public DentistaResponse atualizar(String cpf, DentistaUpdateRequest request) {
         Dentista dentista = repository.buscarPorCpf(cpf);
         if(dentista == null)
@@ -115,11 +134,12 @@ public class DentistaService {
         dentista.setCategoria(request.categoriaDentista());
         dentista.setDisponivel(request.disponivel());
 
-        enderecoService.entradaEndereco(dentista.getEndereco(), request.endereco(), TipoEndereco.RESIDENCIAL);
+        enderecoService.entradaEndereco(dentista.getEndereco(), request.endereco(), TipoEndereco.PROFISSIONAL);
         return mapeamentoParaResponse(dentista);
     }
 
     @Transactional
+    @CacheInvalidateAll(cacheName = "dentistas")
     public long excluir(String cpf) {
         return repository.excluir(cpf);
     }

@@ -315,7 +315,7 @@ class DentistaServiceTest {
     }
 
     @Test
-    @DisplayName("Deve atualizar dentista e atualizar endereço residencial")
+    @DisplayName("Deve atualizar dentista e atualizar endereço profissional")
     void deveAtualizarDentistaComSucesso() {
         // Arrange
         String cpf = CPF_VALIDO;
@@ -338,7 +338,7 @@ class DentistaServiceTest {
         verify(enderecoService, times(1)).entradaEndereco(
                 eq(dentista.getEndereco()),
                 eq(novoEndereco),
-                eq(TipoEndereco.RESIDENCIAL)
+                eq(TipoEndereco.PROFISSIONAL)
         );
     }
 

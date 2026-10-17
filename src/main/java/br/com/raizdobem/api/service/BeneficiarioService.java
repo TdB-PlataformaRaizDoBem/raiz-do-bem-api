@@ -3,6 +3,7 @@ package br.com.raizdobem.api.service;
 import br.com.raizdobem.api.dto.request.BeneficiarioUpdateRequest;
 import br.com.raizdobem.api.dto.request.BeneficiarioCreateRequest;
 import br.com.raizdobem.api.dto.response.BeneficiarioResponse;
+import br.com.raizdobem.api.dto.response.PageResponse;
 import br.com.raizdobem.api.entity.*;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.exception.RequisicaoInvalidaException;
@@ -10,8 +11,9 @@ import br.com.raizdobem.api.exception.ValidacaoException;
 import br.com.raizdobem.api.mapper.BeneficiarioMapper;
 import br.com.raizdobem.api.repository.BeneficiarioRepository;
 import br.com.raizdobem.api.util.CpfValidatorUtil;
+import io.quarkus.cache.CacheInvalidateAll;
 import io.quarkus.cache.CacheResult;
-import io.quarkus.panache.common.Page;
+import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -36,6 +38,7 @@ public class BeneficiarioService {
     EnderecoService enderecoService;
 
     @Transactional
+    @CacheInvalidateAll(cacheName = "beneficiarios")
     public BeneficiarioResponse criarBeneficiario(BeneficiarioCreateRequest dto) {
         Beneficiario beneficiario = new Beneficiario();
         if(dto == null)
@@ -84,13 +87,25 @@ public class BeneficiarioService {
         return mapeamentoBeneficiario(beneficiario);
     }
 
-    @CacheResult(cacheName = "beneficiarios")
     public List<BeneficiarioResponse> listarTodos() {
         return BeneficiarioMapper.mapeamentoBeneficiarios(repository.listarTodos());
     }
     @CacheResult(cacheName = "beneficiarios")
-    public List<BeneficiarioResponse> listarTodosPaginacao(int pagina, int tamanho) {
-        return BeneficiarioMapper.mapeamentoBeneficiarios(repository.listarTodos(pagina, tamanho));
+    public PageResponse<BeneficiarioResponse> listarTodosPaginacao(int pagina, int tamanho) {
+        PanacheQuery<Beneficiario> consulta = repository.listagemPaginacao(pagina, tamanho);
+
+        List<BeneficiarioResponse> itens = consulta.list()
+                .stream()
+                .map(BeneficiarioMapper::mapeamentoBeneficiario)
+                .toList();
+
+        return new PageResponse<>(
+                itens,
+                pagina,
+                tamanho,
+                consulta.count(),
+                consulta.pageCount()
+        );
     }
 
     public List<BeneficiarioResponse> listarPorCidade(String cidade) {
@@ -104,6 +119,7 @@ public class BeneficiarioService {
     }
 
     @Transactional
+    @CacheInvalidateAll(cacheName = "beneficiarios")
     public BeneficiarioResponse atualizar(String cpf, BeneficiarioUpdateRequest request) {
         Beneficiario beneficiario = repository.atualizar(cpf, request);
         if(beneficiario == null)
@@ -117,6 +133,7 @@ public class BeneficiarioService {
     }
 
     @Transactional
+    @CacheInvalidateAll(cacheName = "beneficiarios")
     public boolean excluir(String cpf) {
         if(!CpfValidatorUtil.cpfValido(cpf)){
             throw new NaoEncontradoException("CPF inválido.");

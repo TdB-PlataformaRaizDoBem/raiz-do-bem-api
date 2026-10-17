@@ -3,10 +3,9 @@ package br.com.raizdobem.api.resource;
 import br.com.raizdobem.api.dto.request.BeneficiarioUpdateRequest;
 import br.com.raizdobem.api.dto.request.BeneficiarioCreateRequest;
 import br.com.raizdobem.api.dto.response.BeneficiarioResponse;
-import br.com.raizdobem.api.exception.RequisicaoInvalidaException;
+import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.service.BeneficiarioService;
 import br.com.raizdobem.api.util.CsvUtil;
-import io.vertx.core.cli.annotations.Hidden;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
@@ -31,23 +30,21 @@ public class BeneficiarioResource {
     BeneficiarioService service;
 
     @GET
-    @Operation(summary = "Endpoint de listagem dos beneficiários cadastrados.")
+    @Path("/legado")
+    @Operation(summary = "Endpoint de listagem dos beneficiários cadastrados.", hidden = true)
     @RolesAllowed({"ADMIN", "COLABORADOR"})
     public Response listarTodos(){
         return Response.ok(service.listarTodos()).build();
     }
 
     @GET
-    @Path("/paginacao")
-    @Operation(summary = "Endpoint de listagem dos beneficiários cadastrados.")
+    @Operation(summary = "Endpoint de listagem dos beneficiários cadastrados com paginação.")
     @RolesAllowed({"ADMIN", "COLABORADOR"})
     public Response listarTodosComPaginacao(
             @QueryParam("pagina") @DefaultValue("0") int pagina,
             @QueryParam("size") @DefaultValue("20") int tamanho){
         return Response.ok(service.listarTodosPaginacao(pagina, tamanho)).build();
     }
-
-
 
     @POST
     @Operation(summary = "Endpoint para a criação de beneficiário, de um pedido de ajuda aprovado.")
@@ -113,13 +110,12 @@ public class BeneficiarioResource {
 
     @DELETE
     @Path("/{cpf}")
-    @Operation(summary = "Endpoint para apagar beneficiário existente.")
+    @Operation(summary = "Endpoint para apagar beneficiário existente.", hidden = true)
     @RolesAllowed("ADMIN")
-    @Hidden
     public Response excluir(@PathParam("cpf") String cpf){
        boolean exclusao = service.excluir(cpf);
        if(!exclusao)
-           throw new RequisicaoInvalidaException("Não foi possível excluir beneficiário.");
+           throw new NaoEncontradoException("Não foi possível excluir beneficiário.");
        return Response.noContent().build();
     }
 }

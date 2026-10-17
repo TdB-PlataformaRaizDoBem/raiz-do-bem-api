@@ -15,6 +15,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -73,6 +74,23 @@ class AtendimentoResourceTest {
         // Assert
         assertThat(response.getStatus()).isEqualTo(200);
         assertThat(response.getEntity()).isNotNull();
+        verify(service, times(1)).listarComPaginacao(pagina, tamanho);
+    }
+
+    @Test
+    @DisplayName("Deve retornar lista vazia com HTTP 200 quando paginação não retornar atendimentos")
+    void deveRetornarListaVaziaQuandoPaginacaoNaoRetornarResultados() {
+        // Arrange
+        int pagina = 99;
+        int tamanho = 10;
+        when(service.listarComPaginacao(pagina, tamanho)).thenReturn(Collections.emptyList());
+
+        // Act
+        Response response = resource.listarTodos(pagina, tamanho);
+
+        // Assert
+        assertThat(response.getStatus()).isEqualTo(200);
+        assertThat(response.getEntity()).isEqualTo(Collections.emptyList());
         verify(service, times(1)).listarComPaginacao(pagina, tamanho);
     }
 
@@ -189,6 +207,6 @@ class AtendimentoResourceTest {
         // Act & Assert
         assertThatThrownBy(() -> resource.excluirAtendimento(id))
                 .isInstanceOf(NaoEncontradoException.class)
-                .hasMessage("Pedido de ajuda não encontrado para exclusão.");
+                .hasMessage("Atendimento não encontrado para exclusão.");
     }
 }

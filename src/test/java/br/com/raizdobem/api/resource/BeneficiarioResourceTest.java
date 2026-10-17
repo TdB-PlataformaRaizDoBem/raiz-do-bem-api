@@ -5,7 +5,7 @@ import br.com.raizdobem.api.dto.request.BeneficiarioCreateRequest;
 import br.com.raizdobem.api.dto.response.BeneficiarioResponse;
 import br.com.raizdobem.api.dto.response.EnderecoResponse;
 import br.com.raizdobem.api.dto.response.PedidoAjudaResumidoDTO;
-import br.com.raizdobem.api.exception.RequisicaoInvalidaException;
+import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.service.BeneficiarioService;
 import jakarta.ws.rs.core.Response;
 import org.junit.jupiter.api.DisplayName;
@@ -16,6 +16,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -74,6 +75,23 @@ class BeneficiarioResourceTest {
         // Assert
         assertThat(response.getStatus()).isEqualTo(200);
         assertThat(response.getEntity()).isNotNull();
+        verify(service, times(1)).listarTodosPaginacao(pagina, tamanho);
+    }
+
+    @Test
+    @DisplayName("Deve retornar lista vazia e HTTP 200 quando paginação de beneficiários não tiver resultados")
+    void deveRetornarListaVaziaQuandoPaginacaoNaoRetornarResultados() {
+        // Arrange
+        int pagina = 10;
+        int tamanho = 10;
+        when(service.listarTodosPaginacao(pagina, tamanho)).thenReturn(Collections.emptyList());
+
+        // Act
+        Response response = resource.listarTodosComPaginacao(pagina, tamanho);
+
+        // Assert
+        assertThat(response.getStatus()).isEqualTo(200);
+        assertThat(response.getEntity()).isEqualTo(Collections.emptyList());
         verify(service, times(1)).listarTodosPaginacao(pagina, tamanho);
     }
 
@@ -186,15 +204,15 @@ class BeneficiarioResourceTest {
     }
 
     @Test
-    @DisplayName("Deve lançar RequisicaoInvalidaException ao tentar excluir beneficiário sem sucesso")
-    void deveLancarRequisicaoInvalidaExceptionAoFalharExclusao() {
+    @DisplayName("Deve lançar NaoEncontradoException ao tentar excluir beneficiário sem sucesso")
+    void deveLancarNaoEncontradoExceptionAoFalharExclusao() {
         // Arrange
         String cpf = "12345678901";
         when(service.excluir(cpf)).thenReturn(false);
 
         // Act & Assert
         assertThatThrownBy(() -> resource.excluir(cpf))
-                .isInstanceOf(RequisicaoInvalidaException.class)
+                .isInstanceOf(NaoEncontradoException.class)
                 .hasMessage("Não foi possível excluir beneficiário.");
     }
 }

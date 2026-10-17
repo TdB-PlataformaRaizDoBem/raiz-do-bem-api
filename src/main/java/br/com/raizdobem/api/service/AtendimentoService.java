@@ -5,6 +5,7 @@ import br.com.raizdobem.api.dto.request.AtendimentoCreateRequest;
 import br.com.raizdobem.api.dto.response.AtendimentoResponse;
 import br.com.raizdobem.api.dto.response.BeneficiarioResponse;
 import br.com.raizdobem.api.dto.response.DentistaResponse;
+import br.com.raizdobem.api.dto.response.PageResponse;
 import br.com.raizdobem.api.entity.Beneficiario;
 import br.com.raizdobem.api.entity.Colaborador;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
@@ -14,12 +15,16 @@ import br.com.raizdobem.api.mapper.AtendimentoMapper;
 import br.com.raizdobem.api.mapper.BeneficiarioMapper;
 import br.com.raizdobem.api.repository.AtendimentoRepository;
 import br.com.raizdobem.api.repository.BeneficiarioRepository;
+import io.quarkus.cache.CacheInvalidateAll;
+import io.quarkus.cache.CacheResult;
+import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static br.com.raizdobem.api.mapper.AtendimentoMapper.mapeamentoAtendimento;
@@ -43,6 +48,7 @@ public class AtendimentoService {
     AtendimentoMatchService atendimentoMatchService;
 
     @Transactional
+    @CacheInvalidateAll(cacheName = "atendimentos")
     public AtendimentoResponse criarAtendimento(AtendimentoCreateRequest dto){
         Beneficiario beneficiario = beneficiarioRepository.buscarPorCpf(dto.cpfBeneficiario());
         if(beneficiario == null)
@@ -65,19 +71,34 @@ public class AtendimentoService {
     }
 
     public AtendimentoResponse buscarPorCpf(String cpf) {
-        Atendimento atendimento = repository.buscarPeloCpf(cpf);
-        return mapeamentoAtendimento(atendimento);
+        return mapeamentoAtendimento(repository.buscarPeloCpf(cpf));
     }
 
     public List<AtendimentoResponse> listarAtendimentos(){
         return mapeamentoAtendimentos(repository.listarTodos());
     }
 
-    public List<AtendimentoResponse> listarComPaginacao(int pagina, int tamanho){
-        return mapeamentoAtendimentos(repository.listagemPaginacao(pagina, tamanho));
+    @CacheResult(cacheName = "atendimentos")
+    public PageResponse<AtendimentoResponse> listarComPaginacao(int pagina, int tamanho){
+        PanacheQuery<Atendimento> consulta = repository.listagemPaginacao(pagina, tamanho);
+
+        List<AtendimentoResponse> itens = consulta.list()
+                .stream()
+                .map(AtendimentoMapper::mapeamentoAtendimento)
+                .toList();
+
+
+        return new PageResponse<>(
+                itens,
+                pagina,
+                tamanho,
+                consulta.count(),
+                consulta.pageCount()
+        );
     }
 
     @Transactional
+    @CacheInvalidateAll(cacheName = "atendimentos")
     public void encerrarAtendimento(String cpf, AtendimentoUpdateRequest dto){
         Atendimento atendimento = repository.buscarPeloCpf(cpf);
         if(atendimento == null)
@@ -99,6 +120,7 @@ public class AtendimentoService {
     }
 
     @Transactional
+    @CacheInvalidateAll(cacheName = "atendimentos")
     public boolean excluir(Long id) {
         return repository.excluir(id);
     }

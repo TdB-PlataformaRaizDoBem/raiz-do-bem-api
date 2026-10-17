@@ -5,10 +5,7 @@ import br.com.raizdobem.api.dto.request.PedidoAjudaCreateRequest;
 import br.com.raizdobem.api.dto.response.PedidoAjudaResponse;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.exception.RequisicaoInvalidaException;
-import br.com.raizdobem.api.entity.PedidoAjuda;
-import br.com.raizdobem.api.mapper.PedidoAjudaMapper;
 import br.com.raizdobem.api.service.PedidoAjudaService;
-import io.vertx.core.cli.annotations.Hidden;
 import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.RequestScoped;
@@ -22,7 +19,6 @@ import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @RequestScoped
 @Path("/pedido-ajuda")
@@ -34,10 +30,19 @@ public class PedidoAjudaResource {
     PedidoAjudaService service;
 
     @GET
-    @Operation(summary = "Endpoint de listagem de todos os pedidos de ajuda registrados.")
+    @Path("/legado")
+    @Operation(summary = "Endpoint de listagem de todos os pedidos de ajuda registrados.", hidden = true)
     @RolesAllowed({"ADMIN", "COLABORADOR"})
     public Response listarTodos(){
         return Response.ok(service.listarTodos()).build();
+    }
+
+    @GET
+    @Operation(summary = "Endpoint de listagem de todos os pedidos de ajuda registrados com paginação.")
+    @RolesAllowed({"ADMIN", "COLABORADOR"})
+    public Response listarTodos(@QueryParam("pagina") @DefaultValue("0") int pagina,
+                                @QueryParam("size") @DefaultValue("20") int tamanho){
+        return Response.ok(service.listarComPaginacao(pagina, tamanho)).build();
     }
 
     @GET
@@ -69,9 +74,8 @@ public class PedidoAjudaResource {
 
     @DELETE
     @Path("/{id}")
-    @Operation(summary = "Endpoint de exclusão de um pedido de ajuda.")
+    @Operation(summary = "Endpoint de exclusão de um pedido de ajuda.", hidden = true)
     @RolesAllowed("ADMIN")
-    @Hidden
     public Response excluir(@PathParam("id") Long id){
         boolean apagado = service.excluir(id);
 

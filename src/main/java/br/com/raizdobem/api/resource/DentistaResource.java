@@ -7,7 +7,6 @@ import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.exception.RequisicaoInvalidaException;
 import br.com.raizdobem.api.service.DentistaService;
 import br.com.raizdobem.api.util.CsvUtil;
-import io.vertx.core.cli.annotations.Hidden;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
@@ -20,7 +19,6 @@ import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
 import java.nio.charset.StandardCharsets;
-import java.util.List;
 
 @RequestScoped
 @Path("/dentista")
@@ -43,10 +41,19 @@ public class DentistaResource {
     }
 
     @GET
-    @Operation(summary = "Endpoint para a listagem de todos os dentistas.")
+    @Path("/legado")
+    @Operation(summary = "Endpoint para a listagem de todos os dentistas.", hidden = true)
     @RolesAllowed({"ADMIN", "COLABORADOR"})
     public Response listarTodos(){
         return Response.ok(service.listarTodos()).build();
+    }
+
+    @GET
+    @Operation(summary = "Endpoint para a listagem de todos os dentistas paginados.")
+    @RolesAllowed({"ADMIN", "COLABORADOR"})
+    public Response listarTodosPaginados(@QueryParam("pagina") @DefaultValue("0") int pagina,
+                                         @QueryParam("size") @DefaultValue("20") int tamanho){
+        return Response.ok(service.listarComPaginacao(pagina, tamanho)).build();
     }
 
     @GET
@@ -101,9 +108,8 @@ public class DentistaResource {
 
     @DELETE
     @Path("/{cpf}")
-    @Operation(summary = "Endpoint para a exclusão de dentista.")
+    @Operation(summary = "Endpoint para a exclusão de dentista.", hidden = true)
     @RolesAllowed("ADMIN")
-    @Hidden
     public Response excluir(@PathParam("cpf") String cpf){
         long responseDelete = service.excluir(cpf);
 

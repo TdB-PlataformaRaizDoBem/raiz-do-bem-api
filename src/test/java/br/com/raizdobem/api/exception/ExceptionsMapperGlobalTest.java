@@ -1,9 +1,12 @@
 package br.com.raizdobem.api.exception;
 
 import br.com.raizdobem.api.dto.response.ErroResponse;
+import jakarta.validation.ConstraintViolationException;
 import jakarta.ws.rs.core.Response;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
+import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -75,6 +78,22 @@ class ExceptionsMapperGlobalTest {
         ErroResponse erro = (ErroResponse) response.getEntity();
         assertThat(erro.statusCode()).isEqualTo(400);
         assertThat(erro.mensagem()).isEqualTo("Requisição malformada");
+    }
+
+    @Test
+    @DisplayName("Deve mapear ConstraintViolationException para HTTP 400")
+    void deveMapearConstraintViolationExceptionParaStatus400() {
+        // Arrange
+        ConstraintViolationException ex = new ConstraintViolationException("Violação de restrição", Collections.emptySet());
+
+        // Act
+        Response response = mapper.toResponse(ex);
+
+        // Assert
+        assertThat(response.getStatus()).isEqualTo(400);
+        ErroResponse erro = (ErroResponse) response.getEntity();
+        assertThat(erro.statusCode()).isEqualTo(400);
+        assertThat(erro.mensagem()).isEqualTo("Violação de restrição");
     }
 
     @Test

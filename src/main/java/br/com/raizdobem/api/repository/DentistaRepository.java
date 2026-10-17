@@ -2,7 +2,9 @@ package br.com.raizdobem.api.repository;
 
 import br.com.raizdobem.api.dto.request.DentistaUpdateRequest;
 import br.com.raizdobem.api.entity.Dentista;
+import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
+import io.quarkus.panache.common.Page;
 import jakarta.enterprise.context.ApplicationScoped;
 import java.util.List;
 
@@ -15,6 +17,10 @@ public class DentistaRepository implements PanacheRepository<Dentista> {
 
     public List<Dentista> listarTodos(){
         return listAll();
+    }
+
+    public PanacheQuery<Dentista> listagemPaginacao(int pagina, int tamanho){
+        return findAll().page(Page.of(pagina, tamanho));
     }
 
     public Dentista buscarPorCpf(String cpf){
@@ -30,7 +36,7 @@ public class DentistaRepository implements PanacheRepository<Dentista> {
     }
 
     public List<Dentista> listarDisponiveis() {
-        return list("disponivel", "S");
+        return list("disponivel = 'S' or disponivel = 'true'");
     }
 
     public Dentista atualizar(String cpf, DentistaUpdateRequest dto) {

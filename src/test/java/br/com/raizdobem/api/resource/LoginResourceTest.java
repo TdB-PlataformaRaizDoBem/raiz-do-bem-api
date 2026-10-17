@@ -45,8 +45,29 @@ class LoginResourceTest {
 
         // Assert
         assertThat(response.getStatus()).isEqualTo(200);
+        assertThat(response.getEntity()).isEqualTo(tokensEsperados);
+    }
+
+    @Test
+    @DisplayName("Deve realizar refresh token com sucesso e retornar HTTP 200")
+    @SuppressWarnings("unchecked")
+    void deveRealizarRefreshTokenComSucesso() {
+        // Arrange
+        LoginRequest loginRequest = new LoginRequest("usuario@raizdobem.org", "Senha@123");
+        Map<String, String> tokensEsperados = Map.of(
+                "token", "jwt.access.token",
+                "refreshToken", "jwt.refresh.token"
+        );
+
+        when(loginService.login(loginRequest)).thenReturn(tokensEsperados);
+
+        // Act
+        Response response = loginResource.refreshToken(loginRequest);
+
+        // Assert
+        assertThat(response.getStatus()).isEqualTo(200);
         Map<String, Object> entity = (Map<String, Object>) response.getEntity();
-        assertThat(entity).containsEntry("token", tokensEsperados);
+        assertThat(entity).containsEntry("refreshToken", tokensEsperados);
         assertThat(entity).containsEntry("tipo", "BearerToken");
     }
 

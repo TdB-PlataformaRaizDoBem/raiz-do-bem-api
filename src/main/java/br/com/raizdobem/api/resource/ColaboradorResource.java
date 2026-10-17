@@ -37,10 +37,19 @@ public class ColaboradorResource {
     }
 
     @GET
-    @Operation(summary = "Endpoint de listagem de todos os colaboradores.")
+    @Path("/legado")
+    @Operation(summary = "Endpoint de listagem de todos os colaboradores.", hidden = true)
     @RolesAllowed({"ADMIN", "COLABORADOR"})
     public Response listarTodos(){
         return Response.ok(service.listarTodos()).build();
+    }
+
+    @GET
+    @Operation(summary = "Endpoint de listagem dos colaboradores com paginação.")
+    @RolesAllowed({"ADMIN", "COLABORADOR"})
+    public Response listarTodos(@QueryParam("pagina") @DefaultValue("0") int pagina,
+                                @QueryParam("size") @DefaultValue("20") int tamanho){
+        return Response.ok(service.listarComPaginacao(pagina, tamanho)).build();
     }
 
     @GET

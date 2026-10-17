@@ -283,6 +283,22 @@ class BeneficiarioServiceTest {
     }
 
     @Test
+    @DisplayName("Deve retornar lista vazia quando paginação não encontrar beneficiários")
+    void deveRetornarListaVaziaQuandoPaginacaoNaoEncontrarBeneficiarios() {
+        // Arrange
+        int pagina = 10;
+        int tamanho = 10;
+        when(repository.listarTodos(pagina, tamanho)).thenReturn(List.of());
+
+        // Act
+        List<BeneficiarioResponse> lista = beneficiarioService.listarTodosPaginacao(pagina, tamanho);
+
+        // Assert
+        assertThat(lista).isEmpty();
+        verify(repository, times(1)).listarTodos(pagina, tamanho);
+    }
+
+    @Test
     @DisplayName("Deve listar beneficiários por cidade")
     void deveListarBeneficiariosPorCidade() {
         // Arrange

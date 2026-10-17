@@ -2,6 +2,7 @@ package br.com.raizdobem.api.repository;
 
 import br.com.raizdobem.api.dto.request.PedidoAjudaUpdateRequest;
 import br.com.raizdobem.api.entity.PedidoAjuda;
+import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import io.quarkus.panache.common.Page;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -15,8 +16,8 @@ public class PedidoAjudaRepository implements PanacheRepository<PedidoAjuda> {
         return listAll();
     }
 
-    public List<PedidoAjuda> listagemPaginacao(int pagina, int tamanho){
-        return findAll().page(Page.of(pagina, tamanho)).list();
+    public PanacheQuery<PedidoAjuda> listagemPaginacao(int pagina, int tamanho){
+        return findAll().page(Page.of(pagina, tamanho));
     }
 
     public void criar(PedidoAjuda pedidoAjudaDTO){

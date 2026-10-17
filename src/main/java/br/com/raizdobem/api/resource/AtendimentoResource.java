@@ -7,7 +7,6 @@ import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.exception.RequisicaoInvalidaException;
 import br.com.raizdobem.api.service.AtendimentoService;
 import br.com.raizdobem.api.util.CsvUtil;
-import io.vertx.core.cli.annotations.Hidden;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
@@ -21,7 +20,6 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
 
 @RequestScoped
 @Path("/atendimento/")
@@ -33,15 +31,15 @@ public class AtendimentoResource {
     AtendimentoService service;
     
     @GET
-    @Operation(summary = "Endpoint de listagem dos atendimentos.")
+    @Path("/legado")
+    @Operation(summary = "Endpoint de listagem dos atendimentos.", hidden = true)
     @RolesAllowed({"ADMIN", "COLABORADOR"})
     public Response listarTodos(){
         return Response.ok(service.listarAtendimentos()).build();
     }
 
     @GET
-    @Path("/paginacao")
-    @Operation(summary = "Endpoint de listagem dos atendimentos.")
+    @Operation(summary = "Endpoint de listagem dos atendimentos paginados.")
     @RolesAllowed({"ADMIN", "COLABORADOR"})
     public Response listarTodos(@QueryParam("pagina") @DefaultValue("0") int pagina,
                                 @QueryParam("size") @DefaultValue("20") int tamanho){
@@ -98,15 +96,14 @@ public class AtendimentoResource {
     }
 
     @DELETE
-    @Operation(summary = "Endpoint para exclusão de atendimento.")
+    @Operation(summary = "Endpoint para exclusão de atendimento.", hidden = true)
     @Path("{id}")
     @RolesAllowed("ADMIN")
-    @Hidden
     public Response excluirAtendimento(@PathParam("id") Long id){
         boolean apagado = service.excluir(id);
         if(apagado){
             return Response.noContent().build();
         }
-        throw new NaoEncontradoException("Pedido de ajuda não encontrado para exclusão.");
+        throw new NaoEncontradoException("Atendimento não encontrado para exclusão.");
     }
 }

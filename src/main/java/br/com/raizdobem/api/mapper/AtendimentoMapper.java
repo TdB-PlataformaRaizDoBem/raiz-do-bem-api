@@ -4,6 +4,7 @@ import br.com.raizdobem.api.dto.request.AtendimentoCreateRequest;
 import br.com.raizdobem.api.dto.response.AtendimentoResponse;
 import br.com.raizdobem.api.entity.Atendimento;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public final class AtendimentoMapper {

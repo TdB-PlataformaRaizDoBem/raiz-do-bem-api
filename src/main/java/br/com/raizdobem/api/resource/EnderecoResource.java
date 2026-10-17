@@ -2,7 +2,6 @@ package br.com.raizdobem.api.resource;
 
 import br.com.raizdobem.api.dto.external.ViaCepDTO;
 import br.com.raizdobem.api.dto.request.EnderecoCompletoRequest;
-import br.com.raizdobem.api.dto.response.EnderecoResponse;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.entity.Endereco;
 import br.com.raizdobem.api.service.EnderecoService;
@@ -15,8 +14,6 @@ import jakarta.ws.rs.core.Response;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
-
-import java.util.List;
 
 @RequestScoped
 @Path("/endereco")

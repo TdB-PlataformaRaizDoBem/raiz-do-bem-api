@@ -1,6 +1,8 @@
 package br.com.raizdobem.api.repository;
 
+import br.com.raizdobem.api.dto.response.PageResponse;
 import br.com.raizdobem.api.entity.Atendimento;
+import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import io.quarkus.panache.common.Page;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -18,8 +20,8 @@ public class AtendimentoRepository implements PanacheRepository<Atendimento> {
         return listAll();
     }
 
-    public List<Atendimento> listagemPaginacao(int pagina, int tamanho){
-        return findAll().page(Page.of(pagina, tamanho)).list();
+    public PanacheQuery<Atendimento> listagemPaginacao(int pagina, int tamanho){
+        return findAll().page(Page.of(pagina, tamanho));
     }
 
     public Atendimento buscarPeloCpf(String cpf){

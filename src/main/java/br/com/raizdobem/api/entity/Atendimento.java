@@ -19,7 +19,8 @@ public class Atendimento {
     private String prontuario;
 
     @Column(name = "data_inicial")
-    private LocalDate dataInicial;
+    private LocalDate dataInicial = LocalDate.now();
+
     @Column(name = "data_final")
     private LocalDate dataFinal;
 

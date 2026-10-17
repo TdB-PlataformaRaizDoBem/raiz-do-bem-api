@@ -2,7 +2,9 @@ package br.com.raizdobem.api.repository;
 
 import br.com.raizdobem.api.dto.request.ColaboradorUpdateRequest;
 import br.com.raizdobem.api.entity.Colaborador;
+import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
+import io.quarkus.panache.common.Page;
 import jakarta.enterprise.context.ApplicationScoped;
 
 import java.util.List;
@@ -16,6 +18,10 @@ public class ColaboradorRepository implements PanacheRepository<Colaborador> {
 
     public List<Colaborador> listarTodos(){
         return listAll();
+    }
+
+    public PanacheQuery<Colaborador> listagemPaginacao(int pagina, int tamanho){
+        return findAll().page(Page.of(pagina, tamanho));
     }
 
     public Colaborador buscarPorCpf(String cpf){

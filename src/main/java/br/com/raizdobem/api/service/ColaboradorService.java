@@ -3,13 +3,17 @@ package br.com.raizdobem.api.service;
 import br.com.raizdobem.api.dto.request.ColaboradorUpdateRequest;
 import br.com.raizdobem.api.dto.request.ColaboradorCreateRequest;
 import br.com.raizdobem.api.dto.response.ColaboradorResponse;
+import br.com.raizdobem.api.dto.response.PageResponse;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.exception.ValidacaoException;
 import br.com.raizdobem.api.entity.Colaborador;
 import br.com.raizdobem.api.mapper.ColaboradorMapper;
 import br.com.raizdobem.api.repository.ColaboradorRepository;
 import br.com.raizdobem.api.util.CpfValidatorUtil;
+import io.quarkus.cache.CacheInvalidateAll;
+import io.quarkus.cache.CacheResult;
 import io.quarkus.elytron.security.common.BcryptUtil;
+import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -17,12 +21,15 @@ import jakarta.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 
+import static br.com.raizdobem.api.mapper.AtendimentoMapper.mapeamentoAtendimentos;
+
 @ApplicationScoped
 public class ColaboradorService {
     @Inject
     ColaboradorRepository repository;
 
     @Transactional
+    @CacheInvalidateAll(cacheName = "colaboradores")
     public ColaboradorResponse criarColaborador(ColaboradorCreateRequest dto) {
         if(!CpfValidatorUtil.cpfValido(dto.cpf())){
             throw new ValidacaoException("Cpf inválido");
@@ -61,6 +68,24 @@ public class ColaboradorService {
         return ColaboradorMapper.mapeamentoParaResponse(repository.listarTodos());
     }
 
+    @CacheResult(cacheName = "colaboradores")
+    public PageResponse<ColaboradorResponse> listarComPaginacao(int pagina, int tamanho){
+        PanacheQuery<Colaborador> consulta = repository.listagemPaginacao(pagina, tamanho);
+
+        List<ColaboradorResponse> itens = consulta.list()
+                .stream()
+                .map(ColaboradorMapper::mapeamentoParaResponse)
+                .toList();
+
+        return new PageResponse<>(
+                itens,
+                pagina,
+                tamanho,
+                consulta.count(),
+                consulta.pageCount()
+        );
+    }
+
     public ColaboradorResponse exibirColaboradorPorCpf(String cpf) {
         Colaborador colaborador = repository.buscarPorCpf(cpf);
         if(colaborador == null)
@@ -73,6 +98,7 @@ public class ColaboradorService {
     }
 
     @Transactional
+    @CacheInvalidateAll(cacheName = "colaboradores")
     public void atualizarColaborador(String cpf, ColaboradorUpdateRequest dto) {
         Colaborador colaboradorEncontrado = repository.buscarPorCpf(cpf);
         if(colaboradorEncontrado == null){
@@ -91,6 +117,7 @@ public class ColaboradorService {
     }
 
     @Transactional
+    @CacheInvalidateAll(cacheName = "colaboradores")
     public long excluir(String cpf) {
         return repository.excluir(cpf);
     }

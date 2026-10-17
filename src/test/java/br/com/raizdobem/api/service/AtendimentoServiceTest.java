@@ -249,6 +249,22 @@ class AtendimentoServiceTest {
     }
 
     @Test
+    @DisplayName("Deve retornar lista vazia quando paginação não encontrar atendimentos")
+    void deveRetornarListaVaziaQuandoPaginacaoNaoEncontrarAtendimentos() {
+        // Arrange
+        int pagina = 5;
+        int tamanho = 10;
+        when(repository.listagemPaginacao(pagina, tamanho)).thenReturn(List.of());
+
+        // Act
+        List<AtendimentoResponse> lista = atendimentoService.listarComPaginacao(pagina, tamanho);
+
+        // Assert
+        assertThat(lista).isEmpty();
+        verify(repository, times(1)).listagemPaginacao(pagina, tamanho);
+    }
+
+    @Test
     @DisplayName("Deve encerrar atendimento com sucesso vinculando colaborador e data de finalização")
     void deveEncerrarAtendimentoComSucessoQuandoDadosForemValidos() {
         // Arrange

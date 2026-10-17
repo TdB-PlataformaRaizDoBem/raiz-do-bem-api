@@ -14,6 +14,7 @@ import br.com.raizdobem.api.mapper.EnderecoMapper;
 import br.com.raizdobem.api.repository.EnderecoRepository;
 import java.util.List;
 
+import io.quarkus.cache.CacheInvalidateAll;
 import io.quarkus.cache.CacheResult;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -30,6 +31,7 @@ public class EnderecoService {
     ViaCepClient client;
 
     @Transactional
+    @CacheInvalidateAll(cacheName = "enderecos")
     public Endereco criar(EnderecoCompletoRequest dto) {
         if(!validarCep(dto.cep())){
             throw new RegraNegocioException("CEP inválido! Insira 8 dígitos!");
@@ -42,6 +44,7 @@ public class EnderecoService {
     }
 
     @Transactional
+    @CacheInvalidateAll(cacheName = "enderecos")
     public Endereco criarComoSuporte(
             EnderecoRequest dto,
             TipoEndereco tipoEndereco) {
@@ -79,6 +82,7 @@ public class EnderecoService {
     }
 
     @Transactional
+    @CacheInvalidateAll(cacheName = "enderecos")
     public EnderecoResponse atualizarEndereco(Long id, EnderecoCompletoRequest dto) {
         Endereco endereco = repository.buscarPeloId(id);
         if(endereco == null)
@@ -91,6 +95,7 @@ public class EnderecoService {
     }
 
     @Transactional
+    @CacheInvalidateAll(cacheName = "enderecos")
     public boolean excluir(Long id) {
         return repository.excluir(id);
     }

@@ -65,12 +65,12 @@ public class CsvUtil {
             csv.append(b.dataNascimento()).append(",");
             csv.append(b.telefone()).append(",");
             csv.append(b.email()).append(",");
-            csv.append(b.pedido().id()).append(",");
+            csv.append(b.pedido() != null ? b.pedido().id() : "").append(",");
             csv.append(b.programaSocial()).append(",");
-            csv.append(b.endereco().logradouro()).append(",");
-            csv.append(b.endereco().numero()).append(",");
-            csv.append(b.endereco().cidade()).append(",");
-            csv.append(b.endereco().estado()).append("\n");
+            csv.append(b.endereco() != null ? b.endereco().logradouro() : "").append(",");
+            csv.append(b.endereco() != null ? b.endereco().numero()  : "").append(",");
+            csv.append(b.endereco() != null ? b.endereco().cidade()  : "").append(",");
+            csv.append(b.endereco() != null ? b.endereco().estado()  : "").append("\n");
         }
         return csv.toString();
     }

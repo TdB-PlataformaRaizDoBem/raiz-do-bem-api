@@ -1,7 +1,9 @@
 package br.com.raizdobem.api.util;
 
 import br.com.raizdobem.api.dto.response.AtendimentoResponse;
+import br.com.raizdobem.api.dto.response.BeneficiarioResponse;
 import br.com.raizdobem.api.dto.response.DentistaResponse;
+import br.com.raizdobem.api.dto.response.EnderecoResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -70,6 +72,41 @@ class CsvUtilTest {
         assertThat(csv).contains("ID,CRO,CPF,Nome Completo,Sexo,Email,Telefone,Categoria,Disponível");
         assertThat(csv).contains("Dr. Roberto");
         assertThat(csv).contains("Ortodontia");
+    }
+
+    @Test
+    @DisplayName("Deve gerar CSV de beneficiários com cabeçalho delimitado por vírgula")
+    void deveGerarCsvBeneficiarios() {
+        // Arrange
+        EnderecoResponse end = new EnderecoResponse(
+                1L,
+                "Praça da Sé",
+                "01001000",
+                "100",
+                "Sé",
+                "São Paulo",
+                "SP",
+                "RESIDENCIAL"
+        );
+        BeneficiarioResponse b = new BeneficiarioResponse(
+                1L,
+                "12345678901",
+                "Maria Joana",
+                LocalDate.of(2012, 5, 10),
+                "11988887777",
+                "maria@email.com",
+                null,
+                "Programa 1",
+                end
+        );
+
+        // Act
+        String csv = CsvUtil.gerarCsvBeneficiarios(List.of(b));
+
+        // Assert
+        assertThat(csv).isNotNull();
+        assertThat(csv).contains("ID,CPF,Nome Completo,Data de Nascimento,Telefone,Email,IdPedidoAjuda,ProgramaSocial,Logradouro,Número,Cidade,Estado");
+        assertThat(csv).contains("1,12345678901,Maria Joana,2012-05-10,11988887777,maria@email.com,,Programa 1,Praça da Sé,100,São Paulo,SP");
     }
 
     @Test

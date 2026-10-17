@@ -2,6 +2,7 @@ package br.com.raizdobem.api.service;
 
 import br.com.raizdobem.api.dto.request.PedidoAjudaUpdateRequest;
 import br.com.raizdobem.api.dto.request.PedidoAjudaCreateRequest;
+import br.com.raizdobem.api.dto.response.PageResponse;
 import br.com.raizdobem.api.dto.response.PedidoAjudaResponse;
 import br.com.raizdobem.api.entity.*;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
@@ -10,6 +11,9 @@ import br.com.raizdobem.api.exception.ValidacaoException;
 import br.com.raizdobem.api.mapper.PedidoAjudaMapper;
 import br.com.raizdobem.api.repository.PedidoAjudaRepository;
 import br.com.raizdobem.api.util.CpfValidatorUtil;
+import io.quarkus.cache.CacheInvalidateAll;
+import io.quarkus.cache.CacheResult;
+import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -33,6 +37,7 @@ public class PedidoAjudaService {
     @Inject
     DentistaService dentistaService;
 
+    @CacheInvalidateAll(cacheName = "pedidos")
     public PedidoAjudaResponse criar(PedidoAjudaCreateRequest dto) {
         if(!CpfValidatorUtil.cpfValido(dto.cpf())){
             throw new ValidacaoException("Cpf inválido");
@@ -74,6 +79,24 @@ public class PedidoAjudaService {
         return mapeamentoListaPedidos(pedidos);
     }
 
+    @CacheResult(cacheName = "pedidos")
+    public PageResponse<PedidoAjudaResponse> listarComPaginacao(int pagina, int tamanho) {
+        PanacheQuery<PedidoAjuda> consulta = repository.listagemPaginacao(pagina, tamanho);
+
+        List<PedidoAjudaResponse> itens = consulta.list()
+                .stream()
+                .map(PedidoAjudaMapper::mapeamentoPedido)
+                .toList();
+
+        return new PageResponse<>(
+                itens,
+                pagina,
+                tamanho,
+                consulta.count(),
+                consulta.pageCount()
+        );
+    }
+
     public PedidoAjudaResponse buscarPorCpf(String cpf) {
         PedidoAjuda pedido = repository.buscarPorCpf(cpf);
         if (pedido == null) {
@@ -91,6 +114,7 @@ public class PedidoAjudaService {
         return mapeamentoListaPedidos(pedidos);
     }
 
+    @CacheInvalidateAll(cacheName = "pedidos")
     public PedidoAjudaResponse processarPedido(long id, PedidoAjudaUpdateRequest dto){
         PedidoAjuda pedido = repository.findById(id);
         if(pedido == null)
@@ -126,6 +150,7 @@ public class PedidoAjudaService {
         return mapeamentoPedido(pedido);
     }
 
+    @CacheInvalidateAll(cacheName = "pedidos")
     public boolean excluir(Long id) {
         return repository.excluir(id);
     }
