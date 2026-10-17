@@ -5,6 +5,7 @@ import br.com.raizdobem.api.dto.request.ColaboradorCreateRequest;
 import br.com.raizdobem.api.dto.response.ColaboradorResponse;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.service.ColaboradorService;
+import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
@@ -27,7 +28,7 @@ public class ColaboradorResource {
 
     @POST
     @Operation(summary = "Endpoint de criação de um colaborador da ONG.")
-    @RolesAllowed("ADMIN")
+    @PermitAll
     public Response criarColaborador(@Valid ColaboradorCreateRequest request){
         ColaboradorResponse colaborador = service.criarColaborador(request);
         if(colaborador == null){
