@@ -411,4 +411,20 @@ class BeneficiarioServiceTest {
 
         verifyNoInteractions(repository);
     }
+
+    @Test
+    @DisplayName("Deve retornar false ao excluir beneficiário quando CPF for válido mas registro não existir")
+    void deveRetornarFalseAoExcluirBeneficiarioInexistenteComCpfValido() {
+        // Arrange
+        String cpfValido = CPF_VALIDO;
+        when(repository.excluir(cpfValido)).thenReturn(0L);
+
+        // Act
+        boolean resultado = beneficiarioService.excluir(cpfValido);
+
+        // Assert
+        assertThat(resultado).isFalse();
+        verify(repository, times(1)).excluir(cpfValido);
+    }
 }
+

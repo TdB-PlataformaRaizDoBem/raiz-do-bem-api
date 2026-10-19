@@ -53,7 +53,7 @@ public class PedidoAjudaService {
         if(dto.sexo() == null)
             throw new ValidacaoException("Sexo é obrigatório.");
 
-        if (dto.sexo().equals("M".toUpperCase())) {
+        if ("M".equalsIgnoreCase(dto.sexo())) {
             if(maiorIdade(dto.dataNascimento()))
                 pedidoAjuda.setStatus(StatusPedido.REJEITADO);
         }
@@ -134,13 +134,17 @@ public class PedidoAjudaService {
             throw new ValidacaoException("Status INVÁLIDO. Novo status pode ser APROVADO ou REJEITADO");
         }
 
-        if(novoStatus == StatusPedido.APROVADO && dto.idDentista() > 0){
+        if(novoStatus == StatusPedido.APROVADO){
+            if(dto.idDentista() == null || dto.idDentista() <= 0){
+                throw new ValidacaoException("Dentista inválido!");
+            }
+
             Dentista dentista = dentistaService.buscarEntidadePorId(dto.idDentista());
 
             if(dentista == null)
                 throw new NaoEncontradoException("Dentista aprovador não encontrado.");
 
-            if(dentista.getCategoria().equals("COORDENADOR"))
+            if(("COORDENADOR").equals(dentista.getCategoria()))
                 pedido.setDentista(dentista);
             else{
                 throw new RegraNegocioException("Apenas um Dentista Coordenador pode aprovar um pedido de ajuda.");

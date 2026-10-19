@@ -218,4 +218,24 @@ class LoginServiceTest {
                 .extracting(ex -> ((WebApplicationException) ex).getResponse().getStatus())
                 .isEqualTo(401);
     }
+
+    @Test
+    @DisplayName("Deve lançar ValidacaoException quando senha armazenada no colaborador for nula")
+    void deveLancarValidacaoExceptionQuandoHashSenhaForNulo() {
+        // Arrange
+        String email = "admin@raizdobem.org";
+        LoginRequest dto = new LoginRequest(email, "qualquerSenha");
+
+        Colaborador colaborador = new Colaborador();
+        colaborador.setEmail(email);
+        colaborador.setSenha(null);
+
+        when(colaboradorRepository.buscarPorEmail(email)).thenReturn(colaborador);
+
+        // Act & Assert
+        assertThatThrownBy(() -> loginService.login(dto))
+                .isInstanceOf(ValidacaoException.class)
+                .hasMessage("Email ou senha inválido(s).");
+    }
 }
+

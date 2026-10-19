@@ -287,4 +287,62 @@ class EnderecoServiceTest {
     void deveValidarCepEstaticoValido() {
         assertThat(EnderecoService.validarCep("01001000")).isTrue();
     }
+
+    @Test
+    @DisplayName("Deve lançar RegraNegocioException ao criar endereço como suporte com CEP inválido")
+    void deveLancarRegraNegocioExceptionAoCriarComoSuporteComCepInvalido() {
+        // Arrange
+        EnderecoRequest dtoInvalido = new EnderecoRequest("123", "10");
+
+        // Act & Assert
+        assertThatThrownBy(() -> enderecoService.criarComoSuporte(dtoInvalido, TipoEndereco.RESIDENCIAL))
+                .isInstanceOf(RegraNegocioException.class)
+                .hasMessage("CEP inválido! Insira 8 dígitos!");
+
+        verifyNoInteractions(client);
+        verifyNoInteractions(repository);
+    }
+
+    @Test
+    @DisplayName("Deve lançar NaoEncontradoException ao buscar endereço por ID inexistente")
+    void deveLancarNaoEncontradoExceptionAoBuscarPorIdInexistente() {
+        // Arrange
+        Long idInexistente = 404L;
+        when(repository.buscarPeloId(idInexistente)).thenReturn(null);
+
+        // Act & Assert
+        assertThatThrownBy(() -> enderecoService.buscaPorId(idInexistente))
+                .isInstanceOf(NaoEncontradoException.class)
+                .hasMessage("Endereço não encontrado");
+    }
+
+    @Test
+    @DisplayName("Deve lançar RequisicaoInvalidaException em entradaEndereco quando ViaCEP retornar nulo")
+    void deveLancarRequisicaoInvalidaExceptionEmEntradaEnderecoQuandoViaCepRetornarNulo() {
+        // Arrange
+        Endereco endereco = new Endereco();
+        EnderecoRequest dto = new EnderecoRequest("01001000", "10");
+        when(client.buscarEndereco("01001000")).thenReturn(null);
+
+        // Act & Assert
+        assertThatThrownBy(() -> enderecoService.entradaEndereco(endereco, dto, TipoEndereco.RESIDENCIAL))
+                .isInstanceOf(RequisicaoInvalidaException.class)
+                .hasMessage("Requisição ViaCep inválida.");
+    }
+
+    @Test
+    @DisplayName("Deve lançar NaoEncontradoException em entradaEndereco quando ViaCEP retornar erro true")
+    void deveLancarNaoEncontradoExceptionEmEntradaEnderecoQuandoViaCepRetornarErro() {
+        // Arrange
+        Endereco endereco = new Endereco();
+        EnderecoRequest dto = new EnderecoRequest("99999999", "10");
+        ViaCepDTO viaCepErro = new ViaCepDTO(null, null, null, null, null, null, "true");
+        when(client.buscarEndereco("99999999")).thenReturn(viaCepErro);
+
+        // Act & Assert
+        assertThatThrownBy(() -> enderecoService.entradaEndereco(endereco, dto, TipoEndereco.PROFISSIONAL))
+                .isInstanceOf(NaoEncontradoException.class)
+                .hasMessage("Endereço Inválido. CEP não encontrado");
+    }
 }
+

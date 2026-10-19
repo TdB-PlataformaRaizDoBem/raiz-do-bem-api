@@ -429,4 +429,69 @@ class PedidoAjudaServiceTest {
         assertThat(PedidoAjudaService.maiorIdade(exatamente18)).isTrue();
         assertThat(PedidoAjudaService.maiorIdade(maiorIdade)).isTrue();
     }
+
+    @Test
+    @DisplayName("Deve buscar entidade PedidoAjuda por ID delegando ao repositório")
+    void deveBuscarEntidadePorIdComSucesso() {
+        // Arrange
+        Long id = 25L;
+        PedidoAjuda pedido = criarPedidoEntidade(id, StatusPedido.APROVADO);
+        when(repository.findById(id)).thenReturn(pedido);
+
+        // Act
+        PedidoAjuda resultado = pedidoAjudaService.buscarEntidadePorId(id);
+
+        // Assert
+        assertThat(resultado).isNotNull().isSameAs(pedido);
+        verify(repository, times(1)).findById(id);
+    }
+
+    @Test
+    @DisplayName("Deve lançar ValidacaoException ao aprovar pedido quando idDentista for nulo ou menor/igual a zero")
+    void deveLancarValidacaoExceptionAoAprovarPedidoComIdDentistaInvalido() {
+        // Arrange
+        long pedidoId = 30L;
+        PedidoAjuda pedido = criarPedidoEntidade(pedidoId, StatusPedido.PENDENTE);
+        when(repository.findById(pedidoId)).thenReturn(pedido);
+
+        PedidoAjudaUpdateRequest dtoIdNulo = new PedidoAjudaUpdateRequest(StatusPedido.APROVADO, null);
+        PedidoAjudaUpdateRequest dtoIdZero = new PedidoAjudaUpdateRequest(StatusPedido.APROVADO, 0L);
+        PedidoAjudaUpdateRequest dtoIdNegativo = new PedidoAjudaUpdateRequest(StatusPedido.APROVADO, -5L);
+
+        // Act & Assert
+        assertThatThrownBy(() -> pedidoAjudaService.processarPedido(pedidoId, dtoIdNulo))
+                .isInstanceOf(ValidacaoException.class)
+                .hasMessage("Dentista inválido!");
+
+        assertThatThrownBy(() -> pedidoAjudaService.processarPedido(pedidoId, dtoIdZero))
+                .isInstanceOf(ValidacaoException.class)
+                .hasMessage("Dentista inválido!");
+
+        assertThatThrownBy(() -> pedidoAjudaService.processarPedido(pedidoId, dtoIdNegativo))
+                .isInstanceOf(ValidacaoException.class)
+                .hasMessage("Dentista inválido!");
+
+        verifyNoInteractions(dentistaService);
+    }
+
+    @Test
+    @DisplayName("Deve lançar ValidacaoException caso ocorra falha inesperada ao obter o novo status do pedido")
+    void deveLancarValidacaoExceptionQuandoLeituraDeNovoStatusLancarExcecao() {
+        // Arrange
+        long pedidoId = 31L;
+        PedidoAjuda pedido = criarPedidoEntidade(pedidoId, StatusPedido.PENDENTE);
+        when(repository.findById(pedidoId)).thenReturn(pedido);
+
+        PedidoAjudaUpdateRequest dtoMock = mock(PedidoAjudaUpdateRequest.class);
+        when(dtoMock.statusPedido())
+                .thenReturn(StatusPedido.APROVADO)
+                .thenReturn(StatusPedido.APROVADO)
+                .thenThrow(new IllegalStateException("Status corrompido"));
+
+        // Act & Assert
+        assertThatThrownBy(() -> pedidoAjudaService.processarPedido(pedidoId, dtoMock))
+                .isInstanceOf(ValidacaoException.class)
+                .hasMessage("Status INVÁLIDO. Novo status pode ser APROVADO ou REJEITADO");
+    }
 }
+

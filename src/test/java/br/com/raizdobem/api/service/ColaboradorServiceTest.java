@@ -326,4 +326,61 @@ class ColaboradorServiceTest {
         assertThat(resultado).isEqualTo(1L);
         verify(repository, times(1)).excluir(cpf);
     }
+
+    @Test
+    @DisplayName("Deve atribuir role padrão COLABORADOR quando role informada no cadastro for nula ou em branco")
+    void deveAtribuirRolePadraoColaboradorQuandoRoleForNulaOuEmBranco() {
+        // Arrange
+        ColaboradorCreateRequest dtoRoleNula = new ColaboradorCreateRequest(
+                CPF_VALIDO,
+                "Colaborador Sem Role",
+                LocalDate.of(1995, 3, 20),
+                LocalDate.of(2023, 2, 1),
+                "colab1@raizdobem.org",
+                "senha123",
+                null
+        );
+        ColaboradorCreateRequest dtoRoleEmBranco = new ColaboradorCreateRequest(
+                CPF_VALIDO,
+                "Colaborador Role Vazia",
+                LocalDate.of(1995, 3, 20),
+                LocalDate.of(2023, 2, 1),
+                "colab2@raizdobem.org",
+                "senha123",
+                "   "
+        );
+
+        when(repository.buscarPorCpf(CPF_VALIDO)).thenReturn(null);
+
+        // Act
+        ColaboradorResponse respNula = colaboradorService.criarColaborador(dtoRoleNula);
+        ColaboradorResponse respEmBranco = colaboradorService.criarColaborador(dtoRoleEmBranco);
+
+        // Assert
+        assertThat(respNula.role()).isEqualTo("COLABORADOR");
+        assertThat(respEmBranco.role()).isEqualTo("COLABORADOR");
+    }
+
+    @Test
+    @DisplayName("Deve manter email e senha antigos quando campos informados na atualização forem nulos")
+    void deveManterEmailESenhaAntigosQuandoCamposForemNulos() {
+        // Arrange
+        String cpf = CPF_VALIDO;
+        Colaborador colaborador = criarColaboradorEntidade(1L, cpf);
+        ColaboradorUpdateRequest dto = new ColaboradorUpdateRequest(null, null);
+
+        when(repository.buscarPorCpf(cpf)).thenReturn(colaborador);
+
+        // Act
+        colaboradorService.atualizarColaborador(cpf, dto);
+
+        // Assert
+        ArgumentCaptor<ColaboradorUpdateRequest> captor = ArgumentCaptor.forClass(ColaboradorUpdateRequest.class);
+        verify(repository, times(1)).atualizar(eq(cpf), captor.capture());
+
+        ColaboradorUpdateRequest dtoEnviado = captor.getValue();
+        assertThat(dtoEnviado.email()).isEqualTo(colaborador.getEmail());
+        assertThat(dtoEnviado.senha()).isEqualTo(colaborador.getSenha());
+    }
 }
+

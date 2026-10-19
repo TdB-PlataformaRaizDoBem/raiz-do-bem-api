@@ -55,7 +55,7 @@ public class ColaboradorService {
         colaborador.setSenha(
                 BcryptUtil.bcryptHash(dto.senha())
         );
-        colaborador.setRole(dto.role());
+        colaborador.setRole(dto.role() != null && !dto.role().isBlank() ? dto.role() : "COLABORADOR");
 
         repository.criar(colaborador);
 

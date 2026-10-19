@@ -13,10 +13,13 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -124,4 +127,19 @@ class GoogleMapsServiceTest {
         assertThat(resultado).isNotNull();
         assertThat(resultado.id()).isEqualTo(1L);
     }
+
+    @Test
+    @DisplayName("Deve entrar no ramo de destinos vazios quando lista de dentistas for vazia")
+    void deveEntrarNoRamoDeDestinosVaziosQuandoListaDeDentistasForVazia() {
+        // Arrange
+        String enderecoBeneficiario = "Praça da Sé, 100, São Paulo, SP";
+        List<DentistaResponse> dentistasVazio = List.of();
+
+        // Act & Assert
+        assertThatThrownBy(() -> googleMapsService.calcularDistanciaProximidade(enderecoBeneficiario, dentistasVazio))
+                .isInstanceOf(NoSuchElementException.class);
+
+        verifyNoInteractions(googleMapsClient);
+    }
 }
+

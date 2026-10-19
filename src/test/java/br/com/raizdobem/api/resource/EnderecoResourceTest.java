@@ -95,7 +95,6 @@ class EnderecoResourceTest {
         EnderecoCompletoRequest request = new EnderecoCompletoRequest("", "100", "RESIDENCIAL");
         Endereco endereco = new Endereco();
         endereco.setTipoEndereco(TipoEndereco.RESIDENCIAL);
-        when(service.criar(request)).thenReturn(endereco);
 
         // Act & Assert
         assertThatThrownBy(() -> resource.criar(request))

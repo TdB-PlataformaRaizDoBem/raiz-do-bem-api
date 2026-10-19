@@ -114,6 +114,7 @@ class PedidoAjudaMapperTest {
         List<PedidoAjudaResponse> dtos = PedidoAjudaMapper.mapeamentoListaPedidos(lista);
 
         // Assert
+        assertThat(new PedidoAjudaMapper()).isNotNull();
         assertThat(dtos).isNotNull().hasSize(2);
         assertThat(dtos.get(0).id()).isEqualTo(1L);
         assertThat(dtos.get(0).dentistaResponsavel()).isEqualTo("Dra. Beatriz Santos");
@@ -121,3 +122,4 @@ class PedidoAjudaMapperTest {
         assertThat(dtos.get(1).dentistaResponsavel()).isEqualTo("Aguardando aprovação");
     }
 }
+

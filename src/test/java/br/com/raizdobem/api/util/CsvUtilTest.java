@@ -4,6 +4,7 @@ import br.com.raizdobem.api.dto.response.AtendimentoResponse;
 import br.com.raizdobem.api.dto.response.BeneficiarioResponse;
 import br.com.raizdobem.api.dto.response.DentistaResponse;
 import br.com.raizdobem.api.dto.response.EnderecoResponse;
+import br.com.raizdobem.api.dto.response.PedidoAjudaResumidoDTO;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -146,4 +147,50 @@ class CsvUtilTest {
         // Assert
         assertThat(nomeArquivo).isEqualTo(tipo + "_" + hojeFormatado + ".csv");
     }
+
+    @Test
+    @DisplayName("Deve gerar CSV de dentistas com especialidades e programas sociais nulos e de beneficiários com pedido preenchido")
+    void deveGerarCsvDentistasComListasNulasEBeneficiarioComPedido() {
+        // Arrange
+        DentistaResponse dentistaSemListas = new DentistaResponse(
+                2L,
+                "54321",
+                "98765432100",
+                "Dra. Camila",
+                "F",
+                "camila@odonto.com",
+                "11988882222",
+                "COORDENADOR",
+                null,
+                null,
+                "S",
+                "Av Paulista",
+                "500",
+                "São Paulo",
+                "SP",
+                "01310000"
+        );
+
+        BeneficiarioResponse beneficiarioComPedido = new BeneficiarioResponse(
+                3L,
+                "11122233344",
+                "Lucas Silva",
+                LocalDate.of(2014, 1, 15),
+                "11977770000",
+                "lucas@email.com",
+                new PedidoAjudaResumidoDTO(42L, "Dra. Camila"),
+                "Dentista do Bem",
+                null
+        );
+
+        // Act
+        String csvDentistas = CsvUtil.gerarCsvDentistas(List.of(dentistaSemListas));
+        String csvBeneficiarios = CsvUtil.gerarCsvBeneficiarios(List.of(beneficiarioComPedido));
+
+        // Assert
+        assertThat(new CsvUtil()).isNotNull();
+        assertThat(csvDentistas).contains("2,54321,98765432100,Dra. Camila,F,camila@odonto.com,11988882222,COORDENADOR,S,,,Av Paulista - 500,São Paulo,SP");
+        assertThat(csvBeneficiarios).contains("3,11122233344,Lucas Silva,2014-01-15,11977770000,lucas@email.com,42,Dentista do Bem,,,,");
+    }
 }
+

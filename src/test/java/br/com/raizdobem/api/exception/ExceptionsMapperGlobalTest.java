@@ -146,4 +146,21 @@ class ExceptionsMapperGlobalTest {
         assertThat(erro.statusCode()).isEqualTo(500);
         assertThat(erro.mensagem()).isEqualTo("Erro interno do servidor.");
     }
+
+    @Test
+    @DisplayName("Deve tratar WebApplicationException com status >= 500 como erro interno 500")
+    void deveMapearWebApplicationExceptionComStatus500OuSuperiorParaErroInterno() {
+        // Arrange
+        WebApplicationException ex = new WebApplicationException("Falha interna no provedor", 503);
+
+        // Act
+        Response response = mapper.toResponse(ex);
+
+        // Assert
+        assertThat(response.getStatus()).isEqualTo(500);
+        ErroResponse erro = (ErroResponse) response.getEntity();
+        assertThat(erro.statusCode()).isEqualTo(500);
+        assertThat(erro.mensagem()).isEqualTo("Erro interno do servidor.");
+    }
 }
+

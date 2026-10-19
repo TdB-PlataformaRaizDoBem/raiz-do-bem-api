@@ -372,4 +372,21 @@ class DentistaServiceTest {
         assertThat(resultado).isEqualTo(1L);
         verify(repository, times(1)).excluir(cpf);
     }
+
+    @Test
+    @DisplayName("Deve buscar entidade Dentista por ID delegando ao repositório")
+    void deveBuscarEntidadePorIdComSucesso() {
+        // Arrange
+        Long id = 15L;
+        Dentista dentista = criarDentista(id, CPF_VALIDO);
+        when(repository.findById(id)).thenReturn(dentista);
+
+        // Act
+        Dentista resultado = dentistaService.buscarEntidadePorId(id);
+
+        // Assert
+        assertThat(resultado).isNotNull().isSameAs(dentista);
+        verify(repository, times(1)).findById(id);
+    }
 }
+

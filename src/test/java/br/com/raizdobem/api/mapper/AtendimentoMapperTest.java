@@ -142,9 +142,12 @@ class AtendimentoMapperTest {
         Atendimento entidade = AtendimentoMapper.mapeamentoParaEntidade(request);
 
         // Assert
+        assertThat(new AtendimentoMapper()).isNotNull();
+        assertThat(request.dataInicial()).isEqualTo(LocalDate.now());
         assertThat(entidade).isNotNull();
         assertThat(entidade.getProntuario()).isEqualTo("PRONT-100");
         assertThat(entidade.getBeneficiario()).isNotNull();
         assertThat(entidade.getBeneficiario().getCpf()).isEqualTo("12345678901");
     }
 }
+

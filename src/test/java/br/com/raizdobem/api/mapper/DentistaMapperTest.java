@@ -142,4 +142,46 @@ class DentistaMapperTest {
         assertThat(lista.get(0).nomeCompleto()).isEqualTo("Dra. Camila Santos");
         assertThat(lista.get(1).especialidades()).isEmpty();
     }
+
+    @Test
+    @DisplayName("Deve construir entidade Dentista pelo construtor parametrizado e mapear corretamente")
+    void deveConstruirDentistaComConstrutorParametrizadoEMapear() {
+        // Arrange
+        Endereco endereco = new Endereco();
+        endereco.setLogradouro("Av. Paulista");
+        endereco.setNumero("1500");
+        endereco.setCidade("São Paulo");
+        endereco.setEstado("SP");
+        endereco.setCep("01310100");
+
+        Dentista dentista = new Dentista(
+                "654321",
+                "52998224725",
+                "Dr. Rafael Costa",
+                Sexo.M,
+                "rafael@odonto.com",
+                "11977776666",
+                "VOLUNTARIO",
+                "S",
+                endereco
+        );
+
+        // Act
+        DentistaResponse response = DentistaMapper.mapeamentoParaResponse(dentista);
+
+        // Assert
+        assertThat(new DentistaMapper()).isNotNull();
+        assertThat(response).isNotNull();
+        assertThat(response.croDentista()).isEqualTo("654321");
+        assertThat(response.cpf()).isEqualTo("52998224725");
+        assertThat(response.nomeCompleto()).isEqualTo("Dr. Rafael Costa");
+        assertThat(response.sexo()).isEqualTo("M");
+        assertThat(response.email()).isEqualTo("rafael@odonto.com");
+        assertThat(response.telefone()).isEqualTo("11977776666");
+        assertThat(response.categoria()).isEqualTo("VOLUNTARIO");
+        assertThat(response.disponivel()).isEqualTo("S");
+        assertThat(response.logradouro()).isEqualTo("Av. Paulista");
+        assertThat(response.numero()).isEqualTo("1500");
+    }
 }
+

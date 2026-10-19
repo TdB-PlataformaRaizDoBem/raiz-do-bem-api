@@ -228,7 +228,7 @@ Durante a abertura de um atendimento (`AtendimentoMatchService`), caso nenhum de
 | Método | Endpoint | Query Params | Acesso | Descrição |
 | :---: | :--- | :--- | :---: | :--- |
 | `GET` | `/colaborador` | `pagina=0`, `size=20` | `ADMIN`, `COLABORADOR` | Lista colaboradores de forma paginada (`PageResponse`) com cache. |
-| `POST` | `/colaborador` | — |  `@PermitAll`  | Cadastra novo colaborador com senha criptografada via Bcrypt. |
+| `POST` | `/colaborador` | — | `ADMIN` | Cadastra novo colaborador com senha criptografada via Bcrypt. |
 | `GET` | `/colaborador/{cpf}` | — | `ADMIN`, `COLABORADOR` | Busca dados de um colaborador específico pelo CPF (sem expor senha). |
 | `PUT` | `/colaborador/{cpf}` | — | `ADMIN` | Atualiza o e-mail e informações do colaborador. |
 | `DELETE` | `/colaborador/{cpf}` | — | `ADMIN` | Exclui um colaborador pelo CPF. |

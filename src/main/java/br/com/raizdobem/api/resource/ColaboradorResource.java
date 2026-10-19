@@ -28,7 +28,7 @@ public class ColaboradorResource {
 
     @POST
     @Operation(summary = "Endpoint de criação de um colaborador da ONG.")
-    @PermitAll
+    @RolesAllowed("ADMIN")
     public Response criarColaborador(@Valid ColaboradorCreateRequest request){
         ColaboradorResponse colaborador = service.criarColaborador(request);
         if(colaborador == null){

@@ -79,4 +79,4 @@ application-local.properties
 prints_swagger/
 
 #Key
-src/main/resources/keyPrivada.pem
+#src/main/resources/keyPrivada.pem

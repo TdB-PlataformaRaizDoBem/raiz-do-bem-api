@@ -130,4 +130,25 @@ class BeneficiarioMapperTest {
         assertThat(lista.get(0).nomeCompleto()).isEqualTo("Ana Maria");
         assertThat(lista.get(1).programaSocial()).isEqualTo("N/A");
     }
+
+    @Test
+    @DisplayName("Deve mapear beneficiário quando endereço possuir tipoEndereco nulo e pedido não possuir dentista")
+    void deveMapearBeneficiarioComTipoEnderecoNuloEPedidoSemDentista() {
+        // Arrange
+        Beneficiario b = criarBeneficiario(3L, true);
+        b.getEndereco().setTipoEndereco(null);
+        b.getPedido().setDentista(null);
+
+        // Act
+        BeneficiarioResponse response = BeneficiarioMapper.mapeamentoBeneficiario(b);
+
+        // Assert
+        assertThat(new BeneficiarioMapper()).isNotNull();
+        assertThat(response).isNotNull();
+        assertThat(response.endereco()).isNotNull();
+        assertThat(response.endereco().tipoEndereco()).isNull();
+        assertThat(response.pedido()).isNotNull();
+        assertThat(response.pedido().dentistaResponsavel()).isNull();
+    }
 }
+
