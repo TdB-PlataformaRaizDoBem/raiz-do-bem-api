@@ -68,7 +68,7 @@ public class PedidoAjudaResource {
     @Operation(summary = "Endpoint de processamento de um pedido de ajuda.")
     @Path("/{id}")
     @RolesAllowed({"ADMIN", "COLABORADOR"})
-    public Response atualizar(@PathParam("id") long id, @RequestBody PedidoAjudaUpdateRequest dto){
+    public Response atualizar(@PathParam("id") long id, @Valid @RequestBody PedidoAjudaUpdateRequest dto){
         return Response.ok(service.processarPedido(id, dto)).build();
     }
 

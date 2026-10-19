@@ -61,7 +61,10 @@ public class EnderecoService {
     }
 
     public EnderecoResponse buscaPorId(Long id){
-        return EnderecoMapper.mapeamentoParaResponse(repository.buscarPeloId(id));
+        Endereco enderecoEncontrado = repository.buscarPeloId(id);
+        if(enderecoEncontrado == null)
+            throw new NaoEncontradoException("Endereço não encontrado");
+        return EnderecoMapper.mapeamentoParaResponse(enderecoEncontrado);
     }
 
     @CacheResult(cacheName = "enderecos")

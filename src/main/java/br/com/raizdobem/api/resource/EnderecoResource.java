@@ -8,6 +8,7 @@ import br.com.raizdobem.api.service.EnderecoService;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
+import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -26,13 +27,13 @@ public class EnderecoResource {
     @POST
     @Operation(summary = "Endpoint de criação de endereço.")
     @RolesAllowed({"ADMIN", "COLABORADOR"})
-    public Response criar(EnderecoCompletoRequest request){
+    public Response criar(@Valid EnderecoCompletoRequest request){
+        if(request.cep().isEmpty()){
+            throw new NaoEncontradoException("CEP não encontrado.");
+        }
         Endereco endereco = service.criar(request);
         if(endereco.getTipoEndereco() == null){
             throw new NaoEncontradoException("Tipo de endereço inválido.");
-        }
-        if(request.cep().isEmpty()){
-            throw new NaoEncontradoException("CEP não encontrado.");
         }
         return Response.status(Response.Status.CREATED).entity(endereco).build();
     }
@@ -76,7 +77,7 @@ public class EnderecoResource {
     @Operation(summary = "Endpoint de atualização de endereço.")
     @Path("/{id}")
     @RolesAllowed({"ADMIN", "COLABORADOR"})
-    public Response atualizar(@PathParam("id") Long id, @RequestBody EnderecoCompletoRequest request){
+    public Response atualizar(@PathParam("id") Long id, @Valid  @RequestBody EnderecoCompletoRequest request){
         return Response.ok(service.atualizarEndereco(id, request)).build();
     }
 

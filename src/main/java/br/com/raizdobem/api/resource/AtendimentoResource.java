@@ -90,7 +90,7 @@ public class AtendimentoResource {
     @Operation(summary = "Endpoint para finalizar atendimento.")
     @Path("{cpf}")
     @RolesAllowed({"ADMIN", "COLABORADOR"})
-    public Response atualizar(@PathParam("cpf") String cpf, @RequestBody AtendimentoUpdateRequest dto){
+    public Response atualizar(@PathParam("cpf") String cpf, @Valid @RequestBody AtendimentoUpdateRequest dto){
         service.encerrarAtendimento(cpf, dto);
         return Response.ok().build();
     }

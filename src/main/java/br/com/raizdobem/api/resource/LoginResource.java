@@ -30,7 +30,7 @@ public class LoginResource {
     @Path("/tokenAcesso")
     @PermitAll
     @Operation(summary = "Login de colaborador", description = "Realiza o login do usuário e retorna um token JWT para autenticação.")
-    public Response login(LoginRequest loginRequest) {
+    public Response login(@Valid LoginRequest loginRequest) {
         return Response.ok(service.login(loginRequest)).build();
     }
 

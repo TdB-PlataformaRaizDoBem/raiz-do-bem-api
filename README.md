@@ -191,16 +191,16 @@ Durante a abertura de um atendimento (`AtendimentoMatchService`), caso nenhum de
 
 ### 🦷 Dentistas Voluntários (`/dentista`)
 
-| Método | Endpoint | Query Params | Acesso | Descrição |
-| :---: | :--- | :--- | :---: | :--- |
+| Método | Endpoint | Query Params |         Acesso         | Descrição |
+| :---: | :--- | :--- |:----------------------:| :--- |
 | `GET` | `/dentista` | `pagina=0`, `size=20` | `ADMIN`, `COLABORADOR` | Lista dentistas voluntários de forma paginada (`PageResponse`) com cache. |
-| `POST` | `/dentista` | — | `ADMIN`, `COLABORADOR` | Cadastra um novo dentista voluntário, endereço profissional e especialidades. |
+| `POST` | `/dentista` | — |     `@PermitAll`       | Cadastra um novo dentista voluntário, endereço profissional e especialidades. |
 | `GET` | `/dentista/disponiveis` | — | `ADMIN`, `COLABORADOR` | Lista todos os dentistas com disponibilidade ativa para novos atendimentos. |
 | `GET` | `/dentista/{cpf}` | — | `ADMIN`, `COLABORADOR` | Busca um dentista voluntário pelo CPF. |
 | `GET` | `/dentista/cidade/{cidade}` | — | `ADMIN`, `COLABORADOR` | Lista dentistas voluntários que atendem em determinada cidade. |
 | `GET` | `/dentista/exportarCsv` | — | `ADMIN`, `COLABORADOR` | Exporta a relação de dentistas voluntários em arquivo `.csv` (`UTF-8`). |
 | `PUT` | `/dentista/{cpf}` | — | `ADMIN`, `COLABORADOR` | Atualiza dados cadastrais, disponibilidade e endereço do dentista. |
-| `DELETE` | `/dentista/{cpf}` | — | `ADMIN` | Exclui o registro de um dentista pelo CPF *(oculto no Swagger)*. |
+| `DELETE` | `/dentista/{cpf}` | — |        `ADMIN`         | Exclui o registro de um dentista pelo CPF *(oculto no Swagger)*. |
 
 ### 🏥 Atendimentos Odontológicos (`/atendimento`)
 
@@ -228,7 +228,7 @@ Durante a abertura de um atendimento (`AtendimentoMatchService`), caso nenhum de
 | Método | Endpoint | Query Params | Acesso | Descrição |
 | :---: | :--- | :--- | :---: | :--- |
 | `GET` | `/colaborador` | `pagina=0`, `size=20` | `ADMIN`, `COLABORADOR` | Lista colaboradores de forma paginada (`PageResponse`) com cache. |
-| `POST` | `/colaborador` | — | `ADMIN` | Cadastra novo colaborador com senha criptografada via Bcrypt. |
+| `POST` | `/colaborador` | — |  `@PermitAll`  | Cadastra novo colaborador com senha criptografada via Bcrypt. |
 | `GET` | `/colaborador/{cpf}` | — | `ADMIN`, `COLABORADOR` | Busca dados de um colaborador específico pelo CPF (sem expor senha). |
 | `PUT` | `/colaborador/{cpf}` | — | `ADMIN` | Atualiza o e-mail e informações do colaborador. |
 | `DELETE` | `/colaborador/{cpf}` | — | `ADMIN` | Exclui um colaborador pelo CPF. |

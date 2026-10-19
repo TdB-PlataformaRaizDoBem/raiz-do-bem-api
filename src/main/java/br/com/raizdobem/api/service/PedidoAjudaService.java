@@ -52,7 +52,8 @@ public class PedidoAjudaService {
 
         if(dto.sexo() == null)
             throw new ValidacaoException("Sexo é obrigatório.");
-        if (("M").equals(dto.sexo())) {
+
+        if (dto.sexo().equals("M".toUpperCase())) {
             if(maiorIdade(dto.dataNascimento()))
                 pedidoAjuda.setStatus(StatusPedido.REJEITADO);
         }
