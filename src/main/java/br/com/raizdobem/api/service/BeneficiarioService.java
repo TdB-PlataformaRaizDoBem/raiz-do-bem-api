@@ -7,10 +7,8 @@ import br.com.raizdobem.api.dto.response.PageResponse;
 import br.com.raizdobem.api.entity.*;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.exception.RequisicaoInvalidaException;
-import br.com.raizdobem.api.exception.ValidacaoException;
 import br.com.raizdobem.api.mapper.BeneficiarioMapper;
 import br.com.raizdobem.api.repository.BeneficiarioRepository;
-import br.com.raizdobem.api.util.CpfValidatorUtil;
 import io.quarkus.cache.CacheInvalidateAll;
 import io.quarkus.cache.CacheResult;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
@@ -71,10 +69,13 @@ public class BeneficiarioService {
     }
 
     public BeneficiarioResponse buscarPorCpf(String cpf) {
-        if(!CpfValidatorUtil.cpfValido(cpf))
-            throw new ValidacaoException("CPF inválido.");
-
         Beneficiario beneficiario = repository.buscarPorCpf(cpf);
+        if (beneficiario == null && cpf != null) {
+            String cpfLimpo = cpf.replaceAll("\\D", "");
+            if (!cpfLimpo.equals(cpf)) {
+                beneficiario = repository.buscarPorCpf(cpfLimpo);
+            }
+        }
         if(beneficiario == null)
             throw new NaoEncontradoException("Beneficiário não encontrado.");
         return mapeamentoBeneficiario(beneficiario);
@@ -136,10 +137,13 @@ public class BeneficiarioService {
     @Transactional
     @CacheInvalidateAll(cacheName = "beneficiarios")
     public boolean excluir(String cpf) {
-        if(!CpfValidatorUtil.cpfValido(cpf)){
-            throw new NaoEncontradoException("CPF inválido.");
-        }
         long exclusao = repository.excluir(cpf);
+        if (exclusao == 0 && cpf != null) {
+            String cpfLimpo = cpf.replaceAll("\\D", "");
+            if (!cpfLimpo.equals(cpf)) {
+                exclusao = repository.excluir(cpfLimpo);
+            }
+        }
         return exclusao > 0;
     }
 }

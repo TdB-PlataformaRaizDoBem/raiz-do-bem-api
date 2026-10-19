@@ -39,35 +39,36 @@ public class PedidoAjudaService {
 
     @CacheInvalidateAll(cacheName = "pedidos")
     public PedidoAjudaResponse criar(PedidoAjudaCreateRequest dto) {
-        if(!CpfValidatorUtil.cpfValido(dto.cpf())){
+        String cpf = dto.cpf();
+        if(!CpfValidatorUtil.cpfValido(cpf))
             throw new ValidacaoException("Cpf inválido");
-        }
-
-        PedidoAjuda pedidoAjuda = new PedidoAjuda();
-
-        pedidoAjuda.setCpf(dto.cpf());
-        pedidoAjuda.setNomeCompleto(dto.nome());
-        pedidoAjuda.setDataNascimento(dto.dataNascimento());
-        pedidoAjuda.setStatus(StatusPedido.PENDENTE);
 
         if(dto.sexo() == null)
             throw new ValidacaoException("Sexo é obrigatório.");
 
-        if ("M".equalsIgnoreCase(dto.sexo())) {
-            if(maiorIdade(dto.dataNascimento()))
-                pedidoAjuda.setStatus(StatusPedido.REJEITADO);
-        }
+        PedidoAjuda pedidoExistente = repository.buscarPorCpf(cpf);
+        if (pedidoExistente != null)
+            throw new RegraNegocioException("Já existe um pedido de ajuda cadastrado com esse CPF.");
 
+        Endereco endereco = enderecoService.criarComoSuporte(dto.endereco(), TipoEndereco.RESIDENCIAL);
+        if(endereco == null)
+            throw new NaoEncontradoException("Endereço não encontrado.");
+
+
+        StatusPedido status = ("M".equalsIgnoreCase(dto.sexo()) && maiorIdade(dto.dataNascimento()))
+                ? StatusPedido.REJEITADO
+                : StatusPedido.PENDENTE;
+
+        PedidoAjuda pedidoAjuda = new PedidoAjuda();
+        pedidoAjuda.setCpf(cpf);
+        pedidoAjuda.setNomeCompleto(dto.nome());
+        pedidoAjuda.setDataNascimento(dto.dataNascimento());
+        pedidoAjuda.setStatus(status);
         pedidoAjuda.setSexo(Sexo.valueOf(dto.sexo().toUpperCase()));
         pedidoAjuda.setTelefone(dto.telefone());
         pedidoAjuda.setEmail(dto.email());
         pedidoAjuda.setDescricaoProblema(dto.descricaoProblema());
         pedidoAjuda.setDataPedido(LocalDate.now());
-
-        Endereco endereco = enderecoService.criarComoSuporte(dto.endereco(), TipoEndereco.RESIDENCIAL);
-        if(endereco == null){
-            throw new NaoEncontradoException("Endereço não encontrado.");
-        }
         pedidoAjuda.setEndereco(endereco);
 
         repository.criar(pedidoAjuda);

@@ -196,17 +196,40 @@ class BeneficiarioServiceTest {
     }
 
     @Test
-    @DisplayName("Deve lançar ValidacaoException ao buscar por CPF quando formato for inválido")
-    void deveLancarValidacaoExceptionAoBuscarPorCpfInvalido() {
+    @DisplayName("Deve permitir buscar beneficiário por CPF mesmo quando não respeita o dígito verificador")
+    void deveBuscarBeneficiarioPorCpfSemValidarDigitoVerificador() {
         // Arrange
-        String cpfInvalido = "123";
+        String cpfLegado = "38367655824";
+        Beneficiario beneficiario = criarBeneficiario(1L);
+        beneficiario.setCpf(cpfLegado);
+        when(repository.buscarPorCpf(cpfLegado)).thenReturn(beneficiario);
 
-        // Act & Assert
-        assertThatThrownBy(() -> beneficiarioService.buscarPorCpf(cpfInvalido))
-                .isInstanceOf(ValidacaoException.class)
-                .hasMessage("CPF inválido.");
+        // Act
+        BeneficiarioResponse resultado = beneficiarioService.buscarPorCpf(cpfLegado);
 
-        verifyNoInteractions(repository);
+        // Assert
+        assertThat(resultado).isNotNull();
+        assertThat(resultado.cpf()).isEqualTo(cpfLegado);
+        verify(repository, times(1)).buscarPorCpf(cpfLegado);
+    }
+
+    @Test
+    @DisplayName("Deve buscar beneficiário por CPF formatado consultando versão apenas com números")
+    void deveBuscarBeneficiarioPorCpfFormatado() {
+        // Arrange
+        String cpfFormatado = "404.295.585-11";
+        String cpfLimpo = "40429558511";
+        Beneficiario beneficiario = criarBeneficiario(1L);
+        beneficiario.setCpf(cpfLimpo);
+        when(repository.buscarPorCpf(cpfFormatado)).thenReturn(null);
+        when(repository.buscarPorCpf(cpfLimpo)).thenReturn(beneficiario);
+
+        // Act
+        BeneficiarioResponse resultado = beneficiarioService.buscarPorCpf(cpfFormatado);
+
+        // Assert
+        assertThat(resultado).isNotNull();
+        assertThat(resultado.cpf()).isEqualTo(cpfLimpo);
     }
 
     @Test
@@ -399,17 +422,36 @@ class BeneficiarioServiceTest {
     }
 
     @Test
-    @DisplayName("Deve lançar NaoEncontradoException ao tentar excluir com CPF inválido")
-    void deveLancarNaoEncontradoExceptionAoExcluirComCpfInvalido() {
+    @DisplayName("Deve excluir beneficiário mesmo com CPF que não respeita dígito verificador quando registro existir")
+    void deveExcluirBeneficiarioComCpfSemValidarDigitoVerificador() {
         // Arrange
-        String cpfInvalido = "123";
+        String cpfLegado = "38367655824";
+        when(repository.excluir(cpfLegado)).thenReturn(1L);
 
-        // Act & Assert
-        assertThatThrownBy(() -> beneficiarioService.excluir(cpfInvalido))
-                .isInstanceOf(NaoEncontradoException.class)
-                .hasMessage("CPF inválido.");
+        // Act
+        boolean resultado = beneficiarioService.excluir(cpfLegado);
 
-        verifyNoInteractions(repository);
+        // Assert
+        assertThat(resultado).isTrue();
+        verify(repository, times(1)).excluir(cpfLegado);
+    }
+
+    @Test
+    @DisplayName("Deve excluir beneficiário por CPF formatado consultando versão apenas com números")
+    void deveExcluirBeneficiarioComCpfFormatado() {
+        // Arrange
+        String cpfFormatado = "404.295.585-11";
+        String cpfLimpo = "40429558511";
+        when(repository.excluir(cpfFormatado)).thenReturn(0L);
+        when(repository.excluir(cpfLimpo)).thenReturn(1L);
+
+        // Act
+        boolean resultado = beneficiarioService.excluir(cpfFormatado);
+
+        // Assert
+        assertThat(resultado).isTrue();
+        verify(repository, times(1)).excluir(cpfFormatado);
+        verify(repository, times(1)).excluir(cpfLimpo);
     }
 
     @Test

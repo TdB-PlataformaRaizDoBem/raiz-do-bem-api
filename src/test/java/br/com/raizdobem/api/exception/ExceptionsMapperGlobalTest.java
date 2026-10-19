@@ -1,12 +1,15 @@
 package br.com.raizdobem.api.exception;
 
 import br.com.raizdobem.api.dto.response.ErroResponse;
+import jakarta.persistence.PersistenceException;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -132,6 +135,40 @@ class ExceptionsMapperGlobalTest {
     }
 
     @Test
+    @DisplayName("Deve mapear violação de integridade de banco SQL para HTTP 409")
+    void deveMapearViolacaoDeIntegridadeDeBancoParaStatus409() {
+        // Arrange
+        SQLIntegrityConstraintViolationException sqlEx = new SQLIntegrityConstraintViolationException("ORA-00001: unique constraint violated");
+        PersistenceException ex = new PersistenceException("Erro de persistência", sqlEx);
+
+        // Act
+        Response response = mapper.toResponse(ex);
+
+        // Assert
+        assertThat(response.getStatus()).isEqualTo(409);
+        ErroResponse erro = (ErroResponse) response.getEntity();
+        assertThat(erro.statusCode()).isEqualTo(409);
+        assertThat(erro.mensagem()).isEqualTo("Registro já existente ou violação de integridade dos dados.");
+    }
+
+    @Test
+    @DisplayName("Deve mapear org.hibernate.exception.ConstraintViolationException para HTTP 409")
+    void deveMapearHibernateConstraintViolationExceptionParaStatus409() {
+        // Arrange
+        org.hibernate.exception.ConstraintViolationException ex =
+                new org.hibernate.exception.ConstraintViolationException("Unique constraint", new SQLException(), "UK_CPF");
+
+        // Act
+        Response response = mapper.toResponse(ex);
+
+        // Assert
+        assertThat(response.getStatus()).isEqualTo(409);
+        ErroResponse erro = (ErroResponse) response.getEntity();
+        assertThat(erro.statusCode()).isEqualTo(409);
+        assertThat(erro.mensagem()).isEqualTo("Registro já existente ou violação de integridade dos dados.");
+    }
+
+    @Test
     @DisplayName("Deve mapear exceções não tratadas para HTTP 500 com mensagem genérica")
     void deveMapearExcecoesGenericasParaStatus500() {
         // Arrange
@@ -163,4 +200,3 @@ class ExceptionsMapperGlobalTest {
         assertThat(erro.mensagem()).isEqualTo("Erro interno do servidor.");
     }
 }
-

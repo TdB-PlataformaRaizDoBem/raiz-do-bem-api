@@ -191,6 +191,24 @@ class PedidoAjudaServiceTest {
     }
 
     @Test
+    @DisplayName("Deve lançar RegraNegocioException ao criar pedido quando CPF já estiver cadastrado")
+    void deveLancarRegraNegocioExceptionAoCriarPedidoQuandoCpfJaEstiverCadastrado() {
+        // Arrange
+        PedidoAjudaCreateRequest dto = criarPedidoDTO("F", LocalDate.now().minusYears(20));
+        PedidoAjuda pedidoExistente = criarPedidoEntidade(1L, StatusPedido.PENDENTE);
+        when(repository.buscarPorCpf(dto.cpf())).thenReturn(pedidoExistente);
+
+        // Act & Assert
+        assertThatThrownBy(() -> pedidoAjudaService.criar(dto))
+                .isInstanceOf(RegraNegocioException.class)
+                .hasMessage("Já existe um pedido de ajuda cadastrado com esse CPF.");
+
+        verify(repository, times(1)).buscarPorCpf(dto.cpf());
+        verifyNoInteractions(enderecoService);
+        verify(repository, never()).criar(any());
+    }
+
+    @Test
     @DisplayName("Deve lançar NaoEncontradoException ao criar pedido quando endereço retornado for nulo")
     void deveLancarNaoEncontradoExceptionAoCriarPedidoQuandoEnderecoNaoForEncontrado() {
         // Arrange
