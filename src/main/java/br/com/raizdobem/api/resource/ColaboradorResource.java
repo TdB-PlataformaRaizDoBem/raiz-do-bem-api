@@ -5,7 +5,6 @@ import br.com.raizdobem.api.dto.request.ColaboradorCreateRequest;
 import br.com.raizdobem.api.dto.response.ColaboradorResponse;
 import br.com.raizdobem.api.exception.NaoEncontradoException;
 import br.com.raizdobem.api.service.ColaboradorService;
-import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;

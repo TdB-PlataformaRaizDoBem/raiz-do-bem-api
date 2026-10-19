@@ -1,6 +1,5 @@
 package br.com.raizdobem.api.repository;
 
-import br.com.raizdobem.api.dto.response.PageResponse;
 import br.com.raizdobem.api.entity.Atendimento;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
